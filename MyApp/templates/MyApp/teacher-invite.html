@@ -1,0 +1,159 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Students - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Invite Students</h2>
+                <p>Generate invitation links or send direct emails to students to join your courses. Once they accept, they will have access to all your published materials and assessments.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Invites Sent</span>
+                        <strong>{{ invitations|length }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        {% if messages %}
+            <div class="messages-container" style="max-width: 1200px; margin: 1rem auto; padding: 0 2rem;">
+                {% for message in messages %}
+                <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; {% if message.tags == 'success' %}background: #e6f4ea; color: #1e8e3e;{% else %}background: #fce8e6; color: #d93025;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="grid-two">
+            <article class="upload-panel panel">
+                <h3>Invite / Enroll Students (Manual)</h3>
+                <p>Provide a single course (name and optional code) and then add students for that course. For bulk invites, put one entry per line in the format <code>roll,password,Full Name</code>. Full Name is optional.</p>
+                <form method="POST" action="{% url 'teacher_invite' %}">
+                    {% csrf_token %}
+                    <div class="field-group">
+                        <label for="course_name">Course Name</label>
+                        <input id="course_name" name="course_name" type="text" value="{{ course_name_prefill }}" placeholder="e.g., CS110 - AI Fundamentals" required>
+                    </div>
+                    <div class="field-group">
+                        <label for="course_code">Course ID / Code (optional)</label>
+                        <input id="course_code" name="course_code" type="text" value="{{ course_code_prefill }}" placeholder="e.g., CS110">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="students">Bulk students (one per line: <em>roll,password</em>)</label>
+                        <textarea id="students" name="students" rows="6" placeholder="s12345,Password123,Asad Arif\ns12346,Password456"></textarea>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group" style="flex:1;">
+                            <label for="student_roll">Single student roll</label>
+                            <input id="student_roll" name="student_roll" type="text" placeholder="s12345">
+                        </div>
+                        <div class="field-group" style="flex:1;">
+                            <label for="student_password">Password</label>
+                            <input id="student_password" name="student_password" type="text" placeholder="Password123">
+                        </div>
+                        <div class="field-group" style="flex:1;">
+                            <label for="student_name">Full Name (optional)</label>
+                            <input id="student_name" name="student_name" type="text" placeholder="Asad Arif">
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="submit" id="btn-send">Add / Enroll Students</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Recent Enrollments</h3>
+                <div id="enroll-list">
+                    {% for e in recent_enrollments %}
+                    <div class="list-item">
+                        <strong>{{ e.student.username }}</strong>
+                        <div class="meta"><span>{{ e.course.name }}</span><span>{{ e.enrolled_at|timesince }} ago</span></div>
+                    </div>
+                    {% empty %}
+                    <p>No recent enrollments.</p>
+                    {% endfor %}
+                </div>
+            </article>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+
+
+</body>
+<script>
+document.addEventListener('click', function(e){
+    if(e.target && e.target.classList.contains('copy-btn')){
+        const url = e.target.dataset.url;
+        if(navigator.clipboard){
+            navigator.clipboard.writeText(url).then(()=>{
+                const original = e.target.textContent;
+                e.target.textContent = 'Copied!';
+                setTimeout(()=> e.target.textContent = original, 1500);
+            });
+        } else {
+            // fallback
+            const tmp = document.createElement('textarea');
+            tmp.value = url;
+            document.body.appendChild(tmp);
+            tmp.select();
+            document.execCommand('copy');
+            document.body.removeChild(tmp);
+            const original = e.target.textContent;
+            e.target.textContent = 'Copied!';
+            setTimeout(()=> e.target.textContent = original, 1500);
+        }
+    }
+});
+</script>
+</html>

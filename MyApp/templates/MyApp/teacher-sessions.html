@@ -1,0 +1,169 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Session - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Schedule Academic Sessions</h2>
+                <p>Plan your upcoming lectures, lab sessions, and tutorials. These will appear on the students' dashboard calendars.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Sessions This Week</span>
+                        <strong>12</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Upcoming Labs</span>
+                        <strong>4</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Revision Classes</span>
+                        <strong>2</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <div class="grid-two">
+            <article class="upload-panel panel">
+                <h3>Schedule New Session</h3>
+                <form>
+                    {% csrf_token %}
+                    <div class="field-group">
+                        <label for="course">Course</label>
+                        <select id="course">
+                            <option>CS102 - Data Structures</option>
+                            <option>CS110 - AI Fundamentals</option>
+                            <option>CS120 - Database Systems</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="type">Session Type</label>
+                        <select id="type">
+                            <option>Lecture</option>
+                            <option>Lab Practical</option>
+                            <option>Tutorial</option>
+                            <option>Exam/Quiz</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="title">Session Title</label>
+                        <input id="title" type="text" placeholder="e.g. Graph Theory Intro">
+                    </div>
+                    <div class="field-group">
+                        <label for="datetime">Date & Time</label>
+                        <input id="datetime" type="datetime-local">
+                    </div>
+                    <div class="field-group">
+                        <label for="location">Location / Venue</label>
+                        <input id="location" type="text" placeholder="e.g. Lab 2, CS Department">
+                    </div>
+                    <div class="button-row">
+                        <button type="button" id="btn-add-session">Add to Schedule</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Upcoming Schedule</h3>
+                <div id="session-list">
+                    <div class="list-item">
+                        <strong>Lecture: DFS & BFS Algorithms</strong>
+                        <div class="meta"><span>CS102</span><span>Today, 11:30 AM</span></div>
+                        <span>Venue: Main Lecture Hall 1</span>
+                    </div>
+                    <div class="list-item">
+                        <strong>Lab: Neural Network Setup</strong>
+                        <div class="meta"><span>CS110</span><span>Tomorrow, 09:00 AM</span></div>
+                        <span>Venue: AI Research Lab</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('btn-add-session').addEventListener('click', function() {
+            const course = document.getElementById('course').value;
+            const type = document.getElementById('type').value;
+            const title = document.getElementById('title').value.trim();
+            const datetime = document.getElementById('datetime').value;
+            const location = document.getElementById('location').value.trim();
+
+            if (!title || !datetime || !location) {
+                alert("Please fill in all the details (Title, Date/Time, and Location).");
+                return;
+            }
+
+            // Format date for display
+            const dateObj = new Date(datetime);
+            const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            alert(`Session Scheduled Successfully!\n\n${type}: ${title}\nCourse: ${course}\nTime: ${dateStr} at ${timeStr}\nVenue: ${location}`);
+
+            // Add to the list
+            const sessionList = document.getElementById('session-list');
+            const newItem = document.createElement('div');
+            newItem.className = 'list-item';
+            newItem.innerHTML = `
+                <strong>${type}: ${title}</strong>
+                <div class="meta"><span>${course}</span><span>${dateStr}, ${timeStr}</span></div>
+                <span>Venue: ${location}</span>
+            `;
+            sessionList.prepend(newItem);
+
+            // Clear inputs
+            document.getElementById('title').value = '';
+            document.getElementById('datetime').value = '';
+            document.getElementById('location').value = '';
+        });
+    </script>
+</body>
+</html>

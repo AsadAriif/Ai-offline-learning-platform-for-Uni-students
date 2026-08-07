@@ -1,0 +1,89 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baba Guru Nanak University - AI Learning Platform</title>
+
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+
+<body>
+
+    <!-- Header with logos -->
+    <header>
+        <!-- Department Logo - Top Left -->
+        <img src="{% static 'MyApp/department_logo.png' %}" alt="Department Logo" class="logo-top-left">
+
+        <div class="header-text">
+            <h1>Baba Guru Nanak University Nankana Sahib</h1>
+            <h2>AI Offline Learning Platform</h2>
+        </div>
+
+        <!-- University Logo - Top Right -->
+        <img src="{% static 'MyApp/uni_logo.png' %}" alt="University Logo" class="logo-top-right">
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to AI-Powered Learning</h1>
+        <p>
+            Study anytime without internet. Our platform provides offline courses,
+            AI recommendations, quizzes, and smart learning tools for students.
+        </p>
+
+        <a href="{% url 'login' %}" class="btn">Login</a>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="feature-box">
+            <h3>Offline Access</h3>
+            <p>Download learning material and study without internet.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>AI Learning</h3>
+            <p>Get personalized recommendations from AI assistant.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>Interactive Content</h3>
+            <p>Watch videos, attempt quizzes and improve learning.</p>
+        </div>
+
+        <div class="feature-box">
+            <h3>Progress Tracking</h3>
+            <p>Track student performance and course completion.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p><strong>Phone:</strong></p>
+                <p>056-9201171</p>
+                <p>0300-1199358</p>
+            </div>
+            <div class="footer-section">
+                <h4>Address</h4>
+                <p>Adam Pura</p>
+                <p>Nankana Sahib</p>
+            </div>
+            <div class="footer-section">
+                <h4>Email</h4>
+                <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+            </div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+            <p>AI Offline Learning Platform</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Quizzes - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero panel">
+            <article class="hero-panel">
+                <h2>Quiz Center</h2>
+                <p>Open your scheduled quizzes here and access the quiz content directly. This page focuses on live quiz tasks and upcoming test preparation.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Quizzes Available</span>
+                        <strong>{{ quizzes_available_count }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Due Soon</span>
+                        <strong>{{ due_soon_count }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Completed</span>
+                        <strong>{{ completed_count }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-two">
+            <article class="list-panel panel">
+                <h3>Upcoming Quizzes</h3>
+                {% if upcoming_quizzes %}
+                    {% for q in upcoming_quizzes %}
+                    <div class="list-item" style="border-left-color: var(--accent-warm);">
+                        <strong>{{ q.title }}</strong>
+                        <div class="meta"><span>{{ q.course.name }}</span><span>Published: {{ q.created_at|date:"Y-m-d" }}</span></div>
+                        <span>{{ q.description }}</span>
+                        <div style="margin-top: 10px;">
+                            <a href="{% url 'submit_assignment' q.id %}" class="btn" style="padding: 6px 12px; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-soft), var(--accent-warm)); color: #ffffff;">Start Quiz</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No upcoming quizzes scheduled.</p>
+                {% endif %}
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Completed Quizzes</h3>
+                {% if completed_quizzes %}
+                    {% for item in completed_quizzes %}
+                    <div class="list-item" style="border-left-color: #2e7d32;">
+                        <strong>{{ item.quiz.title }}</strong>
+                        <div class="meta"><span>{{ item.quiz.course.name }}</span><span>Status: Completed</span></div>
+                        <span>
+                            {% if item.submission %}
+                                {% if item.submission.graded %}
+                                    Score: {{ item.submission.marks|default:'-' }} | Grade: {{ item.submission.grade|default:'Pending' }}
+                                    {% if item.submission.feedback %}<br>Feedback: {{ item.submission.feedback }}{% endif %}
+                                {% else %}
+                                    Submission received. Check results for grading.
+                                {% endif %}
+                            {% else %}
+                                Submission received. Check results for grading.
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No completed quizzes yet.</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <footer class="footer">
+            <p>Student quiz page for BGNU's AI Offline Learning Platform. Use this page to open test tasks and see the next available quiz schedule.</p>
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+        </footer>
+    </div>
+</body>
+</html>

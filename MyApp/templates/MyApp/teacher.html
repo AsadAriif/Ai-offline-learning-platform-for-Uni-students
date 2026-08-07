@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'login' %}" class="primary">Logout</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel">
+                <h2>Welcome back, {{ display_name }}</h2>
+                <p>Manage your classes, share learning resources, create assessments, and monitor student progress with a modern, university-branded teacher dashboard.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>My Courses</span>
+                        <strong>{{ total_courses }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Total Students</span>
+                        <strong>{{ total_students }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Published Assignments</span>
+                        <strong>{{ published_assignments }}</strong>
+                    </div>
+                </div>
+            </article>
+            <aside class="profile-panel">
+                <h3>Teacher Summary</h3>
+                <div class="profile-list">
+                    <div class="profile-item">
+                        <strong>Name</strong>
+                        <span>{{ display_name }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Username</strong>
+                        <span>{{ user.username }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Role</strong>
+                        <span>Teacher</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Department</strong>
+                        <span>Computer Science &amp; IT</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>University</strong>
+                        <span>Baba Guru Nanak University Nankana Sahib</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <div class="section-grid">
+            <article class="activity-panel">
+                <h3>Recent Assignments</h3>
+                <div class="recent-list">
+                    {% if assignments %}
+                        {% for assignment in assignments %}
+                        <div class="list-item">
+                            <strong>{{ assignment.title }}</strong>
+                            <div class="meta"><span>{{ assignment.course.name }} - {{ assignment.get_kind_display }}</span><span>{{ assignment.created_at|date:"M d, Y" }}</span></div>
+                            <span>{{ assignment.description|truncatewords:20 }}</span>
+                            {% if assignment.published %}
+                                <span style="color: #4caf50; font-weight: 600;">✓ Published</span>
+                            {% else %}
+                                <span style="color: #ffc107; font-weight: 600;">⚠ Draft</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: #94a9be; padding: 20px 0;">No assignments created yet.</p>
+                    {% endif %}
+                </div>
+            </article>
+
+            <article class="courses-panel">
+                <h3>My Courses</h3>
+                <div class="courses-list">
+                    {% if teacher_courses %}
+                        {% for course in teacher_courses %}
+                        <div class="course-row">
+                            <div class="course-info">
+                                <strong>{{ course.name }}</strong>
+                                <span>{{ course.assignments.count }} assignments &bull; {{ course.materials.count }} materials</span>
+                            </div>
+                            <span class="course-badge">Active</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: #94a9be; padding: 20px 0;">No courses yet.</p>
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+
+        <section class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-row">
+                <a href="{% url 'teacher_invite' %}" class="action-tile">
+                    <strong>Invite Students</strong>
+                    <span>Send course access links and invite new students to join your department classes.</span>
+                </a>
+                <a href="#" class="action-tile">
+                    <strong>Create Assignment</strong>
+                    <span>Start a new assignment or quiz quickly and publish it to offline dashboard access.</span>
+                </a>
+                <a href="{% url 'teacher_materials' %}" class="action-tile">
+                    <strong>Publish Material</strong>
+                    <span>Upload study notes, past papers, and learning modules for student use.</span>
+                </a>
+                <a href="{% url 'teacher_results' %}" class="action-tile">
+                    <strong>Share Results</strong>
+                    <span>Release exam scores and feedback to students with one click.</span>
+                </a>
+            </div>
+        </section>
+        <section class="materials-panel">
+            <h3>My Materials</h3>
+            <div class="materials-list">
+                {% if materials %}
+                    {% for material in materials %}
+                        <div class="material-item">
+                            <strong>{{ material.title }}</strong>
+                            <div class="meta"><span>{{ material.course.name }}</span> <span>{{ material.created_at|date:"M d, Y" }}</span></div>
+                            {% if material.description %}<span>{{ material.description|truncatewords:15 }}</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #94a9be; padding: 20px 0;">No materials uploaded yet.</p>
+                {% endif %}
+            </div>
+            <a href="{% url 'teacher_materials' %}" class="action-tile" style="margin-top:10px; display:inline-block;">View All Materials</a>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

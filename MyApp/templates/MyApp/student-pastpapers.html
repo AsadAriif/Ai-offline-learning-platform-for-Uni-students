@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Papers - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_assignments' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Past Papers</h2>
+                <p>Download past exam papers published by your instructors for practice and revision.</p>
+            </article>
+        </section>
+
+        <div class="grid-one">
+            <article class="list-panel panel">
+                <h3>Available Past Papers</h3>
+                {% if materials %}
+                    {% for m in materials %}
+                        <div class="list-item">
+                            <strong>{{ m.title }}</strong>
+                            <div class="meta"><span>{{ m.course.name }}</span><span>{{ m.created_at|timesince }} ago</span></div>
+                            <div class="actions"><a href="{{ m.file.url }}" download>Download</a></div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No past papers available.</p>
+                {% endif %}
+            </article>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

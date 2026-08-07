@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Detection - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib · Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'teacher_dashboard' %}">Dashboard</a>
+                <a href="{% url 'teacher_materials' %}">Materials</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'logout' %}" class="primary">Logout</a>
+            </div>
+        </header>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Detection Result for "{{ material.title }}"</h2>
+                <p>Uploaded by you on {{ material.created_at|date:"M d, Y" }} in course {{ material.course.name }}.</p>
+                <div class="result-card">
+                    <p><strong>Label:</strong> {{ result.label }}</p>
+                    <p><strong>Confidence:</strong> {{ result.confidence|floatformat:2 }}</p>
+                </div>
+                <div class="action-row">
+                    <a href="{{ material.file.url }}" download class="action-tile">Download Original</a>
+                    <a href="{% url 'teacher_materials' %}" class="action-tile">Back to Materials</a>
+                </div>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section"><h4>Contact Us</h4><p><strong>Phone:</strong></p><p>056-9201171</p><p>0300-1199358</p></div>
+                <div class="footer-section"><h4>Address</h4><p>Adam Pura</p><p>Nankana Sahib</p></div>
+                <div class="footer-section"><h4>Email</h4><p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p><p>AI Offline Learning Platform</p></div>
+        </footer>
+    </div>
+</body>
+</html>

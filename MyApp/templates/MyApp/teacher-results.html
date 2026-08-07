@@ -1,0 +1,160 @@
+{% load static custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Results - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Share Assessment Results</h2>
+                <p>Upload grades and provide detailed feedback for quizzes and assignments. Students can view their performance in their personalized dashboards.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Assessments Graded</span>
+                        <strong>{{ assessments_graded }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Class Average</span>
+                        <strong>{{ class_average }}%</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Pending Grading</span>
+                        <strong>{{ pending_grading }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <div class="grid-two">
+
+
+            <article class="upload-panel panel">
+                <h3>Submit Grades</h3>
+                <form method="post" id="marksForm">
+                    {% csrf_token %}
+                    <div class="field-group">
+                        <label for="assignment_id">Select Assessment</label>
+                        <p class="field-help">Choose an assessment you created earlier and enter grades or feedback for enrolled students.</p>
+                        <select name="assignment_id" id="assignment_id" onchange="showStudents()">
+                            <option value="" disabled>-- Select Assessment --</option>
+                            {% for ctx in assignment_contexts %}
+                                <option value="{{ ctx.assignment.id }}" {% if forloop.first %}selected{% endif %}>{{ ctx.assignment.title }} ({{ ctx.assignment.course.name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% for ctx in assignment_contexts %}
+                    <div class="students-table" id="students_{{ ctx.assignment.id }}" style="display:none;">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    <th>Feedback</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for stu in ctx.students %}
+                                {% with sub=ctx.submissions|dict_get:stu.id %}
+                                <tr>
+                                    <td>{{ stu.get_full_name|default:stu.username }}</td>
+                                    <td><input type="number" step="0.01" name="marks_{{ stu.id }}" value="{{ sub.marks|default_if_none:'' }}" style="width:80px;"></td>
+                                    <td><input type="text" name="grade_{{ stu.id }}" value="{{ sub.grade|default_if_none:'' }}" style="width:80px;"></td>
+                                    <td><input type="text" name="feedback_{{ stu.id }}" value="{{ sub.feedback|default_if_none:'' }}" style="width:180px;"></td>
+                                </tr>
+                                {% endwith %}
+                            {% empty %}
+                                <tr><td colspan="4">No enrolled students found.</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="button-row">
+                            <button type="submit" name="publish" value="1">Publish Results</button>
+                            <button type="submit">Save (Draft)</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </form>
+            </article>
+
+            <script>
+            function showStudents() {
+                var sel = document.getElementById('assignment_id');
+                var val = sel.value;
+                var tables = document.querySelectorAll('.students-table');
+                tables.forEach(function(tbl) { tbl.style.display = 'none'; });
+                if (val) {
+                    var t = document.getElementById('students_' + val);
+                    if (t) t.style.display = 'block';
+                }
+            }
+            // Show table if assignment selected on reload
+            window.onload = function() {
+                showStudents();
+            };
+            </script>
+
+            <article class="list-panel panel">
+                <h3>Latest Published Results</h3>
+                {% if latest_published_results %}
+                    {% for res in latest_published_results %}
+                    <div class="list-item" style="border-left-color: #2e7d32;">
+                        <strong>{{ res.assignment.title }}</strong>
+                        <div class="meta"><span>{{ res.assignment.course.name }}</span><span>Published: {{ res.assignment.created_at|timesince }} ago</span></div>
+                        <span>Average: {{ res.avg_score }}% | {{ res.student_count }} Students Graded</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No published results found.</p>
+                {% endif %}
+            </article>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

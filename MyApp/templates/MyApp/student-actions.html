@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Actions - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Student Action Center</h2>
+                <p>Find all your upcoming assignments, quizzes, and study resources in one place. This page is designed for a clean student workflow with deadline visibility and course progress.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Assignments Due</span>
+                        <strong>{{ assignments_due }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Quizzes Scheduled</span>
+                        <strong>{{ quizzes_scheduled }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Materials Ready</span>
+                        <strong>{{ materials_ready }}</strong>
+                    </div>
+                </div>
+            </article>
+            <aside class="summary-panel panel">
+                <h3>Student Snapshot</h3>
+                <p>Track your active study tasks, see how many assignments and quizzes are available, and keep the next due items front and center.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Courses Active</span>
+                        <strong>{{ courses_active }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Readied Notes</span>
+                        <strong>{{ readied_notes }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Latest Update</span>
+                        <strong style="font-size: 0.95rem; line-height: 1.2; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ latest_update }}</strong>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="action-panel panel">
+            <h3>Student Tools</h3>
+            <div class="action-grid">
+                <a href="{% url 'student_materials' %}" class="action-card">
+                    <strong>Download Materials</strong>
+                    <span>Get lecture slides, notes, and resource packages for your enrolled courses.</span>
+                </a>
+                <a href="{% url 'student_assignments' %}" class="action-card">
+                    <strong>Open Assignment</strong>
+                    <span>View current assignment details and start working on tasks from your dashboard.</span>
+                </a>
+                <a href="{% url 'student_quiz' %}" class="action-card">
+                    <strong>Take Quiz</strong>
+                    <span>Launch scheduled quizzes and complete them for offline grading.</span>
+                </a>
+                <a href="{% url 'student_results' %}" class="action-card">
+                    <strong>Review Results</strong>
+                    <span>See grades and instructor feedback from completed tests.</span>
+                </a>
+                <a href="{% url 'student_pastpapers' %}" class="action-card">
+                    <strong>View Past Papers</strong>
+                    <span>Access old exams and sample questions for stronger revision.</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="list-panel panel">
+            <h3>Current Assignments & Quizzes</h3>
+            {% if current_assignments_list %}
+                {% for a in current_assignments_list %}
+                <div class="list-item">
+                    <strong>{{ a.title }} ({{ a.get_kind_display }})</strong>
+                    <div class="meta"><span>{{ a.course.name }}</span><span>Published: {{ a.created_at|timesince }} ago</span></div>
+                    <span>{{ a.description }}</span>
+                    <div style="margin-top: 10px;">
+                        {% if a.file %}
+                            <a href="{{ a.file.url }}" download class="btn" style="padding: 8px 12px; font-size: 0.85rem;">Download Resource</a>
+                        {% endif %}
+                        <a href="{% url 'submit_assignment' a.id %}" class="btn" style="padding: 8px 12px; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-soft), var(--accent-warm)); color: #ffffff;">Submit</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No active assignments or quizzes.</p>
+            {% endif %}
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

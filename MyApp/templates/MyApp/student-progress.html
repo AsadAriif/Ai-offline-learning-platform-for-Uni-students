@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Progress - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero panel">
+            <article class="hero-panel">
+                <h2>Progress Tracker</h2>
+                <p>Review your course progress, assignment completion, and overall study performance across current modules.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Completion Rate</span>
+                        <strong>{{ completion_rate }}%</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Courses Active</span>
+                        <strong>{{ courses_active }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Tasks Remaining</span>
+                        <strong>{{ tasks_remaining }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-two">
+            <article class="list-panel panel">
+                <h3>Course Progress</h3>
+                {% if course_progress %}
+                    {% for cp in course_progress %}
+                    <div class="list-item">
+                        <strong>{{ cp.course.name }}</strong>
+                        <div class="meta"><span>{{ cp.completion_pct }}% complete</span><span>Status: {{ cp.status }}</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:{{ cp.completion_pct }}%"></div></div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No active courses found.</p>
+                {% endif %}
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Finish Goals</h3>
+                {% if finish_goals %}
+                    {% for goal in finish_goals %}
+                    <div class="list-item" style="border-left-color: #d32f2f;">
+                        <strong>{{ goal.title }} ({{ goal.get_kind_display }})</strong>
+                        <div class="meta"><span>{{ goal.course.name }}</span><span>Published: {{ goal.created_at|timesince }} ago</span></div>
+                        <span>{{ goal.description }}</span>
+                        <div style="margin-top: 10px;">
+                            <a href="{% url 'submit_assignment' goal.id %}" class="btn" style="padding: 6px 12px; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-soft), var(--accent-warm)); color: #ffffff;">Submit Now</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">All caught up! No pending assignments or quizzes.</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <footer class="footer">
+            <p>Student progress page for BGNU's AI Offline Learning Platform. Monitor course completion and task priorities in a clean study dashboard.</p>
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+        </footer>
+    </div>
+</body>
+</html>

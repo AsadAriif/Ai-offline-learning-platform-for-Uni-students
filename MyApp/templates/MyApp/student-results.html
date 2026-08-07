@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Results - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero panel">
+            <article class="hero-panel">
+                <h2>Results Review</h2>
+                <p>View the latest grades and feedback from your teachers. This page keeps all completed assessments in one place so you can learn from every result.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Quizzes Graded</span>
+                        <strong>{{ quizzes_graded_count }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Assignments Graded</span>
+                        <strong>{{ assignments_graded_count }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Average Score</span>
+                        <strong>{{ average_score }}%</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-two">
+            <article class="list-panel panel">
+                <h3>Latest Feedback</h3>
+                {% if latest_feedback %}
+                    {% for sub in latest_feedback %}
+                    <div class="list-item" style="border-left-color: var(--accent-warm);">
+                        <strong>{{ sub.assignment.title }}</strong>
+                        <div class="meta"><span>{{ sub.assignment.course.name }}</span><span>Score: {{ sub.marks|default:"N/A" }} | Grade: {{ sub.grade|default:"N/A" }}</span></div>
+                        <span>Feedback: {{ sub.feedback|default:"No written feedback provided." }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No graded feedback available yet.</p>
+                {% endif %}
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Grade Summary</h3>
+                <div class="list-item" style="border-left-color: var(--accent);">
+                    <strong>Academic Standing</strong>
+                    <div class="meta"><span>Enrolled Courses</span><span>Average: {{ average_score }}%</span></div>
+                    <span>Continue completing your tasks to improve your standing. All assessments are synchronized offline.</span>
+                </div>
+                <div class="list-item" style="border-left-color: var(--accent-light);">
+                    <strong>Platform Information</strong>
+                    <div class="meta"><span>Offline Learning</span><span>Synchronized</span></div>
+                    <span>Your portal synchronizes results automatically whenever a local connection is active.</span>
+                </div>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <p>Student results page for BGNU's AI Offline Learning Platform. Use this page to revisit your graded assessments and instructor feedback.</p>
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+        </footer>
+    </div>
+</body>
+</html>

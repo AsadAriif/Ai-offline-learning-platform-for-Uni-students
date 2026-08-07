@@ -1,0 +1,189 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib.
+                         Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'login' %}" class="primary">Logout</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel">
+                <h2>Welcome back, {{ display_name }}</h2>
+                <p>Access your offline learning materials, track courses, take tests, and review past papers for your enrolled courses.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Active Courses</span>
+                        <strong>{{ total_courses }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Materials Available</span>
+                        <strong>{{ total_materials }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Remaining Assignments/Quizzes</span>
+                        <strong>{{ total_remaining }}</strong>
+                    </div>
+                </div>
+            </article>
+            <aside class="profile-panel">
+                <h3>Student Profile</h3>
+                <div class="profile-list">
+                    <div class="profile-item">
+                        <strong>Name</strong>
+                        <span>{{ display_name }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Role</strong>
+                        <span>Student</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Department</strong>
+                        <span>Computer Science &amp; IT</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>University</strong>
+                        <span>Baba Guru Nanak University Nankana Sahib</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Platform</strong>
+                        <span>AI Offline Learning</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <div class="section-grid">
+            <article class="messages-panel">
+                <h3>Messages from Teachers</h3>
+                {% if student_messages %}
+                    <ul>
+                        {% for msg in student_messages %}
+                            <li>
+                                <strong>{{ msg.sender.get_full_name|default:msg.sender.username }}</strong> ({{ msg.created_at|date:"Y-m-d H:i" }})<br>
+                                <span>{{ msg.content }}</span>
+                                {% if msg.course %}<div><em>Course: {{ msg.course.name }}</em></div>{% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No messages yet.</p>
+                {% endif %}
+            </article>
+            <article class="activity-panel">
+                <h3>Recent Activities</h3>
+                <div class="recent-list">
+                    <div class="list-item">
+                        <strong>New study notes uploaded</strong>
+                        <div class="meta"><span>CS110 - AI Fundamentals</span><span>1 hour ago</span></div>
+                        <span>Lecture notes and practice material are now available for download.</span>
+                    </div>
+                    <div class="list-item">
+                        <strong>Assignment released</strong>
+                        <div class="meta"><span>CS102 - Data Structures</span><span>Yesterday</span></div>
+                        <span>Assignment 4 is live with offline submission instructions.</span>
+                    </div>
+                    <div class="list-item">
+                        <strong>Result published</strong>
+                        <div class="meta"><span>CS120 - Database Systems</span><span>2 days ago</span></div>
+                        <span>Your midterm result has been shared with feedback.</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="courses-panel">
+                <h3>My Courses</h3>
+                <div class="courses-list">
+                    {% for stat in course_stats %}
+                    <div class="course-row">
+                        <div class="course-info">
+                            <strong>{{ stat.course.name }}</strong>
+                            <ul>
+                                <li>Active Assignments: {{ stat.total_assignments }}</li>
+                                <li>Quizzes: {{ stat.total_quizzes }}</li>
+                                <li>Homework: {{ stat.total_homework }}</li>
+                                <li>Projects: {{ stat.total_projects }}</li>
+                                <li>Materials Available: {{ stat.total_materials }}</li>
+                                <li>Assignments/Quizzes Remaining: {{ stat.not_submitted }}</li>
+                                <li>Quizzes Remaining: {{ stat.not_submitted_quiz }}</li>
+                                <li>Homework Remaining: {{ stat.not_submitted_homework }}</li>
+                                <li>Projects Remaining: {{ stat.not_submitted_project }}</li>
+                            </ul>
+                        </div>
+                        <span class="course-badge">Enrolled</span>
+                    </div>
+                    {% empty %}
+                    <p>You are not enrolled in any courses yet.</p>
+                    {% endfor %}
+                </div>
+            </article>
+        </div>
+
+        <section class="quick-actions">
+            <h3>Student Actions</h3>
+            <div class="action-row">
+                <div class="action-tile">
+                    <strong>Download Study Material</strong>
+                    <span>Get lecture notes, slides, and offline resources for your current courses.</span>
+                </div>
+                <div class="action-tile">
+                    <strong>Watch Materials</strong>
+                    <span>View recorded lessons and tutorial videos directly in the student dashboard.</span>
+                </div>
+                <div class="action-tile">
+                    <strong>Give Test</strong>
+                    <span>Open scheduled assessments and complete tests for your enrolled courses.</span>
+                </div>
+                <div class="action-tile">
+                    <strong>View Past Papers</strong>
+                    <span>Access previously published papers and practice exams for revision.</span>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

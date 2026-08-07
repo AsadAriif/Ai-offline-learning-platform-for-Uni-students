@@ -1,0 +1,56 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept Invitation - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="split-layout">
+        <!-- Left Side: Login Form -->
+        <div class="login-side">
+            <div class="login-container">
+                <div class="brand-header">
+                    <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Logo" class="login-logo">
+                    <h2>AI Offline Learning Platform</h2>
+                </div>
+
+                <h3>Accept Invitation</h3>
+                <p>Welcome! Please complete your account setup to join the course.</p>
+
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                    <div class="panel">
+                        <h3>Invitation Registration Disabled</h3>
+                        <p>Registration from invitation links has been disabled. If you received an invitation, please contact the administrator or register via the standard sign-up flow.</p>
+                        <div class="button-row">
+                            <a href="{% url 'login' %}" class="btn">Go to Login</a>
+                        </div>
+                    </div>
+
+                <div class="help-links">
+                    <a href="{% url 'login' %}">Already have an account? Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Promotional Graphic/Image -->
+        <div class="graphic-side">
+            <div class="graphic-content">
+                <h2>Learn Without Limits</h2>
+                <p>Access AI-driven education offline, tailored for the students of BGNU Department of Computer Science & IT.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

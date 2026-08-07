@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publish Material - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib · Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'teacher_actions' %}">Actions</a>
+                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+            </div>
+        </header>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Publish Learning Material</h2>
+                <p>Upload lecture notes, slides, video lectures, and reading materials. Students can download these for offline study.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Total Files</span>
+                        <strong>{{ total_files }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Storage Used</span>
+                        <strong>{{ storage_used }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Downloads</span>
+                        <strong>{{ downloads }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <div class="grid-two">
+            <article class="upload-panel panel">
+                <h3>Upload Material</h3>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="field-group">
+                        <label for="course">Select Course</label>
+                        <select id="course" name="course">
+                            {% for c in courses %}
+                                <option value="{{ c.name }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="title">Material Title</label>
+                        <input id="title" name="title" type="text" placeholder="e.g. Week 4: Search Algorithms Slides" required>
+                    </div>
+                    <div class="field-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Short description (optional)"></textarea>
+                    </div>
+                    <div class="file-upload">
+                        <label>Select File</label>
+                        <input type="file" name="file" required>
+                        <span>Max size: 100MB (PDF, PPTX, MP4, ZIP)</span>
+                    </div>
+                    <div class="button-row">
+                        <button type="submit">Publish Material</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Recently Published</h3>
+                {% if materials %}
+                    {% for m in materials %}
+                        <div class="list-item">
+                            <strong>{{ m.title }}</strong>
+                            <div class="meta"><span>{{ m.course.name }}</span><span>{{ m.created_at|timesince }} ago</span></div>
+                            <span>{{ m.description|default:""|truncatechars:150 }}</span>
+                            {% if m.file %}
+                                <div class="actions">
+                                    <a href="{% url 'teacher_material_detect' m.id %}" class="action-link">Detect AI/Human</a>
+                                    <a href="{{ m.file.url }}" download class="action-link">Download</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No recent materials.</p>
+                {% endif %}
+            </article>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

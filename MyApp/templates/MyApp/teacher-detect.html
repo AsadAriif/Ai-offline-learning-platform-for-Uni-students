@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Detection - Teacher</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <style>
+        .detect-container { max-width: 600px; margin: 40px auto; padding: 20px; background: rgba(255,255,255,0.9); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .detect-result { margin-top: 20px; padding: 15px; border-radius: 8px; }
+        .result-ai { background: #ffebee; color: #c62828; }
+        .result-human { background: #e8f5e9; color: #2e7d32; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Dept Logo">
+                <div class="brand-info">
+                    <h1>AI Detection</h1>
+                    <p>Upload a student submission and instantly see if it was AI‑generated.</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{ % url 'teacher_dashboard' % }">Dashboard</a>
+                <a href="{ % url 'logout' % }" class="primary">Logout</a>
+            </div>
+        </header>
+        <section class="detect-container">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="file">Select file (PDF, DOCX, PPTX, TXT – max 50 MB)</label><br>
+                <input type="file" name="file" id="file" accept=".pdf,.docx,.pptx,.txt" required style="margin-top:8px;">
+                <button type="submit" style="margin-top:12px;">Run Detection</button>
+            </form>
+            {% if result %}
+                <div class="detect-result {% if result.label == 'AI' %}result-ai{% else %}result-human{% endif %}">
+                    <strong>Result:</strong> {{ result.label }}<br>
+                    <strong>Confidence:</strong> {{ result.confidence|floatformat:2 }}
+                </div>
+            {% elif request.method == 'POST' and not result %}
+                <div class="detect-result" style="text-align:center;">
+                    <div class="loader"></div>
+                    <p>Processing…</p>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

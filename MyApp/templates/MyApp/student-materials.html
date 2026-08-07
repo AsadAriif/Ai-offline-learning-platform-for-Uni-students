@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Materials - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero panel">
+            <article class="hero-panel">
+                <h2>Study Materials</h2>
+                <p>Download lecture notes, slides, and past papers for your enrolled courses. This page consolidates all approved study material for quick offline access.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Material Packs</span>
+                        <strong>{{ material_packs }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Past Papers</span>
+                        <strong>{{ past_papers_count }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>New Today</span>
+                        <strong>{{ new_today }}</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-two">
+            <article class="list-panel panel">
+                <h3>Available Downloads</h3>
+                {% if regular_materials %}
+                    {% for m in regular_materials %}
+                        <div class="list-item">
+                            <strong>{{ m.title }}</strong>
+                            <div class="meta"><span>{{ m.course.name }}</span><span>{{ m.file.size|filesizeformat }}</span></div>
+                            <span>{{ m.description|default:""|truncatechars:150 }}</span>
+                            <div class="actions"><a href="{{ m.file.url }}" download class="btn" style="padding: 6px 12px; font-size: 0.85rem;">Download</a></div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No materials available for your courses yet.</p>
+                {% endif %}
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Past Papers</h3>
+                {% if past_papers %}
+                    {% for p in past_papers %}
+                    <div class="list-item" style="border-left-color: var(--accent-warm);">
+                        <strong>{{ p.title }}</strong>
+                        <div class="meta"><span>{{ p.course.name }}</span><span>{{ p.created_at|date:"Y-m-d" }}</span></div>
+                        <div class="actions" style="margin-top: 10px;"><a href="{{ p.file.url }}" download class="btn" style="padding: 6px 12px; font-size: 0.85rem;">Download</a></div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No past papers available yet.</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <footer class="footer">
+            <p>Student materials page for BGNU's AI Offline Learning Platform. Use this page to download and review course resources and past exam papers.</p>
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+        </footer>
+    </div>
+</body>
+</html>

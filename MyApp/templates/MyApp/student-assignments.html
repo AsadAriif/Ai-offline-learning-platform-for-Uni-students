@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Assignments - AI Offline Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
+                <div class="brand-info">
+                    <h1>AI Offline Learning Platform</h1>
+                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'student_actions' %}">Actions</a>
+                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <article class="hero-panel panel">
+                <h2>Student Assignment Hub</h2>
+                <p>Browse your current assignments and quizzes in one place. This page displays deadlines, course priorities, and the most recent work published by your teachers.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Assignments Available</span>
+                        <strong>{{ assignments_available }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Quizzes Live</span>
+                        <strong>{{ quizzes_live }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Pending Reviews</span>
+                        <strong>{{ pending_reviews }}</strong>
+                    </div>
+                </div>
+            </article>
+            <aside class="summary-panel panel">
+                <h3>Course Snapshot</h3>
+                <p>Keep track of which course tasks are due soon and what resources are available. The overview helps you prioritize study time across your active subjects.</p>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <span>Pending Tasks</span>
+                        <strong>{{ pending_reviews }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Quizzes Live</span>
+                        <strong>{{ quizzes_live }}</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Material Packs</span>
+                        <strong>{{ material_packs }}</strong>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="grid-two">
+            <article class="list-panel panel">
+                <h3>Current Assignments</h3>
+                {% if items %}
+                    {% for item in items %}
+                        <div class="list-item">
+                            <strong>{{ item.assignment.title }}</strong>
+                            <div class="meta"><span>{{ item.assignment.course.name }}</span><span>{{ item.assignment.created_at }}</span></div>
+                            <span>{{ item.assignment.description }}</span>
+                            <div>
+                                {% if item.assignment.file %}
+                                    <a href="{{ item.assignment.file.url }}">Download resource</a>
+                                {% endif %}
+                                {% if item.submission %}
+                                    <span style="margin-left:1rem;color:green;">Submitted</span>
+                                {% else %}
+                                    <a href="{% url 'submit_assignment' item.assignment.id %}" style="margin-left:1rem;">Submit</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No assignments available.</p>
+                {% endif %}
+            </article>
+
+            <article class="list-panel panel">
+                <h3>Completed and Reviewed</h3>
+                {% if completed_and_reviewed %}
+                    {% for sub in completed_and_reviewed %}
+                    <div class="list-item" style="border-left-color: #2e7d32;">
+                        <strong>{{ sub.assignment.title }}</strong>
+                        <div class="meta"><span>{{ sub.assignment.course.name }}</span><span>Grade: {{ sub.grade|default:"N/A" }} | Marks: {{ sub.marks|default:"N/A" }}</span></div>
+                        <span>Feedback: {{ sub.feedback|default:"No feedback available." }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); padding: 12px 0;">No graded assignments or quizzes yet.</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p><strong>Phone:</strong></p>
+                    <p>056-9201171</p>
+                    <p>0300-1199358</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Address</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                <p>AI Offline Learning Platform</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
