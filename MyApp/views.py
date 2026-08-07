@@ -30,11 +30,10 @@ def login_view(request):
         username = request.POST.get('student_id')
         password = request.POST.get('password')
         role = request.POST.get('role')
-        
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
-            # If role is provided, verify it matches the user's role
             if role:
                 if getattr(user, 'role', None) == role:
                     auth_login(request, user)
@@ -45,7 +44,6 @@ def login_view(request):
                 else:
                     messages.error(request, f"Access Denied: You are not registered as a {role.capitalize()}.")
             else:
-                # No role supplied; log in user and redirect based on stored role
                 auth_login(request, user)
                 if getattr(user, 'role', '') == 'teacher':
                     return redirect('teacher_dashboard')
@@ -53,8 +51,52 @@ def login_view(request):
                     return redirect('student_dashboard')
         else:
             messages.error(request, "Invalid User ID or Password")
-            
+
     return render(request, 'MyApp/login.html')
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
+        role = request.POST.get('role', '').strip().lower()
+        phone_number = request.POST.get('phone_number', '').strip()
+
+        if not full_name or not username or not password or not role or not phone_number:
+            messages.error(request, 'Please fill in all fields.')
+            return redirect('signup')
+
+        if password != password_confirm:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('signup')
+
+        if CustomUser.objects.filter(username=username).exists():
+            messages.error(request, 'This username already exists.')
+            return redirect('signup')
+
+        if role not in dict(CustomUser.ROLE_CHOICES):
+            messages.error(request, 'Invalid role selected.')
+            return redirect('signup')
+
+        user = CustomUser.objects.create_user(
+            username=username,
+            password=password,
+            role=role,
+            phone_number=phone_number,
+        )
+        user.first_name = full_name.split()[0] if full_name.split() else ''
+        user.last_name = ' '.join(full_name.split()[1:]) if len(full_name.split()) > 1 else ''
+        user.save()
+
+        auth_login(request, user)
+        messages.success(request, 'Account created successfully.')
+        if role == 'teacher':
+            return redirect('teacher_dashboard')
+        return redirect('student_dashboard')
+
+    return render(request, 'MyApp/signup.html')
 
 def logout_view(request):
     auth_logout(request)
