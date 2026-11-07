@@ -2025,9 +2025,13 @@ def run_academic_agent(user, message, uploaded_file=None, local_path=None, histo
     if any(k in lower_msg for k in ['course', 'subject', 'mazmoon']) and any(k in lower_msg for k in ['create', 'add', 'banao', 'new', 'naya']):
         return execute_agent_tool(user, 'manage_course', {'operation': 'create'}, uploaded_file=uploaded_file, local_path=local_path, raw_message=user_text)
 
-    api_key = getattr(settings, 'GEMINI_API_KEY', '')
+    api_key = getattr(settings, 'GEMINI_API_KEY', '') or os.getenv('GEMINI_API_KEY', '')
     if not api_key:
-        return {"reply": "⚠️ Gemini API key not configured.", "source": "error"}
+        return {
+            "reply": "⚠️ Gemini API key configure nahi hai. Aap Vercel Project Settings mein 'GEMINI_API_KEY' add kar sakte hain. Baki tamam offline academic operations (quizzes, duties, announcements, marksheets) bilkul active hain.",
+            "voice_reply": "Gemini API key configure karein ya offline operations istemal karein.",
+            "source": "error"
+        }
 
     prompt = SYSTEM_PROMPT.format(
         username=username,
@@ -2051,10 +2055,10 @@ def run_academic_agent(user, message, uploaded_file=None, local_path=None, histo
     contents.append({"role": "user", "parts": [{"text": augmented_user_text}]})
 
     models_to_try = [
-        'gemini-3.1-flash-lite',
         'gemini-flash-lite-latest',
-        'gemini-3.5-flash',
-        'gemini-3.6-flash',
+        'gemini-3.5-flash-lite',
+        'gemini-3.1-flash-lite',
+        'gemini-3.8-flash',
         'gemini-flash-latest'
     ]
     ai_raw_reply = ""
@@ -2078,7 +2082,11 @@ def run_academic_agent(user, message, uploaded_file=None, local_path=None, histo
             continue
 
     if not ai_raw_reply:
-        return {"reply": "Could not connect to Gemini AI.", "source": "error"}
+        return {
+            "reply": "معذرت، اس وقت آن لائن AI سروس سے رابطہ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں یا متعلقہ اکیڈمک آپریشن (کوئز، اسٹوڈنٹ، ڈیوٹی، نوٹیفکیشن) براہ راست کہیں۔",
+            "voice_reply": "Online AI service se rabta nahi ho saka. Barah-e-karam dobara koshish karein.",
+            "source": "error"
+        }
 
     # Resilient Action Parser (Never crashes or leaks raw JSON on truncation)
     res_action, res_args = parse_resilient_action(ai_raw_reply)
