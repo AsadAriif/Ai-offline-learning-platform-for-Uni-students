@@ -290,7 +290,7 @@
                                             <td style="padding: 12px 14px; color: var(--secondary-text);">{{ paper.course.name }}</td>
                                             <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ paper.created_at|date:"M d, Y" }}</td>
                                             <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">
-                                                {% if paper.file %}{{ paper.file.size|filesizeformat }}{% else %}N/A{% endif %}
+                                                {% if paper.file and paper.file.size %}{{ paper.file.size|filesizeformat }}{% else %}N/A{% endif %}
                                             </td>
                                             <td style="padding: 12px 14px; text-align: center;">
                                                 {% if paper.file %}
@@ -380,7 +380,7 @@
                                             <td style="padding: 12px 14px; color: var(--secondary-text);">{{ material.course.name }}</td>
                                             <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ material.created_at|date:"M d, Y" }}</td>
                                             <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">
-                                                {% if material.file %}{{ material.file.size|filesizeformat }}{% else %}N/A{% endif %}
+                                                {% if material.file and material.file.size %}{{ material.file.size|filesizeformat }}{% else %}N/A{% endif %}
                                             </td>
                                             <td style="padding: 12px 14px; text-align: center;">
                                                 {% if material.file %}

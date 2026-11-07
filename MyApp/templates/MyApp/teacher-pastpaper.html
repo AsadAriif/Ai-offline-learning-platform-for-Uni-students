@@ -207,7 +207,7 @@
                                         </div>
                                         <div class="meta">
                                             <span>📅 {{ m.created_at|date:"M d, Y" }}</span>
-                                            {% if m.file %}<span>&bull; {{ m.file.size|filesizeformat }}</span>{% endif %}
+                                            {% if m.file and m.file.size %}<span>&bull; {{ m.file.size|filesizeformat }}</span>{% endif %}
                                         </div>
                                         <div style="display: flex; gap: 8px; margin-top: 10px; align-items: center;">
                                             {% if m.file %}

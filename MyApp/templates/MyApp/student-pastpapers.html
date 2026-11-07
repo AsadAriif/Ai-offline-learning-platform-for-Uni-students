@@ -173,7 +173,7 @@
                                     </div>
                                     <div class="meta">
                                         <span>📅 Published {{ m.created_at|timesince }} ago</span>
-                                        {% if m.file %}<span>&bull; {{ m.file.size|filesizeformat }}</span>{% endif %}
+                                        {% if m.file and m.file.size %}<span>&bull; {{ m.file.size|filesizeformat }}</span>{% endif %}
                                     </div>
                                     <div style="margin-top: 10px;">
                                         <a href="{{ m.file.url }}" download class="btn" style="padding: 7px 16px; font-size: 0.85rem;">

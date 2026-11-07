@@ -1083,7 +1083,12 @@ def teacher_materials(request):
         models.Q(materials__uploaded_by=request.user)
     ).distinct()
     total_files = materials.count()
-    total_bytes = sum(m.file.size for m in materials if m.file)
+    def _get_m_size(m):
+        try:
+            return m.file.size if (m.file and m.file.name) else 0
+        except Exception:
+            return 0
+    total_bytes = sum(_get_m_size(m) for m in materials)
     if total_bytes < 1024:
         storage_used = f"{total_bytes} B"
     elif total_bytes < 1024 * 1024:
@@ -1402,9 +1407,15 @@ def teacher_material_detect(request, material_id):
     except Material.DoesNotExist:
         messages.error(request, 'Material not found.')
         return redirect('teacher_materials')
-    # Run detection on the file path
-    file_path = material.file.path
+    if not material.file or not material.file.name:
+        messages.error(request, 'No file attached to this material.')
+        return redirect('teacher_materials')
+
     try:
+        if not hasattr(material.file, 'path') or not os.path.exists(material.file.path):
+            messages.error(request, 'The attached file is not present on the server storage.')
+            return redirect('teacher_materials')
+        file_path = material.file.path
         from .utils.detector import predict
         result = predict(file_path)
     except Exception as e:

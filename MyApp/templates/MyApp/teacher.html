@@ -343,7 +343,7 @@
                                     </div>
                                     <div class="meta">
                                         <span>Uploaded {{ material.created_at|date:"M d, Y" }}</span>
-                                        {% if material.file %}<span>&bull; {{ material.file.size|filesizeformat }}</span>{% endif %}
+                                        {% if material.file and material.file.size %}<span>&bull; {{ material.file.size|filesizeformat }}</span>{% endif %}
                                     </div>
                                     {% if material.description %}<span style="color: var(--text-muted); font-size: 0.85rem;">{{ material.description|truncatewords:15 }}</span>{% endif %}
                                 </div>

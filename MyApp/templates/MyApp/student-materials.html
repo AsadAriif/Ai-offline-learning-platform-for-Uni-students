@@ -177,7 +177,7 @@
                                         <span class="badge badge-info">{{ m.course.name }}</span>
                                     </div>
                                     <div class="meta">
-                                        {% if m.file %}<span>File Size: {{ m.file.size|filesizeformat }}</span>{% endif %}
+                                        {% if m.file and m.file.size %}<span>File Size: {{ m.file.size|filesizeformat }}</span>{% endif %}
                                     </div>
                                     <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ m.description|default:""|truncatechars:150 }}</span>
                                     <div class="actions" style="margin-top: 10px;">
