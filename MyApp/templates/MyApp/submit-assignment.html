@@ -1,81 +1,519 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Assignment</title>
+    <title>Submit: {{ assignment.title }} - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header><h1>Submit: {{ assignment.title }}</h1></header>
-        <main>
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class="message {{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; CS &amp; IT</span>
                 </div>
-            {% endif %}
-            {% if assignment.deadline %}
-                <p><strong>Due:</strong> {{ assignment.deadline|date:"Y-m-d H:i" }}</p>
-            {% endif %}
-            {% if assignment.kind == 'quiz' %}
-                <p><strong>Quiz type:</strong> {{ assignment.get_quiz_type_display }}</p>
-            {% endif %}
-            {% if deadline_passed %}
-                <div class="message warning">This quiz is past the due date, but submission is still accepted if the teacher allows it.</div>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% if assignment.kind == 'quiz' and assignment.quiz_questions.exists %}
-                    <div class="quiz-questions">
-                        {% for question in assignment.quiz_questions.all %}
-                            <div class="question-block">
-                                <h3 class="question-title">Question {{ forloop.counter }}</h3>
-                                <p class="question-text">{{ question.get_display_text }}</p>
-                                {% if question.question_type == 'manual' %}
-                                    <label>Your answer</label>
-                                    <textarea name="question_{{ question.id }}" placeholder="Type your answer here" required></textarea>
-                                {% elif question.question_type == 'mcq' %}
-                                    <label class="quiz-option">
-                                        <input type="radio" name="question_{{ question.id }}" value="A" required> A. {{ question.options.A }}
-                                    </label>
-                                    <label class="quiz-option">
-                                        <input type="radio" name="question_{{ question.id }}" value="B" required> B. {{ question.options.B }}
-                                    </label>
-                                    <label class="quiz-option">
-                                        <input type="radio" name="question_{{ question.id }}" value="C" required> C. {{ question.options.C }}
-                                    </label>
-                                    <label class="quiz-option">
-                                        <input type="radio" name="question_{{ question.id }}" value="D" required> D. {{ question.options.D }}
-                                    </label>
-                                {% elif question.question_type == 'fillblank' %}
-                                    <p class="quiz-hint">Fill in each blank below.</p>
-                                    {% if question.blanks %}
-                                        {% for blank in question.blanks %}
-                                            <label>Blank {{ forloop.counter }}{% if blank %}: {{ blank }}{% endif %}</label>
-                                            <input type="text" name="question_{{ question.id }}_blank_{{ forloop.counter0 }}" placeholder="Answer for blank {{ forloop.counter }}" required>
-                                        {% endfor %}
-                                    {% else %}
-                                        <label>Answer</label>
-                                        <input type="text" name="question_{{ question.id }}_blank_0" placeholder="Type your answer" required>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">ACADEMIC WORKSPACE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'student_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'student_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Study Materials</span>
+                    </a>
+                    <a href="{% url 'student_assignments' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Coursework &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'student_quiz' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⏱️</span>
+                        <span class="sidebar-link-text">Attempt Quizzes</span>
+                    </a>
+                    <a href="{% url 'student_progress' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📈</span>
+                        <span class="sidebar-link-text">Progress Tracking</span>
+                    </a>
+                    <a href="{% url 'student_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Assessment Results</span>
+                    </a>
+                    <a href="{% url 'student_pastpapers' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Past Exam Papers</span>
+                    </a>
+                    <a href="{% url 'student_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Actions Directory</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">S</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Student Account</span>
+                        <span class="user-role-badge">Student Portal</span>
                     </div>
-                    <button type="submit">Submit Quiz</button>
-                {% else %}
-                    <label for="submission_file">Attach file</label>
-                    <input type="file" id="submission_file" name="file" title="Attach a file if needed">
-                    <label for="submission_notes">Answer / Notes</label>
-                    <textarea id="submission_notes" name="answer_text" placeholder="Write your answer or notes here"></textarea>
-                    <button type="submit">Upload Submission</button>
-                {% endif %}
-            </form>
-        </main>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Coursework</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Submit: {{ assignment.title }}</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'student_assignments' %}" class="topbar-user-link">
+                        <span>All Assignments</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Submit: {{ assignment.title }}</h2>
+                        <p style="color: var(--secondary-text); margin-top: 4px;">
+                            Course: <strong style="color: var(--primary-text);">{{ assignment.course.name }}</strong> &bull; Type: <strong style="color: var(--primary-text);">{{ assignment.get_kind_display }}</strong>
+                        </p>
+                        {% if assignment.deadline %}
+                            <p style="margin-top: 6px; font-size: 0.875rem;"><strong>Due Date:</strong> <span style="font-family: var(--font-mono);">{{ assignment.deadline|date:"Y-m-d H:i" }}</span></p>
+                        {% endif %}
+                        {% if assignment.kind == 'quiz' %}
+                            <p style="margin-top: 4px; font-size: 0.875rem;"><strong>Quiz Format:</strong> {{ assignment.get_quiz_type_display }}</p>
+                        {% endif %}
+                    </article>
+                </section>
+
+                <main class="panel" style="max-width: 860px; margin: 0 auto;">
+                    {% if messages %}
+                        <div class="messages" style="margin-bottom: 20px;">
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if deadline_passed %}
+                        <div class="alert alert-warning" style="margin-bottom: 20px;">
+                            ⚠️ This assessment is past the due date. Submission is still accepted if your teacher permits late turn-in.
+                        </div>
+                    {% endif %}
+
+                    {% if assignment.description %}
+                        <div style="margin-bottom: 24px; padding: 18px 20px; background: var(--primary-bg); border-radius: var(--radius-md); border: 1px solid var(--borders); border-left: 4px solid var(--primary-accent);">
+                            <strong style="color: var(--primary-text); font-size: 0.95rem;">Instructions &amp; Requirements:</strong>
+                            <p style="margin-top: 8px; white-space: pre-wrap; color: var(--secondary-text); font-size: 0.9rem; line-height: 1.6;">{{ assignment.description }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if assignment.kind == 'quiz' %}
+                    <div class="quiz-timer-bar" id="quizTimerBar">
+                        <div class="quiz-timer-title">
+                            <span>⏱️</span>
+                            <span>Examination Countdown Timer</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="proctor-badge" style="background: rgba(16, 185, 129, 0.15); color: #059669; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.3);">🛡️ Exam Proctoring Active</span>
+                            <div class="quiz-timer-clock" id="quizCountdown">15:00</div>
+                        </div>
+                    </div>
+
+                    <!-- Proctor Warning Banner -->
+                    <div class="proctor-alert-box" style="margin-bottom: 22px; padding: 14px 18px; background: #FFFBEB; border: 1px solid #FDE68A; border-left: 4px solid #F59E0B; border-radius: 8px; font-size: 0.88rem; color: #92400E; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);">
+                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">
+                            <span>⚠️ Strict Exam Security &amp; Anti-Cheating Rules:</span>
+                        </div>
+                        <ul style="margin: 0 0 0 18px; padding: 0; line-height: 1.55;">
+                            <li><strong>Do not switch browser tabs:</strong> Switching tabs or opening another window will <em>immediately submit</em> your quiz.</li>
+                            <li><strong>Do not navigate back or refresh:</strong> Leaving this page or pressing the browser Back button will <em>immediately submit</em> your answers.</li>
+                            <li><strong>Manual Questions:</strong> Write your answers directly in the open answer boxes provided below.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Auto-submit Modal Overlay -->
+                    <div id="proctorModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.88); z-index: 1000000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                        <div style="background: #FFFFFF; border-radius: 16px; padding: 28px 32px; max-width: 480px; width: 90%; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.35); border: 2px solid #F59E0B;">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div>
+                            <h3 style="margin: 0 0 8px; color: #0F172A; font-size: 1.25rem;">Security Violation Detected</h3>
+                            <p id="proctorReasonMsg" style="margin: 0 0 16px; color: #475569; font-size: 0.95rem; line-height: 1.5;">Tab switch or window exit detected. Submitting your quiz now...</p>
+                            <div style="display: inline-block; width: 34px; height: 34px; border: 3px solid #E2E8F0; border-top-color: #2563EB; border-radius: 50%; animation: proctorSpin 0.8s linear infinite;"></div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes proctorSpin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" class="assignment-form" id="assignmentSubmitForm">
+                        {% csrf_token %}
+                        {% if assignment.kind == 'quiz' and assignment.quiz_questions.exists %}
+                            <div class="quiz-questions">
+                                {% for question in assignment.quiz_questions.all %}
+                                    <div class="question-block" style="border: 1px solid var(--borders); padding: 22px; border-radius: var(--radius-md); margin-bottom: 20px; background: #FFFFFF; box-shadow: var(--shadow-xs);">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <h3 class="question-title" style="margin: 0; color: var(--primary-accent); font-size: 1rem;">Question {{ forloop.counter }}</h3>
+                                            {% if question.question_type == 'manual' %}
+                                                <span class="badge" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600;">✍️ Manual / Written Question</span>
+                                            {% elif question.question_type == 'mcq' %}
+                                                <span class="badge" style="background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600;">🔘 Multiple Choice (MCQ)</span>
+                                            {% elif question.question_type == 'fillblank' %}
+                                                <span class="badge" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600;">📝 Fill in Blanks</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="question-text" style="font-size: 1.05rem; margin-bottom: 16px; font-weight: 500; color: var(--primary-text); line-height: 1.55;">{{ question.get_display_text }}</p>
+
+                                        {% if question.question_type == 'manual' %}
+                                            <div class="manual-answer-area" style="margin-top: 10px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                                    <label for="q_input_{{ question.id }}" style="font-weight: 600; font-size: 0.875rem; color: #1E293B;">
+                                                        <span>Your Written Answer:</span>
+                                                    </label>
+                                                    <span class="word-counter" id="counter_{{ question.id }}" style="font-size: 0.78rem; color: #64748B; font-weight: 500;">0 words</span>
+                                                </div>
+                                                <textarea 
+                                                    id="q_input_{{ question.id }}" 
+                                                    name="question_{{ question.id }}" 
+                                                    rows="6" 
+                                                    placeholder="Write your complete and detailed answer here in your own words..." 
+                                                    required 
+                                                    style="width: 100%; min-height: 130px; padding: 14px 16px; border: 1.5px solid #CBD5E1; border-radius: 8px; font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; resize: vertical; box-sizing: border-box; background: #FFFFFF; transition: border-color 0.15s ease, box-shadow 0.15s ease;"
+                                                    oninput="updateWordCount(this, 'counter_{{ question.id }}')"
+                                                ></textarea>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                                    <span style="font-size: 0.78rem; color: #64748B;">💡 Answer in text directly. Answers are recorded on submission.</span>
+                                                </div>
+                                            </div>
+                                        {% elif question.question_type == 'mcq' %}
+                                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                                <label class="quiz-option" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; background: var(--primary-bg); border-radius: var(--radius-sm); border: 1px solid var(--borders); transition: all 0.15s ease;">
+                                                    <input type="radio" name="question_{{ question.id }}" value="A" required> <strong>A.</strong> {{ question.options.A }}
+                                                </label>
+                                                <label class="quiz-option" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; background: var(--primary-bg); border-radius: var(--radius-sm); border: 1px solid var(--borders); transition: all 0.15s ease;">
+                                                    <input type="radio" name="question_{{ question.id }}" value="B" required> <strong>B.</strong> {{ question.options.B }}
+                                                </label>
+                                                <label class="quiz-option" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; background: var(--primary-bg); border-radius: var(--radius-sm); border: 1px solid var(--borders); transition: all 0.15s ease;">
+                                                    <input type="radio" name="question_{{ question.id }}" value="C" required> <strong>C.</strong> {{ question.options.C }}
+                                                </label>
+                                                <label class="quiz-option" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; background: var(--primary-bg); border-radius: var(--radius-sm); border: 1px solid var(--borders); transition: all 0.15s ease;">
+                                                    <input type="radio" name="question_{{ question.id }}" value="D" required> <strong>D.</strong> {{ question.options.D }}
+                                                </label>
+                                            </div>
+                                        {% elif question.question_type == 'fillblank' %}
+                                            <p class="quiz-hint" style="color: var(--secondary-text); margin-bottom: 12px; font-size: 0.875rem;">Fill in each blank below:</p>
+                                            {% if question.blanks %}
+                                                {% for blank in question.blanks %}
+                                                    <label style="display: block; font-size: 0.875rem; margin-top: 10px; font-weight: 500;">Blank {{ forloop.counter }}{% if blank %}: <em>{{ blank }}</em>{% endif %}</label>
+                                                    <input type="text" name="question_{{ question.id }}_blank_{{ forloop.counter0 }}" placeholder="Answer for blank {{ forloop.counter }}" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--borders); border-radius: var(--radius-sm); margin-top: 4px;">
+                                                {% endfor %}
+                                            {% else %}
+                                                <label style="display: block; font-size: 0.875rem; font-weight: 500;">Answer:</label>
+                                                <input type="text" name="question_{{ question.id }}_blank_0" placeholder="Type your answer" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--borders); border-radius: var(--radius-sm); margin-top: 4px;">
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div style="margin-top: 24px;">
+                                <button type="submit" class="btn" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">Submit Quiz Answers &rarr;</button>
+                            </div>
+                        {% elif assignment.kind == 'quiz' %}
+                            <!-- Quiz without split sub-questions (Open Subjective Answer Area) -->
+                            <div class="question-block" style="border: 1px solid var(--borders); padding: 22px; border-radius: var(--radius-md); margin-bottom: 20px; background: #FFFFFF; box-shadow: var(--shadow-xs);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <h3 class="question-title" style="margin: 0; color: var(--primary-accent); font-size: 1rem;">✍️ Quiz Assessment Question</h3>
+                                    <span class="badge" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Manual / Open Answer</span>
+                                </div>
+                                <p class="question-text" style="font-size: 1.05rem; margin-bottom: 16px; font-weight: 500; color: var(--primary-text); line-height: 1.55; white-space: pre-wrap;">{{ assignment.description|default:assignment.title }}</p>
+
+                                <div class="manual-answer-area" style="margin-top: 10px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <label for="input_answer_text" style="font-weight: 600; font-size: 0.875rem; color: #1E293B;">
+                                            <span>Your Written Answer:</span>
+                                        </label>
+                                        <span class="word-counter" id="counter_desc" style="font-size: 0.78rem; color: #64748B; font-weight: 500;">0 words</span>
+                                    </div>
+                                    <textarea 
+                                        id="input_answer_text" 
+                                        name="answer_text" 
+                                        rows="8" 
+                                        placeholder="Write your complete and detailed answer here in your own words..." 
+                                        required 
+                                        style="width: 100%; min-height: 160px; padding: 14px 16px; border: 1.5px solid #CBD5E1; border-radius: 8px; font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; resize: vertical; box-sizing: border-box; background: #FFFFFF;"
+                                        oninput="updateWordCount(this, 'counter_desc')"
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div style="margin-top: 24px;">
+                                <button type="submit" class="btn" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">Submit Quiz Answers &rarr;</button>
+                            </div>
+                        {% else %}
+                            <div class="field-group" style="margin-bottom: 20px;">
+                                <label for="submission_file" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Attach Completed File (PDF, DOCX, PPTX, ZIP, etc.):</label>
+                                <input type="file" id="submission_file" name="file" title="Attach a file if needed" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                            </div>
+                            <div class="field-group" style="margin-bottom: 24px;">
+                                <label for="submission_notes" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Answer / Written Notes:</label>
+                                <textarea id="submission_notes" name="answer_text" placeholder="Write your submission text or additional notes here" style="width: 100%; min-height: 140px; padding: 12px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-family: var(--font-body);"></textarea>
+                            </div>
+                            <div style="margin-top: 24px; display: flex; gap: 14px; align-items: center;">
+                                <button type="submit" class="btn" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">Upload Submission &rarr;</button>
+                                <a href="{% url 'student_assignments' %}" class="btn btn-outline" style="padding: 12px 22px;">Cancel</a>
+                            </div>
+                        {% endif %}
+                    </form>
+                </main>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Navigation</h4>
+                        <p><a href="{% url 'student_dashboard' %}">Return to Dashboard</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
+                </div>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    {% if assignment.kind == 'quiz' %}
+    <script>
+        function updateWordCount(textarea, counterId) {
+            const counter = document.getElementById(counterId);
+            if (!counter) return;
+            const text = textarea.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            counter.textContent = words + (words === 1 ? ' word' : ' words');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const clock = document.getElementById('quizCountdown');
+            const form = document.getElementById('assignmentSubmitForm');
+            if (!form) return;
+
+            let hasSubmitted = false;
+
+            function triggerAutoSubmit(reason) {
+                if (hasSubmitted) return;
+                hasSubmitted = true;
+
+                // Show modal overlay
+                const modal = document.getElementById('proctorModal');
+                const reasonMsg = document.getElementById('proctorReasonMsg');
+                if (modal) {
+                    if (reasonMsg) reasonMsg.textContent = reason + " Your quiz answers are being locked and submitted immediately.";
+                    modal.style.display = 'flex';
+                }
+
+                // Remove required attributes so empty questions don't block auto-submission
+                const reqs = form.querySelectorAll('[required]');
+                reqs.forEach(r => r.removeAttribute('required'));
+
+                // Inject auto_submitted and submission_reason flags
+                let autoInp = document.getElementById('auto_submitted_input');
+                if (!autoInp) {
+                    autoInp = document.createElement('input');
+                    autoInp.type = 'hidden';
+                    autoInp.id = 'auto_submitted_input';
+                    autoInp.name = 'auto_submitted';
+                    form.appendChild(autoInp);
+                }
+                autoInp.value = 'true';
+
+                let reasonInp = document.getElementById('submission_reason_input');
+                if (!reasonInp) {
+                    reasonInp = document.createElement('input');
+                    reasonInp.type = 'hidden';
+                    reasonInp.id = 'submission_reason_input';
+                    reasonInp.name = 'submission_reason';
+                    form.appendChild(reasonInp);
+                }
+                reasonInp.value = reason;
+
+                // Submit immediately
+                try {
+                    form.submit();
+                } catch (err) {
+                    console.error('Auto-submit execution error:', err);
+                }
+            }
+
+            // Normal manual submission
+            form.addEventListener('submit', function() {
+                hasSubmitted = true;
+            });
+
+            // 1. Tab Switching Detection (visibilitychange)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden || document.visibilityState === 'hidden') {
+                    triggerAutoSubmit("Browser tab switch or backgrounding detected.");
+                }
+            });
+
+            // 2. Window Blur Detection (leaving browser window or alt-tab)
+            window.addEventListener('blur', function() {
+                setTimeout(function() {
+                    if (!hasSubmitted && (!document.hasFocus() || document.hidden)) {
+                        triggerAutoSubmit("Window focus lost or user navigated outside the examination window.");
+                    }
+                }, 400);
+            });
+
+            // 3. Back Button / History Navigation Detection
+            history.pushState({ inQuizExam: true }, document.title, window.location.href);
+            window.addEventListener('popstate', function(e) {
+                triggerAutoSubmit("Browser back button navigation detected.");
+            });
+
+            // 4. In-page Link Click Detection
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (link && !hasSubmitted) {
+                    e.preventDefault();
+                    triggerAutoSubmit("Leaving the quiz via page link navigation detected.");
+                }
+            }, true);
+
+            // 5. Timer Countdown
+            if (clock) {
+                let totalSeconds = 15 * 60; // 15 mins
+                const timerInterval = setInterval(function() {
+                    totalSeconds--;
+                    const mins = Math.floor(totalSeconds / 60);
+                    const secs = totalSeconds % 60;
+                    clock.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+                    if (totalSeconds <= 120 && totalSeconds > 30) {
+                        clock.className = 'quiz-timer-clock timer-warning';
+                    } else if (totalSeconds <= 30) {
+                        clock.className = 'quiz-timer-clock timer-danger';
+                    }
+
+                    if (totalSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        triggerAutoSubmit("⏰ Examination time limit expired.");
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+    {% endif %}
+    {% if assignment.kind != 'quiz' %}
+    <!-- Floating BGNU AI Study Tutor (Disabled during exam to prevent cheating) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    {% endif %}
 </body>
 </html>

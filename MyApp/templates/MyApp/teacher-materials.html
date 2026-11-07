@@ -6,133 +6,283 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publish Material - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib · Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
-            </div>
-        </header>
 
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Publish Learning Material</h2>
-                <p>Upload lecture notes, slides, video lectures, and reading materials. Students can download these for offline study.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Total Files</span>
-                        <strong>{{ total_files }}</strong>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">F</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Faculty Member</span>
+                        <span class="user-role-badge">Instructor</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Storage Used</span>
-                        <strong>{{ storage_used }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Downloads</span>
-                        <strong>{{ downloads }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Upload Learning Materials</span>
                     </div>
                 </div>
-            </article>
-        </section>
 
-        <div class="grid-two">
-            <article class="upload-panel panel">
-                <h3>Upload Material</h3>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="field-group">
-                        <label for="course">Select Course</label>
-                        <select id="course" name="course">
-                            {% for c in courses %}
-                                <option value="{{ c.name }}">{{ c.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="field-group">
-                        <label for="title">Material Title</label>
-                        <input id="title" name="title" type="text" placeholder="e.g. Week 4: Search Algorithms Slides" required>
-                    </div>
-                    <div class="field-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" placeholder="Short description (optional)"></textarea>
-                    </div>
-                    <div class="file-upload">
-                        <label>Select File</label>
-                        <input type="file" name="file" required>
-                        <span>Max size: 100MB (PDF, PPTX, MP4, ZIP)</span>
-                    </div>
-                    <div class="button-row">
-                        <button type="submit">Publish Material</button>
-                    </div>
-                </form>
-            </article>
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
 
-            <article class="list-panel panel">
-                <h3>Recently Published</h3>
-                {% if materials %}
-                    {% for m in materials %}
-                        <div class="list-item">
-                            <strong>{{ m.title }}</strong>
-                            <div class="meta"><span>{{ m.course.name }}</span><span>{{ m.created_at|timesince }} ago</span></div>
-                            <span>{{ m.description|default:""|truncatechars:150 }}</span>
-                            {% if m.file %}
-                                <div class="actions">
-                                    <a href="{% url 'teacher_material_detect' m.id %}" class="action-link">Detect AI/Human</a>
-                                    <a href="{{ m.file.url }}" download class="action-link">Download</a>
-                                </div>
-                            {% endif %}
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No recent materials.</p>
-                {% endif %}
-            </article>
-        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
 
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
+                {% endif %}
+
+                <section class="hero panel" style="margin-bottom: 32px;">
+                    <article class="hero-panel">
+                        <h2>Publish Learning Material</h2>
+                        <p>Upload lecture notes, slides, video lectures, and reading materials. Students can download these for offline study.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Total Files</span>
+                                <strong>{{ total_files }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Storage Used</span>
+                                <strong>{{ storage_used }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Downloads</span>
+                                <strong>{{ downloads }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <div class="grid-two">
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 14px;">Upload Material Pack</h3>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="course" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Select Course</label>
+                                <select id="course" name="course" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                    {% for c in courses %}
+                                        <option value="{{ c.name }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="title" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Material Title</label>
+                                <input id="title" name="title" type="text" placeholder="e.g. Week 4: Search Algorithms Slides" required style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="description" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Description</label>
+                                <textarea id="description" name="description" placeholder="Short description (optional)" style="width: 100%; min-height: 80px; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);"></textarea>
+                            </div>
+                            <div class="field-group" style="margin-bottom: 18px;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Select File</label>
+                                <input type="file" name="file" required style="width: 100%; padding: 8px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                <span style="color: var(--secondary-text); font-size: 0.775rem; margin-top: 4px; display: block;">Supported: PDF, PPTX, MP4, ZIP up to 100MB</span>
+                            </div>
+                            <div class="button-row">
+                                <button type="submit" class="btn" style="padding: 11px 24px;">Publish Material</button>
+                            </div>
+                        </form>
+                    </article>
+
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">Recently Published Materials</h3>
+                        {% if materials %}
+                            <div class="recent-list">
+                                {% for m in materials %}
+                                    <div class="list-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <strong>{{ m.title }}</strong>
+                                            <span class="badge badge-info">{{ m.course.name }}</span>
+                                        </div>
+                                        <div class="meta"><span>Published: {{ m.created_at|timesince }} ago</span></div>
+                                        <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ m.description|default:""|truncatechars:150 }}</span>
+                                        {% if m.file %}
+                                            <div class="actions" style="margin-top: 10px; display: flex; gap: 8px;">
+                                                <a href="{% url 'teacher_material_detect' m.id %}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">🤖 Detect AI/Human</a>
+                                                <a href="{{ m.file.url }}" download class="btn" style="padding: 5px 12px; font-size: 0.8rem;">⬇️ Download</a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No recent materials found.</p>
+                        {% endif %}
+                    </article>
                 </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Contact Us</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Faculty Tools</h4>
+                        <p><a href="{% url 'teacher_dashboard' %}">Faculty Dashboard</a></p>
+                    </div>
                 </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
+                </div>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

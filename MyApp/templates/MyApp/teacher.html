@@ -4,179 +4,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - AI Offline Learning Platform</title>
+    <title>Faculty Portal - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
-                </div>
-            </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'profile' %}">Profile</a>
-                <a href="{% url 'login' %}" class="primary">Logout</a>
-            </div>
-        </header>
+    <div class="app-shell">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-        <section class="hero">
-            <article class="hero-panel">
-                <h2>Welcome back, {{ display_name }}</h2>
-                <p>Manage your classes, share learning resources, create assessments, and monitor student progress with a modern, university-branded teacher dashboard.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>My Courses</span>
-                        <strong>{{ total_courses }}</strong>
+        <!-- Fixed Desktop Sidebar (Obsidian Black #111D5E) -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY MANAGEMENT</div>
+                <nav class="sidebar-nav">
+                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous Faculty AI Co-Pilot">
+                          <span class="sidebar-link-icon">🤖</span>
+                          <span class="sidebar-link-text">Faculty AI Co-Pilot ✨</span>
+                      </a>
+
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Log Lecture / Duties</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework / Quiz</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Study Notes</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Share Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                    <a href="{% url 'notifications_list' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🔔</span>
+                        <span class="sidebar-link-text">Notices &amp; Directives</span>
+                        {% if user_unread_notifications_count > 0 %}<span class="sidebar-badge" style="background: #EF4444; color: #FFFFFF;">{{ user_unread_notifications_count }}</span>{% endif %}
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">{{ display_name|slice:":1"|upper }}</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ display_name }}</span>
+                        <span class="user-role-badge">Faculty Instructor</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Total Students</span>
-                        <strong>{{ total_students }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Published Assignments</span>
-                        <strong>{{ published_assignments }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area (Warm Ivory #F4F7FC) -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Faculty Management Console</span>
                     </div>
                 </div>
-            </article>
-            <aside class="profile-panel">
-                <h3>Teacher Summary</h3>
-                <div class="profile-list">
-                    <div class="profile-item">
-                        <strong>Name</strong>
+
+                <div class="topbar-center">
+                    <div class="topbar-search-box">
+                        <span class="topbar-search-icon">🔍</span>
+                        <input type="text" placeholder="Search courses, submissions, materials..." aria-label="Search">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            {% if user_unread_notifications_count > 0 %}
+                            <span class="notif-badge">{{ user_unread_notifications_count }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Official Notices</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                {% if user_notifications %}
+                                    {% for n in user_notifications %}
+                                    <a href="{% url 'notifications_list' %}" class="notif-item">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                                            <span class="notif-item-title">{{ n.title }}</span>
+                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">🚨 Urgent</span>{% endif %}
+                                        </div>
+                                        <span class="notif-item-meta">{{ n.message|truncatewords:10 }}</span>
+                                    </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <div style="padding: 18px; text-align: center; color: var(--secondary-text); font-size: 0.8rem;">No unread announcements.</div>
+                                {% endif %}
+                            </div>
+                            <div style="padding: 8px 14px; background: var(--main-bg); border-top: 1px solid var(--borders); display: flex; justify-content: space-between; font-size: 0.75rem;">
+                                <a href="{% url 'notifications_list' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">View All Notices →</a>
+                                {% if user_unread_notifications_count > 0 %}
+                                <a href="{% url 'mark_all_notifications_read' %}" style="color: var(--secondary-text); text-decoration: none;">Mark All Read</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Self-Hosted</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span class="user-avatar-circle" style="width: 26px; height: 26px; font-size: 0.75rem;">{{ display_name|slice:":1"|upper }}</span>
                         <span>{{ display_name }}</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Username</strong>
-                        <span>{{ user.username }}</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Role</strong>
-                        <span>Teacher</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Department</strong>
-                        <span>Computer Science &amp; IT</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>University</strong>
-                        <span>Baba Guru Nanak University Nankana Sahib</span>
-                    </div>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </aside>
-        </section>
+            </header>
 
-        <div class="section-grid">
-            <article class="activity-panel">
-                <h3>Recent Assignments</h3>
-                <div class="recent-list">
-                    {% if assignments %}
-                        {% for assignment in assignments %}
-                        <div class="list-item">
-                            <strong>{{ assignment.title }}</strong>
-                            <div class="meta"><span>{{ assignment.course.name }} - {{ assignment.get_kind_display }}</span><span>{{ assignment.created_at|date:"M d, Y" }}</span></div>
-                            <span>{{ assignment.description|truncatewords:20 }}</span>
-                            {% if assignment.published %}
-                                <span style="color: #4caf50; font-weight: 600;">✓ Published</span>
+            <!-- Main Workspace Canvas -->
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Faculty Welcome Hero & Profile Card -->
+                <section class="hero" style="margin-bottom: 32px;">
+                    <article class="hero-panel panel">
+                        <div>
+                            <span class="badge badge-info" style="margin-bottom: 8px;">Faculty Management Console</span>
+                            <h2>Welcome, {{ display_name }}</h2>
+                            <p>Manage your assigned courses, upload offline study packs, create timed quizzes, review student submissions with integrated AI detection, and release examination feedback.</p>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Assigned Courses</span>
+                                <strong>{{ total_courses }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Enrolled Students</span>
+                                <strong>{{ total_students }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Published Tasks</span>
+                                <strong>{{ published_assignments }}</strong>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="profile-panel panel">
+                        <h3>Instructor Summary</h3>
+                        <div class="profile-list">
+                            <div class="profile-item">
+                                <strong>Instructor</strong>
+                                <span>{{ display_name }}</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Username</strong>
+                                <span>{{ user.username }}</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Portal Role</strong>
+                                <span class="badge badge-success" style="padding: 2px 8px;">Faculty / Teacher</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Department</strong>
+                                <span>Computer Science &amp; IT</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>University</strong>
+                                <span>Baba Guru Nanak University</span>
+                            </div>
+                        </div>
+                    </aside>
+                </section>
+
+                <!-- Quick Actions Grid -->
+                <section class="quick-actions" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 14px; font-size: 1.15rem;">Faculty Quick Actions &amp; Tools</h3>
+                    <div class="action-row">
+                        <a href="{% url 'teacher_invite' %}" class="action-tile">
+                            <strong>✉️ Invite Students</strong>
+                            <span>Issue course enrollment links and register new students into your department courses.</span>
+                        </a>
+                        <a href="{% url 'teacher_assignment' %}" class="action-tile">
+                            <strong>📝 Create Coursework / Quiz</strong>
+                            <span>Publish assignments, homework, and timed quizzes for offline student access.</span>
+                        </a>
+                        <a href="{% url 'teacher_materials' %}" class="action-tile">
+                            <strong>📤 Upload Study Notes</strong>
+                            <span>Distribute slides, lecture notes, syllabus documents, and offline study files.</span>
+                        </a>
+                        <a href="{% url 'teacher_pastpaper' %}" class="action-tile">
+                            <strong>📑 Publish Past Papers</strong>
+                            <span>Upload previous examination papers to assist students in test preparation.</span>
+                        </a>
+                        <a href="{% url 'teacher_results' %}" class="action-tile">
+                            <strong>🎯 Grade &amp; Share Results</strong>
+                            <span>Enter student marks, compute class averages, and share feedback transparently.</span>
+                        </a>
+                        <a href="{% url 'teacher_detect' %}" class="action-tile">
+                            <strong>🤖 AI Content Detector</strong>
+                            <span>Scan student submissions and documents to detect AI generation vs human authorship.</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Content Grid (Assignments & Courses) -->
+                <div class="section-grid" style="margin-bottom: 32px;">
+                    <article class="activity-panel panel">
+                        <h3>📋 Recent Coursework Published</h3>
+                        <div class="recent-list">
+                            {% if assignments %}
+                                {% for assignment in assignments %}
+                                <div class="list-item">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong>{{ assignment.title }}</strong>
+                                        {% if assignment.published %}
+                                            <span class="badge badge-success">✓ Published</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">⚠ Draft</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="meta">
+                                        <span>{{ assignment.course.name }} &bull; {{ assignment.get_kind_display }}</span>
+                                        <span>{{ assignment.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                    <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ assignment.description|truncatewords:20 }}</span>
+                                    <div style="margin-top: 10px;">
+                                        <a href="{% url 'teacher_submissions' assignment.id %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.825rem;">
+                                            View Submissions &rarr;
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
                             {% else %}
-                                <span style="color: #ffc107; font-weight: 600;">⚠ Draft</span>
+                                <p style="color: var(--text-muted); padding: 16px 0;">No assignments or quizzes created yet.</p>
                             {% endif %}
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="color: #94a9be; padding: 20px 0;">No assignments created yet.</p>
-                    {% endif %}
-                </div>
-            </article>
+                    </article>
 
-            <article class="courses-panel">
-                <h3>My Courses</h3>
-                <div class="courses-list">
-                    {% if teacher_courses %}
-                        {% for course in teacher_courses %}
-                        <div class="course-row">
-                            <div class="course-info">
-                                <strong>{{ course.name }}</strong>
-                                <span>{{ course.assignments.count }} assignments &bull; {{ course.materials.count }} materials</span>
-                            </div>
-                            <span class="course-badge">Active</span>
+                    <article class="courses-panel panel">
+                        <h3>📖 Assigned Department Courses</h3>
+                        <div class="courses-list">
+                            {% if teacher_courses %}
+                                {% for course in teacher_courses %}
+                                <div class="course-row">
+                                    <div class="course-info">
+                                        <strong>{{ course.name }}</strong>
+                                        <ul>
+                                            <li>Tasks: <strong>{{ course.assignments.count }}</strong></li>
+                                            <li>Materials: <strong>{{ course.materials.count }}</strong></li>
+                                        </ul>
+                                    </div>
+                                    <span class="course-badge">Active</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p style="color: var(--text-muted); padding: 16px 0;">No courses assigned yet.</p>
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="color: #94a9be; padding: 20px 0;">No courses yet.</p>
-                    {% endif %}
+                    </article>
                 </div>
-            </article>
+
+                <!-- Materials Section -->
+                <section class="materials-panel panel" style="margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0;">📚 Uploaded Course Materials</h3>
+                        <a href="{% url 'teacher_materials' %}" class="btn" style="padding: 7px 16px; font-size: 0.85rem;">Manage All Materials</a>
+                    </div>
+                    <div class="materials-list">
+                        {% if materials %}
+                            {% for material in materials %}
+                                <div class="material-item">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong>{{ material.title }}</strong>
+                                        <span class="badge badge-info">{{ material.course.name }}</span>
+                                    </div>
+                                    <div class="meta">
+                                        <span>Uploaded {{ material.created_at|date:"M d, Y" }}</span>
+                                        {% if material.file %}<span>&bull; {{ material.file.size|filesizeformat }}</span>{% endif %}
+                                    </div>
+                                    {% if material.description %}<span style="color: var(--text-muted); font-size: 0.85rem;">{{ material.description|truncatewords:15 }}</span>{% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--text-muted); padding: 16px 0;">No materials uploaded yet. Click 'Upload Study Notes' above to get started.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </main>
+
+            <!-- Institutional University Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171</p>
+                        <p><strong>Mobile:</strong> 0300-1199358</p>
+                        <p><strong>Email:</strong> <a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura</p>
+                        <p>Nankana Sahib, Punjab, Pakistan</p>
+                        <p>Baba Guru Nanak University</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Faculty Tools</h4>
+                        <p><a href="{% url 'teacher_assignment' %}">Create Assignment</a></p>
+                        <p><a href="{% url 'teacher_detect' %}">AI Content Scanner</a></p>
+                        <p><a href="{% url 'teacher_results' %}">Publish Results</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                    <p>AI Offline Learning Platform &mdash; Faculty Portal</p>
+                </div>
+            </footer>
         </div>
-
-        <section class="quick-actions">
-            <h3>Quick Actions</h3>
-            <div class="action-row">
-                <a href="{% url 'teacher_invite' %}" class="action-tile">
-                    <strong>Invite Students</strong>
-                    <span>Send course access links and invite new students to join your department classes.</span>
-                </a>
-                <a href="#" class="action-tile">
-                    <strong>Create Assignment</strong>
-                    <span>Start a new assignment or quiz quickly and publish it to offline dashboard access.</span>
-                </a>
-                <a href="{% url 'teacher_materials' %}" class="action-tile">
-                    <strong>Publish Material</strong>
-                    <span>Upload study notes, past papers, and learning modules for student use.</span>
-                </a>
-                <a href="{% url 'teacher_results' %}" class="action-tile">
-                    <strong>Share Results</strong>
-                    <span>Release exam scores and feedback to students with one click.</span>
-                </a>
-            </div>
-        </section>
-        <section class="materials-panel">
-            <h3>My Materials</h3>
-            <div class="materials-list">
-                {% if materials %}
-                    {% for material in materials %}
-                        <div class="material-item">
-                            <strong>{{ material.title }}</strong>
-                            <div class="meta"><span>{{ material.course.name }}</span> <span>{{ material.created_at|date:"M d, Y" }}</span></div>
-                            {% if material.description %}<span>{{ material.description|truncatewords:15 }}</span>{% endif %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="color: #94a9be; padding: 20px 0;">No materials uploaded yet.</p>
-                {% endif %}
-            </div>
-            <a href="{% url 'teacher_materials' %}" class="action-tile" style="margin-top:10px; display:inline-block;">View All Materials</a>
-        </section>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

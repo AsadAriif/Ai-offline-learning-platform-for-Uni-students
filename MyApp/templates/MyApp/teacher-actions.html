@@ -6,351 +6,501 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Actions - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel">
-                <h2>Teacher Action Center</h2>
-                <p>Launch the most important teaching workflows from one university-branded page. Invite students, publish learning materials, create assessments, and track engagement with a clean BGNU dashboard experience.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Course Actions</span>
-                        <strong>{{ course_actions_count }}</strong>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Log Lecture / Duties</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">{{ display_name|slice:":1"|upper }}</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ display_name }}</span>
+                        <span class="user-role-badge">Faculty Instructor</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Quick Tools</span>
-                        <strong>{{ quick_tools_count }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Department Reach</span>
-                        <strong>{{ department_reach }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">All Faculty Actions</span>
                     </div>
                 </div>
-            </article>
-            <aside class="profile-panel">
-                <h3>Teacher Profile</h3>
-                <div class="profile-list">
-                    <div class="profile-item">
-                        <strong>Name</strong>
-                        <span>{{ display_name }}</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Role</strong>
-                        <span>Teacher</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Department</strong>
-                        <span>Computer Science &amp; IT</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>University</strong>
-                        <span>Baba Guru Nanak University Nankana Sahib</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Username</strong>
-                        <span>{{ user.username }}</span>
-                    </div>
-                </div>
-            </aside>
-        </section>
 
-        <div class="section-grid">
-            <article class="activity-panel">
-                <h3>Latest Teacher Workflow</h3>
-                <div class="recent-list">
-                    {% if latest_activities %}
-                        {% for act in latest_activities %}
-                        <div class="list-item">
-                            <strong>{{ act.title }}</strong>
-                            <div class="meta"><span>{{ act.meta }}</span><span>{{ act.time|timesince }} ago</span></div>
-                            <span>{{ act.desc }}</span>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="color: var(--muted); padding: 12px 0;">No recent actions logged yet.</p>
-                    {% endif %}
-                </div>
-            </article>
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
 
-            <article class="courses-panel">
-                <h3>Current Teaching Set</h3>
-                <div class="courses-list">
-                    {% if teacher_courses %}
-                        {% for course in teacher_courses %}
-                        <div class="course-row">
-                            <div class="course-info">
-                                <strong>{{ course.name }}</strong>
-                                <span>{{ course.assignments.count }} assignments &bull; {{ course.materials.count }} materials</span>
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
                             </div>
-                            <span class="course-badge">Active</span>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="color: var(--muted); padding: 12px 0;">No active courses assigned.</p>
-                    {% endif %}
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </article>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero" style="margin-bottom: 32px;">
+                    <article class="hero-panel panel">
+                        <h2>Teacher Action Center</h2>
+                        <p>Launch the most important teaching workflows from one university-branded page. Invite students, publish learning materials, create assessments, and track engagement with a clean BGNU dashboard experience.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Course Actions</span>
+                                <strong>{{ course_actions_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Quick Tools</span>
+                                <strong>{{ quick_tools_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Department Reach</span>
+                                <strong>{{ department_reach }}</strong>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="profile-panel panel">
+                        <h3>Teacher Profile</h3>
+                        <div class="profile-list">
+                            <div class="profile-item">
+                                <strong>Name</strong>
+                                <span>{{ display_name }}</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Role</strong>
+                                <span class="badge badge-success">Teacher</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Department</strong>
+                                <span>Computer Science &amp; IT</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>University</strong>
+                                <span>Baba Guru Nanak University Nankana Sahib</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Username</strong>
+                                <span>{{ user.username }}</span>
+                            </div>
+                        </div>
+                    </aside>
+                </section>
+
+                <div class="section-grid" style="margin-bottom: 32px;">
+                    <article class="activity-panel panel">
+                        <h3>Latest Teacher Workflow</h3>
+                        <div class="recent-list">
+                            {% if latest_activities %}
+                                {% for act in latest_activities %}
+                                <div class="list-item">
+                                    <strong>{{ act.title }}</strong>
+                                    <div class="meta"><span>{{ act.meta }}</span><span>{{ act.time|timesince }} ago</span></div>
+                                    <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ act.desc }}</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p style="color: var(--secondary-text); padding: 12px 0;">No recent actions logged yet.</p>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="courses-panel panel">
+                        <h3>Current Teaching Set</h3>
+                        <div class="courses-list">
+                            {% if teacher_courses %}
+                                {% for course in teacher_courses %}
+                                <div class="course-row">
+                                    <div class="course-info">
+                                        <strong>{{ course.name }}</strong>
+                                        <span>{{ course.assignments.count }} assignments &bull; {{ course.materials.count }} materials</span>
+                                    </div>
+                                    <span class="course-badge">Active</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p style="color: var(--secondary-text); padding: 12px 0;">No active courses assigned.</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+
+                <section class="action-panel panel" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 16px;">Teacher Quick Actions</h3>
+                    <div class="action-row">
+                        <a href="{% url 'teacher_attendance' %}" class="action-tile">
+                            <strong>Log Lecture &amp; Duties</strong>
+                            <span>Submit class conduction log and student attendance count to HOD, and review assigned duties.</span>
+                        </a>
+                        <a href="{% url 'teacher_invite' %}" class="action-tile">
+                            <strong>Invite Students</strong>
+                            <span>Send class access links and invite new students to join your courses with a simple email-ready workflow.</span>
+                        </a>
+                        <a href="{% url 'teacher_assignment' %}" class="action-tile">
+                            <strong>Create Assignment</strong>
+                            <span>Build quizzes, homework, and project prompts in one place and publish them for offline access.</span>
+                        </a>
+                        <a href="{% url 'teacher_materials' %}" class="action-tile">
+                            <strong>Publish Material</strong>
+                            <span>Upload lecture notes, slides, and course resources for students to download and review.</span>
+                        </a>
+                        <a href="{% url 'teacher_pastpaper' %}" class="action-tile">
+                            <strong>Publish Past Paper</strong>
+                            <span>Upload past exam papers for student practice and revision.</span>
+                        </a>
+                        <a href="{% url 'teacher_results' %}" class="action-tile">
+                            <strong>Share Results</strong>
+                            <span>Release assessment grades, feedback, and performance summaries directly to students.</span>
+                        </a>
+                        <a href="{% url 'teacher_detect' %}" class="action-tile">
+                            <strong>AI Content Detector</strong>
+                            <span>Analyze student assignments, quizzes, and documents with the integrated AI detector model.</span>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="action-panel panel" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 16px;">📚 Your Past Papers</h3>
+                    <div class="resource-list">
+                        {% if past_papers %}
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: var(--primary-bg); border-bottom: 1px solid var(--borders);">
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📄 Title</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📚 Course</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📅 Date</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📊 Size</th>
+                                            <th style="padding: 12px 14px; text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">⚙️ Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for paper in past_papers %}
+                                        <tr style="border-bottom: 1px solid var(--borders);">
+                                            <td style="padding: 12px 14px; font-weight: 500;">{{ paper.title }}</td>
+                                            <td style="padding: 12px 14px; color: var(--secondary-text);">{{ paper.course.name }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ paper.created_at|date:"M d, Y" }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">
+                                                {% if paper.file %}{{ paper.file.size|filesizeformat }}{% else %}N/A{% endif %}
+                                            </td>
+                                            <td style="padding: 12px 14px; text-align: center;">
+                                                {% if paper.file %}
+                                                    <a href="{{ paper.file.url }}" download class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem; margin-right: 6px;">⬇️ Download</a>
+                                                {% endif %}
+                                                <form method="POST" action="{% url 'delete_pastpaper' paper.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this past paper?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 0.8rem;">🗑️ Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 24px; color: var(--secondary-text);">
+                                <p>📚 No past papers published yet.</p>
+                                <p style="font-size: 0.9rem; margin-top: 6px;"><a href="{% url 'teacher_pastpaper' %}">Go to Past Papers page to upload</a></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="action-panel panel" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 16px;">📝 Your Assignments</h3>
+                    <div class="resource-list">
+                        {% if assignments %}
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: var(--primary-bg); border-bottom: 1px solid var(--borders);">
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📝 Title</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📚 Course</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📅 Date</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">🏷️ Type</th>
+                                            <th style="padding: 12px 14px; text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">⚙️ Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for assignment in assignments %}
+                                        <tr style="border-bottom: 1px solid var(--borders);">
+                                            <td style="padding: 12px 14px; font-weight: 500;">{{ assignment.title }}</td>
+                                            <td style="padding: 12px 14px; color: var(--secondary-text);">{{ assignment.course.name }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ assignment.created_at|date:"M d, Y" }}</td>
+                                            <td style="padding: 12px 14px;"><span class="badge badge-info">{{ assignment.get_kind_display }}</span></td>
+                                            <td style="padding: 12px 14px; text-align: center;">
+                                                <a href="{% url 'teacher_assignment' %}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem; margin-right: 6px;">✏️ Edit</a>
+                                                <form method="POST" action="{% url 'delete_assignment' assignment.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 0.8rem;">🗑️ Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 24px; color: var(--secondary-text);">
+                                <p>📝 No assignments created yet.</p>
+                                <p style="font-size: 0.9rem; margin-top: 6px;"><a href="{% url 'teacher_assignment' %}">Go to Assignments page to create</a></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="action-panel panel" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 16px;">📖 Your Materials</h3>
+                    <div class="resource-list">
+                        {% if materials %}
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: var(--primary-bg); border-bottom: 1px solid var(--borders);">
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📄 Title</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📚 Course</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📅 Date</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📊 Size</th>
+                                            <th style="padding: 12px 14px; text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">⚙️ Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for material in materials %}
+                                        <tr style="border-bottom: 1px solid var(--borders);">
+                                            <td style="padding: 12px 14px; font-weight: 500;">{{ material.title }}</td>
+                                            <td style="padding: 12px 14px; color: var(--secondary-text);">{{ material.course.name }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ material.created_at|date:"M d, Y" }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">
+                                                {% if material.file %}{{ material.file.size|filesizeformat }}{% else %}N/A{% endif %}
+                                            </td>
+                                            <td style="padding: 12px 14px; text-align: center;">
+                                                {% if material.file %}
+                                                    <a href="{{ material.file.url }}" download class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem; margin-right: 6px;">⬇️ Download</a>
+                                                {% endif %}
+                                                <form method="POST" action="{% url 'delete_material' material.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this material?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 0.8rem;">🗑️ Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 24px; color: var(--secondary-text);">
+                                <p>📖 No materials published yet.</p>
+                                <p style="font-size: 0.9rem; margin-top: 6px;"><a href="{% url 'teacher_materials' %}">Go to Materials page to upload</a></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="action-panel panel">
+                    <h3 style="margin-bottom: 16px;">📧 Your Invitations</h3>
+                    <div class="resource-list">
+                        {% if invitations %}
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: var(--primary-bg); border-bottom: 1px solid var(--borders);">
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📧 Student Email</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📚 Course</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">📅 Sent Date</th>
+                                            <th style="padding: 12px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">✅ Status</th>
+                                            <th style="padding: 12px 14px; text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary-text);">⚙️ Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for invitation in invitations %}
+                                        <tr style="border-bottom: 1px solid var(--borders);">
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ invitation.email }}</td>
+                                            <td style="padding: 12px 14px;">{{ invitation.course }}</td>
+                                            <td style="padding: 12px 14px; font-family: var(--font-mono); font-size: 0.85rem;">{{ invitation.created_at|date:"M d, Y" }}</td>
+                                            <td style="padding: 12px 14px;">
+                                                {% if invitation.is_used %}
+                                                    <span class="badge badge-success">✓ Accepted</span>
+                                                {% else %}
+                                                    <span class="badge badge-warning">⏳ Pending</span>
+                                                {% endif %}
+                                            </td>
+                                            <td style="padding: 12px 14px; text-align: center;">
+                                                <form method="POST" action="{% url 'delete_invitation' invitation.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to revoke this invitation?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 0.8rem;">🗑️ Revoke</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 24px; color: var(--secondary-text);">
+                                <p>📧 No invitations sent yet.</p>
+                                <p style="font-size: 0.9rem; margin-top: 6px;"><a href="{% url 'teacher_invite' %}">Go to Invite page to send invitations</a></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Contact Us</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Address</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Email</h4>
+                        <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
+                </div>
+            </footer>
         </div>
-
-        <section class="action-panel">
-            <h3>Teacher Quick Actions</h3>
-            <div class="action-row">
-                <a href="{% url 'teacher_invite' %}" class="action-tile">
-                    <strong>Invite Students</strong>
-                    <span>Send class access links and invite new students to join your courses with a simple email-ready workflow.</span>
-                </a>
-                <a href="{% url 'teacher_assignment' %}" class="action-tile">
-                    <strong>Create Assignment</strong>
-                    <span>Build quizzes, homework, and project prompts in one place and publish them for offline access.</span>
-                </a>
-                <a href="{% url 'teacher_materials' %}" class="action-tile">
-                    <strong>Publish Material</strong>
-                    <span>Upload lecture notes, slides, and course resources for students to download and review.</span>
-                </a>
-                <a href="{% url 'teacher_pastpaper' %}" class="action-tile">
-                    <strong>Publish Past Paper</strong>
-                    <span>Upload past exam papers for student practice and revision.</span>
-                </a>
-                <a href="{% url 'teacher_results' %}" class="action-tile">
-                    <strong>Share Results</strong>
-                    <span>Release assessment grades, feedback, and performance summaries directly to students.</span>
-                </a>
-                <!-- Schedule Session and Review Analytics actions removed per request -->
-            </div>
-        </section>
-
-        <section class="action-panel">
-            <h3>📚 Your Past Papers</h3>
-            <div class="resource-list">
-                {% if past_papers %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
-                                    <th style="padding: 10px; text-align: left;">📄 Title</th>
-                                    <th style="padding: 10px; text-align: left;">📚 Course</th>
-                                    <th style="padding: 10px; text-align: left;">📅 Date</th>
-                                    <th style="padding: 10px; text-align: left;">📊 Size</th>
-                                    <th style="padding: 10px; text-align: center;">⚙️ Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for paper in past_papers %}
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">{{ paper.title }}</td>
-                                    <td style="padding: 10px;">{{ paper.course.name }}</td>
-                                    <td style="padding: 10px;">{{ paper.created_at|date:"M d, Y" }}</td>
-                                    <td style="padding: 10px;">
-                                        {% if paper.file %}
-                                            {{ paper.file.size|filesizeformat }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    </td>
-                                    <td style="padding: 10px; text-align: center;">
-                                        {% if paper.file %}
-                                            <a href="{{ paper.file.url }}" download style="color: #2980b9; text-decoration: none; margin-right: 10px;">⬇️ Download</a>
-                                        {% endif %}
-                                        <form method="POST" action="{% url 'delete_pastpaper' paper.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this past paper?');">
-                                            {% csrf_token %}
-                                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">🗑️ Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        <p>📚 No past papers published yet.</p>
-                        <p style="font-size: 0.9rem;"><a href="{% url 'teacher_pastpaper' %}" style="color: #2980b9;">Go to Past Papers page to upload</a></p>
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <section class="action-panel">
-            <h3>📝 Your Assignments</h3>
-            <div class="resource-list">
-                {% if assignments %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
-                                    <th style="padding: 10px; text-align: left;">📝 Title</th>
-                                    <th style="padding: 10px; text-align: left;">📚 Course</th>
-                                    <th style="padding: 10px; text-align: left;">📅 Date</th>
-                                    <th style="padding: 10px; text-align: left;">🏷️ Type</th>
-                                    <th style="padding: 10px; text-align: center;">⚙️ Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for assignment in assignments %}
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">{{ assignment.title }}</td>
-                                    <td style="padding: 10px;">{{ assignment.course.name }}</td>
-                                    <td style="padding: 10px;">{{ assignment.created_at|date:"M d, Y" }}</td>
-                                    <td style="padding: 10px;">{{ assignment.get_kind_display }}</td>
-                                    <td style="padding: 10px; text-align: center;">
-                                        <a href="{% url 'teacher_assignment' %}" style="color: #2980b9; text-decoration: none; margin-right: 10px;">✏️ Edit</a>
-                                        <form method="POST" action="{% url 'delete_assignment' assignment.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
-                                            {% csrf_token %}
-                                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">🗑️ Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        <p>📝 No assignments created yet.</p>
-                        <p style="font-size: 0.9rem;"><a href="{% url 'teacher_assignment' %}" style="color: #2980b9;">Go to Assignments page to create</a></p>
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <section class="action-panel">
-            <h3>📖 Your Materials</h3>
-            <div class="resource-list">
-                {% if materials %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
-                                    <th style="padding: 10px; text-align: left;">📄 Title</th>
-                                    <th style="padding: 10px; text-align: left;">📚 Course</th>
-                                    <th style="padding: 10px; text-align: left;">📅 Date</th>
-                                    <th style="padding: 10px; text-align: left;">📊 Size</th>
-                                    <th style="padding: 10px; text-align: center;">⚙️ Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for material in materials %}
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">{{ material.title }}</td>
-                                    <td style="padding: 10px;">{{ material.course.name }}</td>
-                                    <td style="padding: 10px;">{{ material.created_at|date:"M d, Y" }}</td>
-                                    <td style="padding: 10px;">
-                                        {% if material.file %}
-                                            {{ material.file.size|filesizeformat }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    </td>
-                                    <td style="padding: 10px; text-align: center;">
-                                        {% if material.file %}
-                                            <a href="{{ material.file.url }}" download style="color: #2980b9; text-decoration: none; margin-right: 10px;">⬇️ Download</a>
-                                        {% endif %}
-                                        <form method="POST" action="{% url 'delete_material' material.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this material?');">
-                                            {% csrf_token %}
-                                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">🗑️ Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        <p>📖 No materials published yet.</p>
-                        <p style="font-size: 0.9rem;"><a href="{% url 'teacher_materials' %}" style="color: #2980b9;">Go to Materials page to upload</a></p>
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <section class="action-panel">
-            <h3>📧 Your Invitations</h3>
-            <div class="resource-list">
-                {% if invitations %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
-                                    <th style="padding: 10px; text-align: left;">📧 Student Email</th>
-                                    <th style="padding: 10px; text-align: left;">📚 Course</th>
-                                    <th style="padding: 10px; text-align: left;">📅 Sent Date</th>
-                                    <th style="padding: 10px; text-align: left;">✅ Status</th>
-                                    <th style="padding: 10px; text-align: center;">⚙️ Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for invitation in invitations %}
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">{{ invitation.email }}</td>
-                                    <td style="padding: 10px;">{{ invitation.course }}</td>
-                                    <td style="padding: 10px;">{{ invitation.created_at|date:"M d, Y" }}</td>
-                                    <td style="padding: 10px;">
-                                        {% if invitation.is_used %}
-                                            <span style="background: #27ae60; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.85rem;">✓ Accepted</span>
-                                        {% else %}
-                                            <span style="background: #f39c12; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.85rem;">⏳ Pending</span>
-                                        {% endif %}
-                                    </td>
-                                    <td style="padding: 10px; text-align: center;">
-                                        <form method="POST" action="{% url 'delete_invitation' invitation.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to revoke this invitation?');">
-                                            {% csrf_token %}
-                                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">🗑️ Revoke</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        <p>📧 No invitations sent yet.</p>
-                        <p style="font-size: 0.9rem;"><a href="{% url 'teacher_invite' %}" style="color: #2980b9;">Go to Invite page to send invitations</a></p>
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

@@ -4,51 +4,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Detection - Teacher</title>
+    <title>AI Content Scanner - Faculty Portal</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
     <style>
-        .detect-container { max-width: 600px; margin: 40px auto; padding: 20px; background: rgba(255,255,255,0.9); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .detect-result { margin-top: 20px; padding: 15px; border-radius: 8px; }
-        .result-ai { background: #ffebee; color: #c62828; }
-        .result-human { background: #e8f5e9; color: #2e7d32; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto; }
+        .detect-card {
+            max-width: 800px;
+            margin: 0 auto 36px;
+            padding: 36px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--borders);
+        }
+        .file-dropzone {
+            border: 2px dashed var(--borders);
+            border-radius: var(--radius-md);
+            padding: 28px 20px;
+            text-align: center;
+            background: var(--primary-bg);
+            transition: var(--transition-fast);
+            margin-bottom: 20px;
+        }
+        .file-dropzone:hover {
+            border-color: var(--primary-accent);
+            background: #FFFFFF;
+        }
+        .loader {
+            border: 4px solid var(--borders);
+            border-top: 4px solid var(--primary-accent);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 1s linear infinite;
+            margin: 16px auto;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Dept Logo">
-                <div class="brand-info">
-                    <h1>AI Detection</h1>
-                    <p>Upload a student submission and instantly see if it was AI‑generated.</p>
+    <div class="app-shell">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar (Obsidian Black #111D5E) -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Dept Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{ % url 'teacher_dashboard' % }">Dashboard</a>
-                <a href="{ % url 'logout' % }" class="primary">Logout</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline AI Enabled</span>
             </div>
-        </header>
-        <section class="detect-container">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="file">Select file (PDF, DOCX, PPTX, TXT – max 50 MB)</label><br>
-                <input type="file" name="file" id="file" accept=".pdf,.docx,.pptx,.txt" required style="margin-top:8px;">
-                <button type="submit" style="margin-top:12px;">Run Detection</button>
-            </form>
-            {% if result %}
-                <div class="detect-result {% if result.label == 'AI' %}result-ai{% else %}result-human{% endif %}">
-                    <strong>Result:</strong> {{ result.label }}<br>
-                    <strong>Confidence:</strong> {{ result.confidence|floatformat:2 }}
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">F</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Faculty Member</span>
+                        <span class="user-role-badge">Instructor</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area (Warm Ivory #F4F7FC) -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">AI Content &amp; Document Detector</span>
+                    </div>
                 </div>
-            {% elif request.method == 'POST' and not result %}
-                <div class="detect-result" style="text-align:center;">
-                    <div class="loader"></div>
-                    <p>Processing…</p>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline ML Model Active</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            {% endif %}
-        </section>
+            </header>
+
+            <!-- Main Workspace Canvas -->
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="max-width: 800px; margin: 0 auto 20px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Dedicated AI Inspection Workspace -->
+                <section class="detect-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <span class="badge badge-info">Automated Academic Integrity Tool</span>
+                        <span class="sidebar-badge" style="background: rgba(39, 133, 104, 0.15); color: var(--success); border-color: rgba(39, 133, 104, 0.3);">
+                            ● Offline Scikit-Learn Engine
+                        </span>
+                    </div>
+
+                    <h2 style="margin-bottom: 8px; font-size: 1.45rem;">AI Content &amp; Document Detector</h2>
+                    <p style="color: var(--secondary-text); margin-bottom: 24px; line-height: 1.6;">
+                        Upload any student assignment document, essay, or lecture resource to verify whether the text was authored by a human or generated by an AI model. Works 100% locally without external cloud APIs.
+                    </p>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="file-dropzone">
+                            <label for="file" style="display: block; font-weight: 600; font-size: 1rem; margin-bottom: 6px; cursor: pointer;">
+                                Select Document to Scan
+                            </label>
+                            <p style="color: var(--secondary-text); font-size: 0.8125rem; margin-bottom: 14px;">
+                                Supported file formats: <strong>.pdf, .docx, .pptx, .txt</strong> (up to 50 MB)
+                            </p>
+                            <input type="file" name="file" id="file" accept=".pdf,.docx,.pptx,.txt" required style="max-width: 360px; margin: 0 auto; display: block; padding: 10px; background: #FFFFFF; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%; padding: 14px; font-size: 1rem; border-radius: var(--radius-md);">
+                            🔍 Run Deep AI Detection Analysis
+                        </button>
+                    </form>
+
+                    {% if result %}
+                        <div class="detect-result {% if result.label == 'AI' %}result-ai{% else %}result-human{% endif %}" style="margin-top: 24px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                                <strong style="font-size: 1.15rem;">
+                                    {% if result.label == 'AI' %}⚠️ AI-Generated Content Detected{% else %}✓ Human-Written Content Verified{% endif %}
+                                </strong>
+                                <span class="badge {% if result.label == 'AI' %}badge-danger{% else %}badge-success{% endif %}" style="font-size: 0.9rem; padding: 4px 10px;">
+                                    {{ result.label }}
+                                </span>
+                            </div>
+                            <p style="margin: 0; font-size: 0.95rem;">
+                                <strong>Detection Confidence:</strong> <span style="font-family: var(--font-mono); font-size: 1.1rem; color: #FFFFFF;">{{ result.confidence|floatformat:2 }}</span> / 1.00
+                            </p>
+                            {% if result.note %}
+                                <p style="margin-top: 8px; font-size: 0.875rem; opacity: 0.9; color: var(--soft-accent);">{{ result.note }}</p>
+                            {% endif %}
+                        </div>
+                    {% elif request.method == 'POST' and not result %}
+                        <div class="detect-result" style="text-align: center; background: var(--secondary-dark); border: 1px solid var(--borders); margin-top: 24px;">
+                            <div class="loader"></div>
+                            <p style="color: var(--soft-accent); font-size: 0.95rem;">Analyzing document vectors with local scikit-learn AI model&hellip;</p>
+                        </div>
+                    {% endif %}
+                </section>
+            </main>
+
+            <!-- Institutional University Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171</p>
+                        <p><strong>Mobile:</strong> 0300-1199358</p>
+                        <p><strong>Email:</strong> <a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib</p>
+                        <p>Baba Guru Nanak University</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Faculty Tools</h4>
+                        <p><a href="{% url 'teacher_assignment' %}">Create Assignment</a></p>
+                        <p><a href="{% url 'teacher_materials' %}">Publish Materials</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                    <p>AI Offline Learning Platform &mdash; Academic Integrity Scanner</p>
+                </div>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

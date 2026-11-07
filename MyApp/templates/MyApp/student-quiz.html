@@ -6,95 +6,267 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Quizzes - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; CS &amp; IT</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'student_actions' %}">Actions</a>
-                <a href="{% url 'student_dashboard' %}" class="primary">Student Dashboard</a>
-            </div>
-        </header>
 
-        <section class="hero panel">
-            <article class="hero-panel">
-                <h2>Quiz Center</h2>
-                <p>Open your scheduled quizzes here and access the quiz content directly. This page focuses on live quiz tasks and upcoming test preparation.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Quizzes Available</span>
-                        <strong>{{ quizzes_available_count }}</strong>
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">ACADEMIC WORKSPACE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'student_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'student_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Study Materials</span>
+                    </a>
+                    <a href="{% url 'student_assignments' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Coursework &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'student_quiz' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">⏱️</span>
+                        <span class="sidebar-link-text">Attempt Quizzes</span>
+                        {% if quizzes_available_count %}<span class="sidebar-badge">{{ quizzes_available_count }}</span>{% endif %}
+                    </a>
+                    <a href="{% url 'student_progress' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📈</span>
+                        <span class="sidebar-link-text">Progress Tracking</span>
+                    </a>
+                    <a href="{% url 'student_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Assessment Results</span>
+                    </a>
+                    <a href="{% url 'student_pastpapers' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Past Exam Papers</span>
+                    </a>
+                    <a href="{% url 'student_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Actions Directory</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">S</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Student Account</span>
+                        <span class="user-role-badge">Student Portal</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Due Soon</span>
-                        <strong>{{ due_soon_count }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Completed</span>
-                        <strong>{{ completed_count }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Student Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Timed Quizzes &amp; Assessments</span>
                     </div>
                 </div>
-            </article>
-        </section>
 
-        <section class="grid-two">
-            <article class="list-panel panel">
-                <h3>Upcoming Quizzes</h3>
-                {% if upcoming_quizzes %}
-                    {% for q in upcoming_quizzes %}
-                    <div class="list-item" style="border-left-color: var(--accent-warm);">
-                        <strong>{{ q.title }}</strong>
-                        <div class="meta"><span>{{ q.course.name }}</span><span>Published: {{ q.created_at|date:"Y-m-d" }}</span></div>
-                        <span>{{ q.description }}</span>
-                        <div style="margin-top: 10px;">
-                            <a href="{% url 'submit_assignment' q.id %}" class="btn" style="padding: 6px 12px; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-soft), var(--accent-warm)); color: #ffffff;">Start Quiz</a>
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="color: var(--muted); padding: 12px 0;">No upcoming quizzes scheduled.</p>
-                {% endif %}
-            </article>
-
-            <article class="list-panel panel">
-                <h3>Completed Quizzes</h3>
-                {% if completed_quizzes %}
-                    {% for item in completed_quizzes %}
-                    <div class="list-item" style="border-left-color: #2e7d32;">
-                        <strong>{{ item.quiz.title }}</strong>
-                        <div class="meta"><span>{{ item.quiz.course.name }}</span><span>Status: Completed</span></div>
-                        <span>
-                            {% if item.submission %}
-                                {% if item.submission.graded %}
-                                    Score: {{ item.submission.marks|default:'-' }} | Grade: {{ item.submission.grade|default:'Pending' }}
-                                    {% if item.submission.feedback %}<br>Feedback: {{ item.submission.feedback }}{% endif %}
-                                {% else %}
-                                    Submission received. Check results for grading.
-                                {% endif %}
-                            {% else %}
-                                Submission received. Check results for grading.
-                            {% endif %}
-                        </span>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="color: var(--muted); padding: 12px 0;">No completed quizzes yet.</p>
-                {% endif %}
-            </article>
-        </section>
+                    <a href="{% url 'student_dashboard' %}" class="topbar-user-link">
+                        <span>Student Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
 
-        <footer class="footer">
-            <p>Student quiz page for BGNU's AI Offline Learning Platform. Use this page to open test tasks and see the next available quiz schedule.</p>
-            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-        </footer>
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 32px;">
+                    <article class="hero-panel">
+                        <h2>Quiz Center</h2>
+                        <p>Open your scheduled quizzes here and access the quiz content directly. This page focuses on live quiz tasks and upcoming test preparation.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Quizzes Available</span>
+                                <strong>{{ quizzes_available_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Due Soon</span>
+                                <strong>{{ due_soon_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Completed</span>
+                                <strong>{{ completed_count }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="grid-two">
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">⏱️ Upcoming Quizzes</h3>
+                        {% if upcoming_quizzes %}
+                            {% for q in upcoming_quizzes %}
+                            <div class="list-item" style="border-left: 3px solid var(--primary-accent);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <strong>{{ q.title }}</strong>
+                                    <span class="badge badge-info">{{ q.course.name }}</span>
+                                </div>
+                                <div class="meta"><span>Published: {{ q.created_at|date:"Y-m-d" }}</span></div>
+                                <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ q.description }}</span>
+                                <div style="margin-top: 12px;">
+                                    <a href="{% url 'submit_assignment' q.id %}" class="btn" style="padding: 7px 16px; font-size: 0.825rem;">Start Quiz &rarr;</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No upcoming quizzes scheduled.</p>
+                        {% endif %}
+                    </article>
+
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">✓ Completed Quizzes</h3>
+                        {% if completed_quizzes %}
+                            {% for item in completed_quizzes %}
+                            <div class="list-item" style="border-left: 3px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <strong>{{ item.quiz.title }}</strong>
+                                    <span class="badge badge-success">Completed</span>
+                                </div>
+                                <div class="meta"><span>{{ item.quiz.course.name }}</span></div>
+                                <span style="color: var(--secondary-text); font-size: 0.875rem;">
+                                    {% if item.submission %}
+                                        {% if item.submission.graded %}
+                                            Score: <strong>{{ item.submission.marks|default:'-' }}</strong> &bull; Grade: <strong>{{ item.submission.grade|default:'Pending' }}</strong>
+                                            {% if item.submission.feedback %}<br><span style="color: var(--soft-accent);">Feedback: {{ item.submission.feedback }}</span>{% endif %}
+                                        {% else %}
+                                            Submission received. Check results for grading.
+                                        {% endif %}
+                                    {% else %}
+                                        Submission received. Check results for grading.
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No completed quizzes yet.</p>
+                        {% endif %}
+                    </article>
+                </section>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Contact Us</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Navigation</h4>
+                        <p><a href="{% url 'student_dashboard' %}">Return to Dashboard</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
+                </div>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
 </body>
 </html>

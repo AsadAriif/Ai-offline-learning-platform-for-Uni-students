@@ -1,0 +1,1430 @@
+{% load static %}
+<!-- BGNU Gemini AI Study Tutor - Floating Interactive Assistant -->
+<div id="bgnu-chatbot-root">
+    <!-- Floating Trigger Button -->
+    <button id="bgnu-chatbot-toggle" class="bgnu-chat-trigger" aria-label="Open BGNU AI Assistant" title="Open BGNU AI Assistant">
+        {% if request.user.is_authenticated and request.user.role == 'hod' %}
+            <span class="chat-trigger-icon">🤖</span>
+            <span class="chat-trigger-text">HOD AI Co-Pilot</span>
+            <span class="chat-trigger-badge" style="background: #FEF08A; color: #854D0E; font-weight: 800;">HOD AGENT</span>
+        {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+            <span class="chat-trigger-icon">🤖</span>
+            <span class="chat-trigger-text">Faculty AI Co-Pilot</span>
+            <span class="chat-trigger-badge" style="background: #BBF7D0; color: #166534; font-weight: 800;">FACULTY</span>
+        {% else %}
+            <span class="chat-trigger-icon">✨</span>
+            <span class="chat-trigger-text">AI Study Tutor</span>
+            <span class="chat-trigger-badge">GEMINI</span>
+        {% endif %}
+    </button>
+
+    <!-- Floating Chat Window -->
+    <div id="bgnu-chatbot-window" class="bgnu-chat-window" style="display: none;" role="dialog" aria-labelledby="chat-title">
+        <!-- Header -->
+        <div class="bgnu-chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">
+                    {% if request.user.is_authenticated and request.user.role == 'hod' %}🤖{% elif request.user.is_authenticated and request.user.role == 'teacher' %}👨‍🏫{% else %}✨{% endif %}
+                </div>
+                <div class="chat-header-text">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 id="chat-title" style="margin: 0; font-size: 0.95rem; font-family: var(--font-heading, sans-serif); color: #FFFFFF;">
+                            {% if request.user.is_authenticated and request.user.role == 'hod' %}
+                                BGNU HOD Executive AI Co-Pilot
+                            {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+                                BGNU Faculty AI Co-Pilot
+                            {% else %}
+                                BGNU AI Study Tutor
+                            {% endif %}
+                        </h3>
+                        <span class="chat-gemini-pill">Gemini Live</span>
+                    </div>
+                    <div class="chat-header-sub">
+                        <span class="chat-status-dot"></span>
+                        <span id="chat-engine-status">
+                            {% if request.user.is_authenticated and request.user.role == 'hod' %}
+                                Online &bull; Autonomous HOD Operations Active
+                            {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+                                Online &bull; Faculty Operations &amp; Quizzes Active
+                            {% else %}
+                                Online &bull; Deep Academic Mode
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-header-actions">
+                <button type="button" id="bgnu-chatbot-voice-toggle" class="chat-icon-action-btn" title="Toggle Auto Voice Mode (Speaks responses aloud)" aria-label="Toggle Voice Mode">🔈</button>
+                <button type="button" id="bgnu-chatbot-newchat" class="chat-icon-action-btn" title="Start New Conversation" aria-label="New Chat">🔄</button>
+                <button type="button" id="bgnu-chatbot-expand" class="chat-icon-action-btn" title="Toggle Expand / Wide Mode" aria-label="Expand Window">⤢</button>
+                <button type="button" id="bgnu-chatbot-close" class="chat-close-btn" title="Close Chat Window" aria-label="Close Chat">&times;</button>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="bgnu-chat-messages" class="bgnu-chat-body">
+            <!-- Welcome message -->
+            <div class="chat-msg chat-msg-bot">
+                <div class="chat-sender-label">
+                    <span class="sender-avatar-icon">🤖</span>
+                    <span>
+                        {% if request.user.is_authenticated and request.user.role == 'hod' %}
+                            HOD Executive Co-Pilot
+                        {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+                            Faculty AI Co-Pilot
+                        {% else %}
+                            BGNU AI Tutor
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="msg-bubble">
+                    {% if request.user.is_authenticated and request.user.role == 'hod' %}
+                        <p style="margin: 0 0 8px; font-weight: 600; font-size: 1.02rem; color: #111D5E;">Assalam-o-Alaikum Dr. {{ request.user.get_full_name|default:request.user.username }} (HOD)!</p>
+                        <p style="margin: 0 0 8px; line-height: 1.55;">Main aapka <strong>HOD Executive AI Co-Pilot</strong> hoon. Aap mujhe aawaz (Voice 🎤) ya text mein kisi bhi waqt hukam de sakte hain:</p>
+                        <ul style="margin: 0 0 10px 18px; padding: 0; line-height: 1.5;">
+                            <li><strong>Official Circulars:</strong> <em>"All students ko urgent notice bhej do ke kal 9 AM datesheet display hogi."</em></li>
+                            <li><strong>Faculty Tasks:</strong> <em>"Teacher Ahmed ko task assign karo ke CS102 ki outline submit karein."</em></li>
+                            <li><strong>Local Storage Attachments:</strong> 📎 button daba kar koi bhi file attach karein ya PC path dein (e.g. <code>E:\Notices\file.pdf</code>).</li>
+                            <li><strong>Invite Faculty/Students:</strong> <em>"Naya teacher invite karo email prof@bgnu.edu.pk"</em></li>
+                        </ul>
+                    {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+                        <p style="margin: 0 0 8px; font-weight: 600; font-size: 1.02rem; color: #111D5E;">Assalam-o-Alaikum Respected Faculty Member!</p>
+                        <p style="margin: 0 0 8px; line-height: 1.55;">Main aapka <strong>Faculty AI Co-Pilot</strong> hoon. Aap mujhe kisi bhi course ke liye direct instruct kar sakte hain:</p>
+                        <ul style="margin: 0 0 10px 18px; padding: 0; line-height: 1.5;">
+                            <li><strong>Quizzes &amp; Assignments:</strong> <em>"CS102 ke liye 5 MCQs ka quiz banao on Trees."</em></li>
+                            <li><strong>Past Papers &amp; Notes:</strong> <em>"CS102 ka 2024 Past Paper publish kar do."</em> (📎 attach karke ya PC path se).</li>
+                            <li><strong>Submit Marksheets:</strong> <em>"Final marksheet HOD ko approval ke liye submit kar do."</em></li>
+                        </ul>
+                    {% else %}
+                        <p style="margin: 0 0 10px; font-weight: 600; font-size: 1.02rem; color: #111D5E;">Assalam-o-Alaikum! Welcome to BGNU AI Study Assistant.</p>
+                        <p style="margin: 0 0 8px; line-height: 1.55;">I am your comprehensive academic tutor powered by <strong>Google Gemini</strong>. Ask me anything about Data Structures, Algorithms, OOP, Database queries, and exam preparation!</p>
+                    {% endif %}
+                </div>
+                <div class="chat-msg-footer">
+                    <span class="msg-time">Co-Pilot &bull; Active</span>
+                </div>
+            </div>
+
+            <!-- Quick Suggestion Chips -->
+            <div class="chat-quick-chips" id="chat-quick-chips">
+                {% if request.user.is_authenticated and request.user.role == 'hod' %}
+                    <button type="button" class="chip-btn" data-query="All students ko urgent notification bhej do ke kal 9 baje mid-term datesheet display hogi">📢 Urgent Notice to Students</button>
+                    <button type="button" class="chip-btn" data-query="All faculty members ko notification bhej do ke kal 11 AM department meeting hai">📢 Meeting Notice to Faculty</button>
+                    <button type="button" class="chip-btn" data-query="Naya teacher invite karo email prof.cs@bgnu.edu.pk for course Artificial Intelligence">✉️ Invite New Faculty</button>
+                    <button type="button" class="chip-btn" data-query="Review all pending submitted marksheets">📊 Check Marksheets</button>
+                {% elif request.user.is_authenticated and request.user.role == 'teacher' %}
+                    <button type="button" class="chip-btn" data-query="CS102 Data Structures course ke liye ek 3 MCQs ka quiz bana do on Binary Search">📝 Generate 3 MCQs Quiz</button>
+                    <button type="button" class="chip-btn" data-query="CS102 ke liye 2024 Past Paper publish kar do description: Final Exam Papers">📄 Publish Past Paper</button>
+                    <button type="button" class="chip-btn" data-query="CS102 ke students ko assignment submission deadline ka notice bhej do">📢 Notify Class Students</button>
+                    <button type="button" class="chip-btn" data-query="Semester marksheet HOD ko approval ke liye submit kar do">📈 Submit Marksheet to HOD</button>
+                {% else %}
+                    <button type="button" class="chip-btn" data-query="Explain Binary Search algorithm in detail with step-by-step Python code and Big-O complexity analysis">💡 Binary Search in Detail</button>
+                    <button type="button" class="chip-btn" data-query="Explain the 4 Core Pillars of Object Oriented Programming (OOP) with comprehensive Python examples">🏛️ 4 Pillars of OOP</button>
+                    <button type="button" class="chip-btn" data-query="Explain all types of SQL Joins (INNER, LEFT, RIGHT, FULL) with clear table schemas and queries">📊 SQL Joins Guide</button>
+                    <button type="button" class="chip-btn" data-query="Give me university exam preparation strategy and key questions for Data Structures &amp; Algorithms">🎯 DSA Exam Preparation</button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Input Bar with Voice Support -->
+        <div id="bgnu-attachment-preview" style="display: none; padding: 6px 14px; background: #EEF4FF; border-top: 1px solid #D0E1FD; align-items: center; justify-content: space-between; font-size: 0.82rem; color: #111D5E;">
+            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span>📎</span>
+                <span id="bgnu-attachment-name" style="font-weight: 600;"></span>
+            </div>
+            <button type="button" id="bgnu-attachment-remove" style="background: none; border: none; color: #EF4444; font-size: 1.1rem; cursor: pointer; padding: 0 4px; line-height: 1;" title="Remove file">&times;</button>
+        </div>
+
+        <!-- Input Bar with Voice & File Support -->
+        <form id="bgnu-chat-form" class="bgnu-chat-footer" autocomplete="off">
+            <input type="file" id="bgnu-chat-file" style="display: none;" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.csv,.xlsx,.jpg,.jpeg,.png,.zip">
+            <button type="button" id="bgnu-chat-attach-btn" class="chat-attach-btn" title="Attach file from Mobile or PC Storage" aria-label="Attach File">📎</button>
+            <button type="button" id="bgnu-chat-lang-btn" class="chat-tool-btn" style="background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 4px 6px; cursor: pointer; transition: all 0.15s ease;" title="Voice Language: Urdu / Roman Urdu (Click for English)">UR</button>
+            <button type="button" id="bgnu-chat-mic" class="chat-mic-btn" title="Speak Question (Voice Input)" aria-label="Voice Input">🎙️</button>
+            <textarea 
+                id="bgnu-chat-input" 
+                placeholder="Ask any academic question in English or Urdu/Roman Urdu..." 
+                rows="1"
+                maxlength="2000" 
+                required 
+                aria-label="Ask a question"
+            ></textarea>
+            <button type="submit" id="bgnu-chat-send" aria-label="Send message">
+                <span>Send</span>
+                <span class="send-arrow">&rarr;</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Modern Professional Executive AI Co-Pilot Styling */
+#bgnu-chatbot-root {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+}
+
+/* Floating Trigger Pill */
+.bgnu-chat-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #0F172A;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 12px 22px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(37, 99, 235, 0.2);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+}
+
+.bgnu-chat-trigger:hover {
+    background: #1E293B;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.45), 0 0 16px rgba(37, 99, 235, 0.4);
+    border-color: #38BDF8;
+}
+
+.chat-trigger-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.chat-trigger-text {
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: -0.2px;
+    color: #F8FAFC;
+}
+
+.chat-trigger-badge {
+    background: linear-gradient(135deg, #38BDF8, #60A5FA);
+    color: #0F172A;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+/* Chat Window Container */
+.bgnu-chat-window {
+    position: fixed;
+    bottom: 88px;
+    right: 24px;
+    width: 440px;
+    max-width: calc(100vw - 32px);
+    height: 620px;
+    max-height: calc(100vh - 110px);
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.25), 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: bgnuFadeSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bgnu-chat-window.is-expanded {
+    width: 780px;
+    height: 720px;
+    max-height: calc(100vh - 100px);
+}
+
+@keyframes bgnuFadeSlideUp {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header */
+.bgnu-chat-header {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    color: #FFFFFF;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #2563EB;
+}
+
+.chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-avatar {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #1E293B, #334155);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.chat-gemini-pill {
+    background: rgba(37, 99, 235, 0.25);
+    color: #60A5FA;
+    border: 1px solid rgba(96, 165, 250, 0.4);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chat-header-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.74rem;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.chat-status-dot {
+    width: 8px;
+    height: 8px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10B981;
+    animation: bgnuPulse 2s infinite;
+}
+
+@keyframes bgnuPulse {
+    0% { transform: scale(0.95); opacity: 0.85; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.85; }
+}
+
+.chat-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chat-icon-action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.chat-icon-action-btn:hover {
+    background: rgba(37, 99, 235, 0.35);
+    border-color: #60A5FA;
+}
+
+.chat-close-btn {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 1.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.chat-close-btn:hover {
+    color: #FFFFFF;
+}
+
+/* Chat Body (Clean, High Contrast) */
+.bgnu-chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #F8FAFC;
+}
+
+.chat-sender-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 5px;
+    letter-spacing: -0.1px;
+}
+
+.sender-avatar-icon {
+    font-size: 0.88rem;
+}
+
+.chat-msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+}
+
+.chat-msg-user {
+    align-self: flex-end;
+}
+
+.chat-msg-bot {
+    align-self: flex-start;
+    max-width: 95%;
+}
+
+.bgnu-chat-window.is-expanded .chat-msg-bot {
+    max-width: 92%;
+}
+
+.msg-bubble {
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 0.92rem;
+    line-height: 1.62;
+    word-break: break-word;
+}
+
+/* User Message: Elegant Royal Blue */
+.chat-msg-user .msg-bubble {
+    background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%);
+    color: #FFFFFF;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+}
+
+/* Bot Message: Crisp White Card with Maximum Contrast */
+.chat-msg-bot .msg-bubble {
+    background: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #E2E8F0;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+/* Markdown Headings */
+.msg-bubble h1, .msg-bubble h2, .msg-bubble h3, .msg-bubble h4 {
+    margin: 14px 0 8px 0;
+    color: #0F172A;
+    font-weight: 700;
+    line-height: 1.35;
+}
+.msg-bubble h1 { font-size: 1.15rem; }
+.msg-bubble h2 { font-size: 1.05rem; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; }
+.msg-bubble h3 { font-size: 0.98rem; }
+.msg-bubble h4 { font-size: 0.92rem; }
+
+.msg-bubble p {
+    margin: 0 0 10px 0;
+}
+.msg-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.msg-bubble ul, .msg-bubble ol {
+    margin: 6px 0 12px 20px;
+    padding: 0;
+}
+
+.msg-bubble li {
+    margin-bottom: 5px;
+    line-height: 1.55;
+}
+
+.msg-bubble blockquote {
+    margin: 10px 0;
+    padding: 8px 14px;
+    background: #F1F5F9;
+    border-left: 3px solid #2563EB;
+    color: #334155;
+    border-radius: 0 8px 8px 0;
+}
+
+.msg-bubble hr {
+    border: 0;
+    height: 1px;
+    background: #E2E8F0;
+    margin: 16px 0;
+}
+
+/* Code Blocks with Midnight Slate Header */
+.code-block-container {
+    margin: 12px 0;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0B0F19;
+}
+
+.code-block-header {
+    background: #1E293B;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+}
+
+.code-block-lang {
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #38BDF8;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.code-copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.code-copy-btn:hover {
+    background: #2563EB;
+    color: #FFFFFF;
+    border-color: #2563EB;
+}
+
+.code-block-container pre {
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', Consolas, Monaco, monospace;
+    font-size: 0.85rem;
+    line-height: 1.52;
+    color: #F8FAFC;
+    tab-size: 4;
+}
+
+/* Inline Code: High-Contrast Lavender Pill */
+.msg-bubble code.inline-code {
+    background: #EEF2FF;
+    color: #3730A3;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.88em;
+    border: 1px solid #C7D2FE;
+    font-weight: 600;
+}
+
+/* Markdown Tables */
+.chat-table-wrapper {
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+.chat-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-table-wrapper th, .chat-table-wrapper td {
+    padding: 9px 12px;
+    border: 1px solid #E2E8F0;
+    text-align: left;
+}
+
+.chat-table-wrapper th {
+    background: #0F172A;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.chat-table-wrapper tr:nth-child(even) {
+    background: #F8FAFC;
+}
+
+/* Message Footer */
+.chat-msg-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding-left: 2px;
+}
+
+.msg-time {
+    font-size: 0.72rem;
+    color: #64748B;
+    font-weight: 500;
+}
+
+.chat-action-pill-btn {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    color: #334155;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+}
+
+.chat-action-pill-btn:hover {
+    background: #EEF2FF;
+    color: #1E40AF;
+    border-color: #3B82F6;
+}
+
+/* Quick Suggestion Chips */
+.chat-quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 6px;
+    padding-bottom: 4px;
+}
+
+.chip-btn {
+    background: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #CBD5E1;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.chip-btn:hover {
+    background: #0F172A;
+    color: #FFFFFF;
+    border-color: #0F172A;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+/* Typing Dots */
+.typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 18px;
+}
+
+.typing-dot {
+    width: 7px;
+    height: 7px;
+    background: #2563EB;
+    border-radius: 50%;
+    animation: bgnuTyping 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bgnuTyping {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+    30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Footer / Input Bar */
+.bgnu-chat-footer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 14px;
+    background: #FFFFFF;
+    border-top: 1px solid #CBD5E1;
+}
+
+.bgnu-chat-footer textarea {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #CBD5E1;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    outline: none;
+    background: #F8FAFC;
+    color: #0F172A;
+    resize: none;
+    line-height: 1.45;
+    max-height: 120px;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bgnu-chat-footer textarea:focus {
+    border-color: #2563EB;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+.chat-attach-btn {
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    transition: all 0.15s ease;
+}
+
+.chat-attach-btn:hover {
+    background: #EEF2FF;
+    border-color: #3B82F6;
+}
+
+.chat-mic-btn {
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    transition: all 0.15s ease;
+}
+
+.chat-mic-btn:hover {
+    background: #EEF2FF;
+    border-color: #3B82F6;
+}
+
+.chat-mic-btn.listening {
+    background: #FEE2E2;
+    border-color: #EF4444;
+    animation: micPulse 1.2s infinite;
+}
+
+@keyframes micPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.2); }
+}
+
+.bgnu-chat-footer button[type="submit"] {
+    background: #2563EB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    transition: all 0.18s ease;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.bgnu-chat-footer button[type="submit"]:hover {
+    background: #1D4ED8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.bgnu-chat-footer button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+@media (max-width: 640px) {
+    #bgnu-chatbot-root {
+        bottom: 16px;
+        right: 16px;
+    }
+    .bgnu-chat-window, .bgnu-chat-window.is-expanded {
+        right: 12px;
+        bottom: 74px;
+        width: calc(100vw - 24px);
+        height: 520px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('bgnu-chatbot-toggle');
+    const closeBtn = document.getElementById('bgnu-chatbot-close');
+    const expandBtn = document.getElementById('bgnu-chatbot-expand');
+    const newChatBtn = document.getElementById('bgnu-chatbot-newchat');
+    const chatWindow = document.getElementById('bgnu-chatbot-window');
+    const chatForm = document.getElementById('bgnu-chat-form');
+    const chatInput = document.getElementById('bgnu-chat-input');
+    const chatMessages = document.getElementById('bgnu-chat-messages');
+    const chatSendBtn = document.getElementById('bgnu-chat-send');
+    const chipsContainer = document.getElementById('chat-quick-chips');
+
+    if (!toggleBtn || !chatWindow) return;
+
+    // Multi-turn conversation memory for true Gemini context
+    let conversationHistory = [];
+
+    // Toggle Chat Window
+    function toggleChat() {
+        if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+            chatWindow.style.display = 'flex';
+            toggleBtn.style.display = 'none';
+            chatInput.focus();
+        } else {
+            chatWindow.style.display = 'none';
+            toggleBtn.style.display = 'inline-flex';
+        }
+    }
+
+    toggleBtn.addEventListener('click', toggleChat);
+    closeBtn.addEventListener('click', toggleChat);
+
+    // Expand / Maximize toggle
+    expandBtn.addEventListener('click', function() {
+        const isExp = chatWindow.classList.toggle('is-expanded');
+        expandBtn.textContent = isExp ? '⤡' : '⤢';
+        expandBtn.setAttribute('title', isExp ? 'Standard View' : 'Expand / Wide Mode');
+        scrollToBottom();
+    });
+
+    // Reset / New Chat
+    newChatBtn.addEventListener('click', function() {
+        conversationHistory = [];
+        chatMessages.innerHTML = `
+            <div class="chat-msg chat-msg-bot">
+                <div class="chat-sender-label">
+                    <span class="sender-avatar-icon">🎓</span>
+                    <span>BGNU AI Tutor</span>
+                </div>
+                <div class="msg-bubble">
+                    <p style="margin: 0 0 6px; font-weight: 600; color: #111D5E;">Conversation Reset ✨</p>
+                    <p style="margin: 0;">Started a fresh study session. Ask me any new computer science, algorithm, or exam question!</p>
+                </div>
+                <div class="chat-msg-footer">
+                    <span class="msg-time">AI Tutor &bull; Ready</span>
+                </div>
+            </div>
+        `;
+        if (chipsContainer) {
+            chipsContainer.style.display = 'flex';
+            chatMessages.appendChild(chipsContainer);
+        }
+        chatInput.focus();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && chatWindow.style.display === 'flex') {
+            toggleChat();
+        }
+    });
+
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Auto-expand textarea on typing
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Enter to submit (Shift+Enter for new line)
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // Robust Gemini-style Markdown Formatter
+    function formatMessageText(rawText) {
+        if (!rawText) return '';
+
+        // 1. Extract and protect code blocks
+        const codeBlocks = [];
+        let text = rawText.replace(/```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+            const index = codeBlocks.length;
+            const cleanLang = (lang || 'code').trim().toLowerCase();
+            codeBlocks.push({ lang: cleanLang, code: code.replace(/\r\n/g, '\n').trim() });
+            return `__CODE_BLOCK_${index}__`;
+        });
+
+        // 2. Escape HTML entities
+        text = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        // 3. Headings: ###, ##, #
+        text = text.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+        text = text.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+        text = text.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+
+        // 4. Horizontal Rule: ---
+        text = text.replace(/^---$/gm, '<hr>');
+
+        // 5. Blockquotes: > quote
+        text = text.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
+
+        // 6. Tables (| col | col |)
+        text = text.replace(/((?:\|[^\n]+\|\n?)+)/g, function(tableText) {
+            const lines = tableText.trim().split('\n');
+            if (lines.length < 2) return tableText;
+
+            let html = '<div class="chat-table-wrapper"><table>';
+            lines.forEach((line, idx) => {
+                const cells = line.split('|').map(c => c.trim()).filter((c, i, a) => i > 0 && i < a.length - 1);
+                if (cells.every(c => /^[-:]+$/.test(c))) return; // Divider row
+
+                const tag = idx === 0 ? 'th' : 'td';
+                html += '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+            });
+            html += '</table></div>';
+            return html;
+        });
+
+        // 7. Unordered Lists: * item or - item
+        text = text.replace(/^[\*\-] (.*?)$/gm, '<li>$1</li>');
+        text = text.replace(/(<li>.*?<\/li>\s*)+/gs, function(match) {
+            return `<ul>${match}</ul>`;
+        });
+
+        // 8. Numbered Lists: 1. item
+        text = text.replace(/^\d+\.\s+(.*?)$/gm, '<li class="num-li">$1</li>');
+        text = text.replace(/(<li class="num-li">.*?<\/li>\s*)+/gs, function(match) {
+            return `<ol>${match.replace(/class="num-li"/g, '')}</ol>`;
+        });
+
+        // 9. Bold: **text**
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // 10. Italic: *text* or _text_
+        text = text.replace(/\*([^\*\n]+)\*/g, '<em>$1</em>');
+        text = text.replace(/_([^_\n]+)_/g, '<em>$1</em>');
+
+        // 11. Inline Code: `code`
+        text = text.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+
+        // 12. Paragraph breaks
+        text = text.replace(/\n\n+/g, '</p><p>');
+        text = text.replace(/\n/g, '<br>');
+        text = `<p>${text}</p>`;
+        text = text.replace(/<p><\/p>/g, '');
+        text = text.replace(/<p>(<h[1-4]>.*?<\/h[1-4]>)<\/p>/g, '$1');
+        text = text.replace(/<p>(<ul>.*?<\/ul>)<\/p>/gs, '$1');
+        text = text.replace(/<p>(<ol>.*?<\/ol>)<\/p>/gs, '$1');
+        text = text.replace(/<p>(<div class="chat-table-wrapper">.*?<\/div>)<\/p>/gs, '$1');
+        text = text.replace(/<p>(<hr>)<\/p>/g, '$1');
+        text = text.replace(/<p>(<blockquote>.*?<\/blockquote>)<\/p>/gs, '$1');
+
+        // 13. Reinsert code blocks with copy bar
+        codeBlocks.forEach((cb, idx) => {
+            const escapedCode = cb.code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            const replacement = `
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span class="code-block-lang">${cb.lang}</span>
+                        <button type="button" class="code-copy-btn" onclick="copySnippet(this)">📋 Copy Code</button>
+                    </div>
+                    <pre><code>${escapedCode}</code></pre>
+                </div>
+            `;
+            text = text.replace(`__CODE_BLOCK_${idx}__`, replacement);
+        });
+
+        return text;
+    }
+
+    // Append Message to UI
+    function appendMessage(sender, text, modelSource) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-msg ' + (sender === 'user' ? 'chat-msg-user' : 'chat-msg-bot');
+
+        if (sender === 'bot') {
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'chat-sender-label';
+            labelDiv.innerHTML = '<span class="sender-avatar-icon">✨</span><span>BGNU AI Tutor (Gemini)</span>';
+            msgDiv.appendChild(labelDiv);
+        }
+
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        bubble.innerHTML = formatMessageText(text);
+        msgDiv.appendChild(bubble);
+
+        // Footer Actions
+        const footer = document.createElement('div');
+        footer.className = 'chat-msg-footer';
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'msg-time';
+        const now = new Date();
+        timeSpan.textContent = (sender === 'user' ? 'You • ' : 'Gemini • ') + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        footer.appendChild(timeSpan);
+
+        if (sender === 'bot') {
+            // Copy Entire Response Button
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'chat-action-pill-btn';
+            copyBtn.innerHTML = '📋 Copy';
+            copyBtn.onclick = function() {
+                navigator.clipboard.writeText(text).then(() => {
+                    copyBtn.innerHTML = '✓ Copied!';
+                    setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+                });
+            };
+            footer.appendChild(copyBtn);
+
+            // Listen Aloud (SpeechSynthesis)
+            if ('speechSynthesis' in window) {
+                const listenBtn = document.createElement('button');
+                listenBtn.type = 'button';
+                listenBtn.className = 'chat-action-pill-btn';
+                listenBtn.innerHTML = '🔊 Listen';
+                listenBtn.onclick = function() {
+                    if (window.speechSynthesis.speaking) {
+                        window.speechSynthesis.cancel();
+                        listenBtn.innerHTML = '🔊 Listen';
+                        return;
+                    }
+                    const cleanText = text.replace(/[*_`#]/g, '').replace(/```[\s\S]*?```/g, 'Code example omitted.');
+                    const utter = new SpeechSynthesisUtterance(cleanText);
+                    utter.rate = 1.0;
+                    utter.onend = function() { listenBtn.innerHTML = '🔊 Listen'; };
+                    listenBtn.innerHTML = '⏹️ Stop';
+                    window.speechSynthesis.speak(utter);
+                };
+                footer.appendChild(listenBtn);
+            }
+        }
+
+        msgDiv.appendChild(footer);
+        chatMessages.appendChild(msgDiv);
+        scrollToBottom();
+    }
+
+    // Typing Indicator
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'bgnu-typing-indicator';
+        typingDiv.className = 'chat-msg chat-msg-bot';
+        typingDiv.innerHTML = `
+            <div class="chat-sender-label">
+                <span class="sender-avatar-icon">✨</span>
+                <span>Gemini is generating in-depth explanation...</span>
+            </div>
+            <div class="msg-bubble typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+        const el = document.getElementById('bgnu-typing-indicator');
+        if (el) el.remove();
+    }
+
+    // Send Message Handler
+    // Voice Mode State & Speech Synthesis (Auto Voice ON by default like Gemini)
+    let voiceModeEnabled = true;
+    const voiceToggleBtn = document.getElementById('bgnu-chatbot-voice-toggle');
+
+    function speakAloud(textToSpeak) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const cleanSpoken = textToSpeak
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            .replace(/[*_`#]/g, '')
+            .replace(/```[\s\S]*?```/g, 'Code example omitted.')
+            .trim();
+        if (!cleanSpoken) return;
+
+        const utter = new SpeechSynthesisUtterance(cleanSpoken);
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
+
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+            const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Neural') || v.name.includes('Online'))) ||
+                              voices.find(v => v.lang.startsWith('en'));
+            if (preferred) utter.voice = preferred;
+        }
+
+        window.speechSynthesis.speak(utter);
+    }
+
+    if (voiceToggleBtn) {
+        voiceToggleBtn.classList.add('active');
+        voiceToggleBtn.title = 'Auto Voice Mode: ON (Assistant speaks aloud)';
+        voiceToggleBtn.innerHTML = '🔊';
+
+        voiceToggleBtn.addEventListener('click', function() {
+            voiceModeEnabled = !voiceModeEnabled;
+            this.classList.toggle('active', voiceModeEnabled);
+            this.title = voiceModeEnabled ? 'Auto Voice Mode: ON (Assistant speaks aloud)' : 'Auto Voice Mode: OFF';
+            this.innerHTML = voiceModeEnabled ? '🔊' : '🔈';
+            if (voiceModeEnabled) {
+                speakAloud('Voice mode enabled.');
+            } else {
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        });
+    }
+
+    // File Attachment Handler (Mobile & PC)
+    let selectedFile = null;
+    const attachBtn = document.getElementById('bgnu-chat-attach-btn');
+    const fileInput = document.getElementById('bgnu-chat-file');
+    const attachPreview = document.getElementById('bgnu-attachment-preview');
+    const attachNameSpan = document.getElementById('bgnu-attachment-name');
+    const attachRemoveBtn = document.getElementById('bgnu-attachment-remove');
+
+    if (attachBtn && fileInput) {
+        attachBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                selectedFile = this.files[0];
+                if (attachNameSpan) attachNameSpan.textContent = selectedFile.name;
+                if (attachPreview) attachPreview.style.display = 'flex';
+                chatInput.placeholder = 'Add instructions for attached file...';
+                chatInput.focus();
+            }
+        });
+    }
+
+    function clearAttachedFile() {
+        selectedFile = null;
+        if (fileInput) fileInput.value = '';
+        if (attachPreview) attachPreview.style.display = 'none';
+        if (attachNameSpan) attachNameSpan.textContent = '';
+        chatInput.placeholder = 'Ask any question or assign academic tasks...';
+    }
+
+    if (attachRemoveBtn) {
+        attachRemoveBtn.addEventListener('click', clearAttachedFile);
+    }
+
+    // Send Message Handler
+    async function sendMessage(text) {
+        if ((!text || !text.trim()) && !selectedFile) return;
+        const query = text ? text.trim() : (selectedFile ? `Please process this attached file: ${selectedFile.name}` : '');
+
+        appendMessage('user', query);
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        chatInput.disabled = true;
+        chatSendBtn.disabled = true;
+
+        if (chipsContainer) {
+            chipsContainer.style.display = 'none';
+        }
+
+        showTypingIndicator();
+
+        try {
+            let csrfToken = '';
+            const match = document.cookie.match(/csrftoken=([^;]+)/);
+            if (match) csrfToken = match[1];
+
+            let response;
+            if (selectedFile) {
+                const fd = new FormData();
+                fd.append('message', query);
+                fd.append('history', JSON.stringify(conversationHistory));
+                fd.append('file', selectedFile);
+                fd.append('sender_role', '{{ request.user.role|default:"" }}');
+                fd.append('current_path', window.location.pathname);
+
+                response = await fetch('/api/chatbot/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: fd
+                });
+                clearAttachedFile();
+            } else {
+                response = await fetch('/api/chatbot/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        message: query,
+                        history: conversationHistory,
+                        sender_role: '{{ request.user.role|default:"" }}',
+                        current_path: window.location.pathname
+                    })
+                });
+            }
+
+            removeTypingIndicator();
+
+            if (response.ok) {
+                const data = await response.json();
+                const reply = data.reply || 'No response generated.';
+                appendMessage('bot', reply, data.model);
+
+                // Speak aloud if voice mode is enabled
+                if (voiceModeEnabled) {
+                    speakAloud(data.voice_reply || reply);
+                }
+
+                // Add to multi-turn memory
+                conversationHistory.push({ role: 'user', text: query });
+                conversationHistory.push({ role: 'model', text: reply });
+            } else {
+                appendMessage('bot', '⚠️ Temporary error communicating with Gemini AI server. Please try again.');
+            }
+        } catch (err) {
+            removeTypingIndicator();
+            appendMessage('bot', '📡 Offline Mode: Network connection interrupted.');
+        } finally {
+            chatInput.disabled = false;
+            chatSendBtn.disabled = false;
+            chatInput.focus();
+        }
+    }
+
+    // Form Submit
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage(chatInput.value);
+    });
+
+    // Quick Chips Clicks
+    if (chipsContainer) {
+        chipsContainer.addEventListener('click', function(e) {
+            const btn = e.target.closest('.chip-btn');
+            if (btn && btn.dataset.query) {
+                sendMessage(btn.dataset.query);
+            }
+        });
+    }
+
+    // Unlimited Continuous Voice Input via Web Speech API
+    const micBtn = document.getElementById('bgnu-chat-mic');
+    if (micBtn) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRec) {
+            const recognizer = new SpeechRec();
+            recognizer.continuous = true;
+            recognizer.interimResults = true;
+
+            // Speech Language Management (Urdu / English)
+            let speechLang = localStorage.getItem('bgnu_speech_lang') || 'ur';
+            const langBtn = document.getElementById('bgnu-chat-lang-btn');
+
+            function applySpeechLang() {
+                if (speechLang === 'ur') {
+                    recognizer.lang = 'ur-PK';
+                    if (langBtn) {
+                        langBtn.textContent = 'UR';
+                        langBtn.title = 'Voice Language: Urdu / Roman Urdu (Click to switch to English)';
+                        langBtn.style.background = '#EFF6FF';
+                        langBtn.style.color = '#1D4ED8';
+                    }
+                } else {
+                    recognizer.lang = 'en-US';
+                    if (langBtn) {
+                        langBtn.textContent = 'EN';
+                        langBtn.title = 'Voice Language: English (Click to switch to Urdu)';
+                        langBtn.style.background = '#F3F4F6';
+                        langBtn.style.color = '#374151';
+                    }
+                }
+                localStorage.setItem('bgnu_speech_lang', speechLang);
+            }
+
+            if (langBtn) {
+                langBtn.addEventListener('click', function() {
+                    speechLang = (speechLang === 'ur') ? 'en' : 'ur';
+                    applySpeechLang();
+                });
+            }
+            applySpeechLang();
+
+            let isRecording = false;
+            let finalAccumulatedTranscript = '';
+            let preRecordingText = '';
+
+            function startRecording() {
+                isRecording = true;
+                finalAccumulatedTranscript = '';
+                preRecordingText = chatInput.value ? (chatInput.value.trim() + ' ') : '';
+
+                // Ensure voice audio reply is enabled when microphone is activated
+                voiceModeEnabled = true;
+                if (voiceToggleBtn) {
+                    voiceToggleBtn.classList.add('active');
+                    voiceToggleBtn.title = 'Auto Voice Mode: ON (Assistant speaks aloud)';
+                    voiceToggleBtn.innerHTML = '🔊';
+                }
+
+                try {
+                    recognizer.start();
+                } catch (err) {
+                    console.log('Speech recognizer start exception:', err);
+                }
+                micBtn.classList.add('listening');
+                micBtn.title = 'Recording Active (Unlimited) - Click Mic to pause or Send when finished';
+                chatInput.placeholder = '🎙️ Listening continuously... Speak as long as you like. Click Send when done.';
+                chatInput.focus();
+            }
+
+            function stopRecording() {
+                isRecording = false;
+                try {
+                    recognizer.stop();
+                } catch (err) {}
+                micBtn.classList.remove('listening');
+                micBtn.title = 'Speak Question (Unlimited Voice Input)';
+                chatInput.placeholder = 'Ask any academic question in English or Urdu/Roman Urdu...';
+            }
+
+            recognizer.onstart = function() {
+                micBtn.classList.add('listening');
+            };
+
+            recognizer.onresult = function(event) {
+                let currentSessionFinal = '';
+                let interimTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcriptPart = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        currentSessionFinal += transcriptPart + ' ';
+                    } else {
+                        interimTranscript += transcriptPart;
+                    }
+                }
+
+                if (currentSessionFinal) {
+                    finalAccumulatedTranscript += currentSessionFinal;
+                }
+
+                const totalText = preRecordingText + finalAccumulatedTranscript + interimTranscript;
+                chatInput.value = totalText;
+                chatInput.style.height = 'auto';
+                chatInput.style.height = (chatInput.scrollHeight) + 'px';
+            };
+
+            recognizer.onerror = function(event) {
+                // Ignore silent timeouts / no-speech while user is still speaking/recording
+                if (event.error === 'no-speech' && isRecording) {
+                    return;
+                }
+                console.log('Speech recognition event:', event.error);
+                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    stopRecording();
+                    alert('Microphone access was denied. Please allow microphone permissions in your browser.');
+                }
+            };
+
+            recognizer.onend = function() {
+                // If user is still in recording mode, automatically restart to overcome the browser 2-3s silence limit!
+                if (isRecording) {
+                    try {
+                        recognizer.start();
+                    } catch (e) {
+                        setTimeout(function() {
+                            if (isRecording) {
+                                try { recognizer.start(); } catch (err) {}
+                            }
+                        }, 250);
+                    }
+                } else {
+                    micBtn.classList.remove('listening');
+                    chatInput.placeholder = 'Ask any academic question in English or Urdu/Roman Urdu...';
+                }
+            };
+
+            micBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            });
+
+            // When user submits or clicks Send, automatically stop recording cleanly
+            chatForm.addEventListener('submit', function() {
+                if (isRecording) {
+                    stopRecording();
+                }
+            });
+        } else {
+            micBtn.style.display = 'none';
+        }
+    }
+
+});
+
+// Global copy snippet handler for code blocks
+function copySnippet(btn) {
+    const pre = btn.closest('.code-block-container').querySelector('pre code');
+    if (pre) {
+        navigator.clipboard.writeText(pre.innerText).then(() => {
+            const orig = btn.innerText;
+            btn.innerText = '✓ Copied!';
+            setTimeout(() => { btn.innerText = orig; }, 2000);
+        });
+    }
+}
+</script>

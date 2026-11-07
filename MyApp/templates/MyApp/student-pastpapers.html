@@ -4,63 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Past Papers - AI Offline Learning Platform</title>
+    <title>Past Examination Papers - Student Portal</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; CS &amp; IT</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'student_actions' %}">Actions</a>
-                <a href="{% url 'student_assignments' %}" class="primary">Student Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Past Papers</h2>
-                <p>Download past exam papers published by your instructors for practice and revision.</p>
-            </article>
-        </section>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">ACADEMIC WORKSPACE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'student_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'student_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Study Materials</span>
+                    </a>
+                    <a href="{% url 'student_assignments' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Coursework &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'student_quiz' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⏱️</span>
+                        <span class="sidebar-link-text">Attempt Quizzes</span>
+                    </a>
+                    <a href="{% url 'student_progress' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📈</span>
+                        <span class="sidebar-link-text">Progress Tracking</span>
+                    </a>
+                    <a href="{% url 'student_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Assessment Results</span>
+                    </a>
+                    <a href="{% url 'student_pastpapers' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Past Exam Papers</span>
+                    </a>
+                    <a href="{% url 'student_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Actions Directory</span>
+                    </a>
+                </nav>
 
-        <div class="grid-one">
-            <article class="list-panel panel">
-                <h3>Available Past Papers</h3>
-                {% if materials %}
-                    {% for m in materials %}
-                        <div class="list-item">
-                            <strong>{{ m.title }}</strong>
-                            <div class="meta"><span>{{ m.course.name }}</span><span>{{ m.created_at|timesince }} ago</span></div>
-                            <div class="actions"><a href="{{ m.file.url }}" download>Download</a></div>
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">S</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Student Account</span>
+                        <span class="user-role-badge">Student Portal</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Student Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Past Examination Papers</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No past papers available.</p>
-                {% endif %}
-            </article>
-        </div>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'student_dashboard' %}" class="topbar-user-link">
+                        <span>Student Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-            </div>
-        </footer>
+            </header>
+
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <section class="hero panel" style="display: block; margin-bottom: 28px;">
+                    <span class="badge badge-info" style="margin-bottom: 8px;">Examination Preparation</span>
+                    <h2>Past Examination Papers</h2>
+                    <p style="color: var(--secondary-text); margin: 0;">Download previous semester exam papers, midterms, and practice revisions published by your department instructors for offline revision.</p>
+                </section>
+
+                <main class="panel">
+                    <h3 style="margin-bottom: 16px;">Available Examination Papers</h3>
+                    {% if materials %}
+                        <div class="recent-list">
+                            {% for m in materials %}
+                                <div class="list-item">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <strong>{{ m.title }}</strong>
+                                        <span class="badge badge-info">{{ m.course.name }}</span>
+                                    </div>
+                                    <div class="meta">
+                                        <span>📅 Published {{ m.created_at|timesince }} ago</span>
+                                        {% if m.file %}<span>&bull; {{ m.file.size|filesizeformat }}</span>{% endif %}
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <a href="{{ m.file.url }}" download class="btn" style="padding: 7px 16px; font-size: 0.85rem;">
+                                            ⬇️ Download Examination Paper
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 36px 16px; color: var(--secondary-text);">
+                            <p style="font-size: 1.05rem; margin-bottom: 6px;">No past examination papers have been published for your enrolled courses yet.</p>
+                            <p style="font-size: 0.875rem;">Check back later as instructors upload exam archives.</p>
+                        </div>
+                    {% endif %}
+                </main>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Navigation</h4>
+                        <p><a href="{% url 'student_dashboard' %}">Return to Dashboard</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
+                </div>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
 </body>
 </html>

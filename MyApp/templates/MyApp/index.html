@@ -1,89 +1,120 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baba Guru Nanak University - AI Learning Platform</title>
-
+    <title>Baba Guru Nanak University - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 
 <body>
+    <div class="page">
+        <!-- University Header with Dual Logos -->
+        <header class="landing-header">
+            <img src="{% static 'MyApp/department_logo.png' %}" alt="Department of CS & IT Logo" class="logo-top-left">
 
-    <!-- Header with logos -->
-    <header>
-        <!-- Department Logo - Top Left -->
-        <img src="{% static 'MyApp/department_logo.png' %}" alt="Department Logo" class="logo-top-left">
-
-        <div class="header-text">
-            <h1>Baba Guru Nanak University Nankana Sahib</h1>
-            <h2>AI Offline Learning Platform</h2>
-        </div>
-
-        <!-- University Logo - Top Right -->
-        <img src="{% static 'MyApp/uni_logo.png' %}" alt="University Logo" class="logo-top-right">
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Welcome to AI-Powered Learning</h1>
-        <p>
-            Study anytime without internet. Our platform provides offline courses,
-            AI recommendations, quizzes, and smart learning tools for students.
-        </p>
-
-        <a href="{% url 'login' %}" class="btn">Login</a>
-    </section>
-
-    <!-- Features -->
-    <section class="features">
-        <div class="feature-box">
-            <h3>Offline Access</h3>
-            <p>Download learning material and study without internet.</p>
-        </div>
-
-        <div class="feature-box">
-            <h3>AI Learning</h3>
-            <p>Get personalized recommendations from AI assistant.</p>
-        </div>
-
-        <div class="feature-box">
-            <h3>Interactive Content</h3>
-            <p>Watch videos, attempt quizzes and improve learning.</p>
-        </div>
-
-        <div class="feature-box">
-            <h3>Progress Tracking</h3>
-            <p>Track student performance and course completion.</p>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Contact Us</h4>
-                <p><strong>Phone:</strong></p>
-                <p>056-9201171</p>
-                <p>0300-1199358</p>
+            <div class="header-text">
+                <h1>Baba Guru Nanak University Nankana Sahib</h1>
+                <h2>Department of Computer Science &amp; IT &middot; AI Offline Learning Platform</h2>
             </div>
-            <div class="footer-section">
-                <h4>Address</h4>
-                <p>Adam Pura</p>
-                <p>Nankana Sahib</p>
-            </div>
-            <div class="footer-section">
-                <h4>Email</h4>
-                <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-            </div>
-        </div>
-        <div class="footer-divider"></div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-            <p>AI Offline Learning Platform</p>
-        </div>
-    </footer>
 
+            <img src="{% static 'MyApp/uni_logo.png' %}" alt="University Logo" class="logo-top-right">
+        </header>
+
+        <!-- Modern Hero Section -->
+        <section class="landing-hero">
+            <span class="badge" style="margin-bottom: 16px; display: inline-flex; font-size: 0.85rem; padding: 6px 14px; background: rgba(110, 168, 254, 0.18); color: var(--secondary-accent); border: 1px solid var(--primary-accent);">
+                🎓 Academic Year 2026 &bull; Offline-Ready Education
+            </span>
+            <h1>Welcome to AI-Powered University Learning</h1>
+            <p>
+                Study coursework anytime without continuous internet access. Our platform provides offline course modules,
+                study materials, past examination papers, interactive quizzes, and integrated AI-assisted analysis for students and faculty.
+            </p>
+
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+                <a href="{% url 'login' %}" class="btn" style="padding: 12px 28px;">
+                    Portal Login &rarr;
+                </a>
+            </div>
+
+            <div class="stats-row" style="margin-top: 36px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 24px;">
+                <div class="stat-card" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); border-left-color: var(--primary-accent);">
+                    <span style="color: var(--secondary-accent);">Offline Capability</span>
+                    <strong style="color: #ffffff; font-size: 1.35rem;">100% Offline</strong>
+                </div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); border-left-color: var(--primary-accent);">
+                    <span style="color: var(--secondary-accent);">AI Intelligence</span>
+                    <strong style="color: #ffffff; font-size: 1.35rem;">Built-in Detector</strong>
+                </div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); border-left-color: var(--primary-accent);">
+                    <span style="color: var(--secondary-accent);">Assessments</span>
+                    <strong style="color: #ffffff; font-size: 1.35rem;">Quizzes &amp; Tasks</strong>
+                </div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); border-left-color: var(--primary-accent);">
+                    <span style="color: var(--secondary-accent);">Faculty &amp; HOD</span>
+                    <strong style="color: #ffffff; font-size: 1.35rem;">Grading &amp; Sync</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <h2 style="margin-bottom: 20px; font-size: 1.45rem;">Platform Highlights &amp; Features</h2>
+        <section class="features">
+            <div class="feature-box">
+                <h3>📚 Offline Study Access</h3>
+                <p>Download comprehensive course packs, lecture notes, slides, and past exam papers to study without requiring an active internet connection.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>🤖 AI Submission Detector</h3>
+                <p>State-of-the-art machine learning model trained to identify whether submitted coursework is human-written or AI-generated with confidence metrics.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>📝 Interactive Quizzes &amp; Tasks</h3>
+                <p>Complete scheduled quizzes, submit assignment documents, and test subject comprehension with offline progress caching.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>📊 Academic Performance Tracking</h3>
+                <p>Monitor your academic progress across enrolled courses, view grading breakdowns, and receive personalized teacher feedback.</p>
+            </div>
+        </section>
+
+        <!-- Institutional University Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Department Contact</h4>
+                    <p><strong>Phone:</strong> 056-9201171</p>
+                    <p><strong>Mobile:</strong> 0300-1199358</p>
+                    <p><strong>Email:</strong> <a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Campus Location</h4>
+                    <p>Adam Pura</p>
+                    <p>Nankana Sahib, Punjab, Pakistan</p>
+                    <p>Baba Guru Nanak University</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="{% url 'login' %}">Student, Faculty &amp; HOD Login</a></p>
+                    <p><a href="#top">Back to Top &uarr;</a></p>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                <p>AI Offline Learning Platform &mdash; All Rights Reserved</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

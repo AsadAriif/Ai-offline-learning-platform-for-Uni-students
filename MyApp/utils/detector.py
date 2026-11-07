@@ -1,5 +1,6 @@
 import os
 import hashlib
+import warnings
 from pathlib import Path
 import joblib
 import PyPDF2
@@ -84,9 +85,11 @@ def _load_model_and_vectorizer():
     
     if model_path.is_file() and vec_path.is_file():
         try:
-            model = joblib.load(model_path)
-            vec = joblib.load(vec_path)
-            return model, vec
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                model = joblib.load(model_path)
+                vec = joblib.load(vec_path)
+                return model, vec
         except Exception as e:
             print(f"Error loading models: {e}")
             return None, None
@@ -105,7 +108,7 @@ def predict(file_path: str) -> dict:
     Returns
     -------
     dict
-        A dictionary with keys ``label`` ("AI" or "Human") and ``confidence`` (float 0‑1).
+        A dictionary with keys ``label`` ("AI" or "Human") and ``confidence`` (float 0-1).
     """
     if _model is not None and _vectorizer is not None:
         try:

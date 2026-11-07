@@ -1,0 +1,412 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Faculty &amp; HODs - HOD Portal - Baba Guru Nanak University</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- HOD Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; HOD Portal</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">DEPARTMENT GOVERNANCE</div>
+                <nav class="sidebar-nav">
+                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous HOD AI Co-Pilot">
+                          <span class="sidebar-link-icon">🤖</span>
+                          <span class="sidebar-link-text">HOD AI Co-Pilot ✨</span>
+                      </a>
+
+                    <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">HOD Dashboard</span>
+                    </a>
+                    <a href="{% url 'hod_notifications' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📢</span>
+                        <span class="sidebar-link-text">Official Announcements</span>
+                    </a>
+                    <a href="{% url 'hod_courses' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Course Allocations</span>
+                    </a>
+                    <a href="{% url 'hod_tasks' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Faculty Duties &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'hod_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Faculty Lecture Logs</span>
+                    </a>
+                    <a href="{% url 'hod_marksheets' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Review Marksheets</span>
+                    </a>
+                    <a href="{% url 'hod_student_roster' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Student Roster Template</span>
+                    </a>
+                    <a href="{% url 'hod_manage_users' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span class="sidebar-link-text">Manage Faculty &amp; HODs</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👨‍🏫</span>
+                        <span class="sidebar-link-text">Faculty Workspace</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">🏛️</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head of Dept</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Faculty &amp; Department Administration</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span>{{ user.get_full_name|default:user.username }} (HOD)</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Department Staff &amp; Leadership Directory</h2>
+                        <p>Register new academic faculty members or appoint assistant Head of Department (HOD) administrators to collaborate on academic governance.</p>
+                        <div class="stats-row" style="margin-top: 18px;">
+                            <div class="stat-card">
+                                <span>HOD Administrators</span>
+                                <strong>{{ hods|length }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Faculty Instructors</span>
+                                <strong>{{ teachers|length }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                {% if messages %}
+                <div class="messages-container" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Two Forms: Create HOD & Create Faculty -->
+                <div class="grid-two" style="margin-bottom: 28px;">
+                    <!-- Create Another HOD Form -->
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 10px;">🏛️ Add / Appoint New HOD</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.85rem; margin-bottom: 16px;">Create an administrative HOD account with full department governance privileges.</p>
+                        <form method="POST" action="{% url 'hod_manage_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create_hod">
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="hod_fullname" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Full Name</label>
+                                <input id="hod_fullname" name="full_name" type="text" placeholder="e.g. Dr. Tariq Mahmood" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="hod_username" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">HOD Username / User ID</label>
+                                <input id="hod_username" name="username" type="text" placeholder="e.g. hod_cs" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="hod_password" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Initial Password</label>
+                                <input id="hod_password" name="password" type="password" placeholder="Create secure password" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="hod_email" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Official Email (Optional)</label>
+                                <input id="hod_email" name="email" type="email" placeholder="e.g. hod.cs@bgnu.edu.pk" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 16px;">
+                                <label for="hod_phone" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Phone Number (Optional)</label>
+                                <input id="hod_phone" name="phone_number" type="text" placeholder="03001234567" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <button type="submit" class="btn" style="padding: 9px 20px;">Create HOD Account &rarr;</button>
+                        </form>
+                    </article>
+
+                    <!-- Create New Faculty Form -->
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 10px;">👨‍🏫 Register New Faculty Member</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.85rem; margin-bottom: 16px;">Register an instructor and optionally allocate their starting course.</p>
+                        <form method="POST" action="{% url 'hod_manage_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create_teacher">
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="teach_fullname" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Full Name</label>
+                                <input id="teach_fullname" name="full_name" type="text" placeholder="e.g. Engr. Asim Riaz" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="teach_username" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Faculty Username / ID</label>
+                                <input id="teach_username" name="username" type="text" placeholder="e.g. asim_riaz" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="teach_password" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Initial Password</label>
+                                <input id="teach_password" name="password" type="password" placeholder="Create password for instructor" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="teach_course" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Allocate Initial Course (Optional)</label>
+                                <select id="teach_course" name="course_id" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="">-- Allocate Course Later --</option>
+                                    {% for c in courses %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 16px;">
+                                <label for="teach_email" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Faculty Email</label>
+                                <input id="teach_email" name="email" type="email" placeholder="e.g. asim.riaz@bgnu.edu.pk" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <button type="submit" class="btn" style="padding: 9px 20px;">Register Faculty Member &rarr;</button>
+                        </form>
+                    </article>
+                </div>
+
+                <!-- Directory Listings with Edit & Delete Controls -->
+                <div class="grid-two">
+                    <!-- HODs List -->
+                    <article class="panel">
+                        <h3 style="margin-bottom: 14px;">🏛️ Head of Department (HOD) Accounts</h3>
+                        <div class="recent-list">
+                            {% for h in hods %}
+                            <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-card);">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                        <strong>{{ h.get_full_name|default:h.username }}</strong>
+                                        <span class="badge" style="background: rgba(17, 29, 94, 0.1); color: #111D5E; font-weight: 600;">HOD</span>
+                                        {% if h.id == user.id %}
+                                        <span class="badge" style="background: #BBF7D0; color: #166534; font-size: 0.7rem;">(You)</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="meta" style="font-size: 0.8rem; color: var(--secondary-text);">
+                                        <span>Username: <code>{{ h.username }}</code></span>
+                                        {% if h.email %}<span>&bull; {{ h.email }}</span>{% endif %}
+                                        {% if h.phone_number %}<span>&bull; {{ h.phone_number }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;" onclick="openEditUserModal('{{ h.id }}', '{{ h.username|escapejs }}', '{{ h.get_full_name|escapejs }}', '{{ h.email|escapejs }}', '{{ h.phone_number|escapejs }}', 'hod', '')">✏️ Edit</button>
+                                    {% if h.id != user.id %}
+                                    <form method="POST" action="{% url 'hod_manage_users' %}" onsubmit="return confirm('Permanently delete HOD account {{ h.username }}?');" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_user">
+                                        <input type="hidden" name="user_id" value="{{ h.id }}">
+                                        <button type="submit" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem; color: #DC2626; border-color: #DC2626;">🗑️ Delete</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No additional HODs registered.</p>
+                            {% endfor %}
+                        </div>
+                    </article>
+
+                    <!-- Faculty List -->
+                    <article class="panel">
+                        <h3 style="margin-bottom: 14px;">👨‍🏫 Department Faculty Instructors</h3>
+                        <div class="recent-list">
+                            {% for t in teachers %}
+                            <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-card);">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                        <strong>{{ t.get_full_name|default:t.username }}</strong>
+                                        <span class="badge" style="background: rgba(110, 168, 254, 0.15); color: #2563EB; font-weight: 600;">Faculty</span>
+                                    </div>
+                                    <div class="meta" style="margin-bottom: 4px; font-size: 0.8rem; color: var(--secondary-text);">
+                                        <span>ID / Username: <code>{{ t.username }}</code></span>
+                                        {% if t.email %}<span>&bull; {{ t.email }}</span>{% endif %}
+                                        {% if t.phone_number %}<span>&bull; {{ t.phone_number }}</span>{% endif %}
+                                    </div>
+                                    <div style="font-size: 0.78rem;">
+                                        <strong>Allocated Courses:</strong>
+                                        {% for ac in t.assigned_courses.all %}
+                                        <span class="badge" style="background: #EEF2FF; color: #4338CA; font-size: 0.72rem; padding: 2px 6px; margin-right: 4px;">{{ ac.name }}</span>
+                                        {% empty %}
+                                        <span style="color: var(--secondary-text);">None allocated</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;" onclick="openEditUserModal('{{ t.id }}', '{{ t.username|escapejs }}', '{{ t.get_full_name|escapejs }}', '{{ t.email|escapejs }}', '{{ t.phone_number|escapejs }}', 'teacher', '{% if t.assigned_courses.first %}{{ t.assigned_courses.first.id }}{% endif %}')">✏️ Edit</button>
+                                    <form method="POST" action="{% url 'hod_manage_users' %}" onsubmit="return confirm('Permanently remove faculty member {{ t.username }}?');" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_user">
+                                        <input type="hidden" name="user_id" value="{{ t.id }}">
+                                        <button type="submit" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem; color: #DC2626; border-color: #DC2626;">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No instructors registered yet.</p>
+                            {% endfor %}
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Edit User Modal -->
+                <div id="editUserModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.55); z-index: 100000; align-items: center; justify-content: center;">
+                    <div style="background: var(--bg-card, #FFFFFF); border-radius: 16px; padding: 24px; width: 480px; max-width: 92vw; box-shadow: 0 20px 45px rgba(0,0,0,0.25); border: 1px solid var(--borders);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 id="editModalTitle" style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Edit User Account</h3>
+                            <button type="button" onclick="closeEditUserModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--secondary-text);">&times;</button>
+                        </div>
+                        <form method="POST" action="{% url 'hod_manage_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="edit_user">
+                            <input type="hidden" name="user_id" id="edit_user_id">
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Full Name</label>
+                                <input type="text" name="full_name" id="edit_full_name" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Username / User ID</label>
+                                <input type="text" name="username" id="edit_username" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">New Password <span style="font-weight: normal; color: var(--secondary-text); font-size: 0.78rem;">(Leave blank to keep unchanged)</span></label>
+                                <input type="password" name="password" id="edit_password" placeholder="Enter new password to change" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Official Email</label>
+                                <input type="email" name="email" id="edit_email" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Phone Number</label>
+                                <input type="text" name="phone_number" id="edit_phone" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div id="edit_course_group" style="margin-bottom: 18px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Allocated Course</label>
+                                <select name="course_id" id="edit_course_id" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="">-- No Course Allocated --</option>
+                                    {% for c in courses %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                <button type="button" onclick="closeEditUserModal()" class="btn btn-outline" style="padding: 8px 16px;">Cancel</button>
+                                <button type="submit" class="btn" style="padding: 8px 18px;">Save Changes &rarr;</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <script>
+                function openEditUserModal(id, username, fullname, email, phone, role, courseId) {
+                    document.getElementById('edit_user_id').value = id;
+                    document.getElementById('edit_username').value = username;
+                    document.getElementById('edit_full_name').value = fullname;
+                    document.getElementById('edit_email').value = email;
+                    document.getElementById('edit_phone').value = phone;
+                    document.getElementById('edit_password').value = '';
+                    
+                    const courseGroup = document.getElementById('edit_course_group');
+                    if (role === 'teacher') {
+                        courseGroup.style.display = 'block';
+                        document.getElementById('edit_course_id').value = courseId || '';
+                    } else {
+                        courseGroup.style.display = 'none';
+                    }
+
+                    document.getElementById('editModalTitle').textContent = 'Edit ' + (role === 'hod' ? 'HOD' : 'Faculty') + ' Account: ' + username;
+                    document.getElementById('editUserModal').style.display = 'flex';
+                }
+
+                function closeEditUserModal() {
+                    document.getElementById('editUserModal').style.display = 'none';
+                }
+                </script>
+            </main>
+
+            <footer class="app-footer">
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    {% include 'MyApp/chatbot_widget.html' %}
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+</body>
+</html>
+

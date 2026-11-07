@@ -1,83 +1,76 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Baba Guru Nanak University Nankana Sahib</title>
+    <title>Portal Login - Baba Guru Nanak University Nankana Sahib</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
-<body>
-    <div class="login-container">
-        <div class="logo-row">
-            <img src="{% static 'MyApp/department_logo.png' %}" alt="University Logo">
-            <img src="{% static 'MyApp/uni_logo.png' %}" alt="Department Logo">
-        </div>
-        <h1>AI Offline Learning Platform</h1>
-        <h2>Login</h2>
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
+<body style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; background: var(--bg-surface);">
+    
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px 16px;">
+        <div class="login-container">
+            <div class="logo-row">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="Department of CS & IT Logo" title="Department of Computer Science & IT">
+                <img src="{% static 'MyApp/uni_logo.png' %}" alt="Baba Guru Nanak University Logo" title="Baba Guru Nanak University">
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="student_id">User ID:</label>
-                <input type="text" id="student_id" name="student_id" required>
+
+            <h1>Baba Guru Nanak University</h1>
+            <h2>AI Offline Learning Portal &bull; Login</h2>
+
+            {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
             </div>
-            <div class="form-group">
-                <label for="role">Role:</label>
-                <select id="role" name="role" required>
-                    <option value="">Select role</option>
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                </select>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="student_id">Username or User ID</label>
+                    <input type="text" id="student_id" name="student_id" placeholder="Enter your ID or username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Select Role</label>
+                    <select id="role" name="role" required>
+                        <option value="" disabled selected>-- Select your portal role --</option>
+                        <option value="student">🎓 Student</option>
+                        <option value="teacher">👨‍🏫 Teacher / Faculty</option>
+                        <option value="hod">🏛️ Head of Department (HOD)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your account password" required>
+                </div>
+
+                <div class="login-actions">
+                    <button type="submit" class="login-btn">Sign In to Portal &rarr;</button>
+                </div>
+            </form>
+
+            <a href="{% url 'index' %}" class="back-link">&larr; Return to University Home</a>
+
+            <div class="university-name">
+                Department of Computer Science &amp; IT &middot; Baba Guru Nanak University Nankana Sahib
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="login-actions">
-                <button type="submit" class="login-btn">Login</button>
-            </div>
-        </form>
-        <div class="signup-prompt">
-            <p>Don't have an account?</p>
-            <a href="{% url 'signup' %}" class="signup-link">Create Account</a>
-        </div>
-        <a href="{% url 'index' %}" class="back-link">← Back to Home</a>
-        <div class="university-name">
-            Baba Guru Nanak University Nankana Sahib
         </div>
     </div>
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Contact Us</h4>
-                <p><strong>Phone:</strong></p>
-                <p>056-9201171</p>
-                <p>0300-1199358</p>
-            </div>
-            <div class="footer-section">
-                <h4>Address</h4>
-                <p>Adam Pura</p>
-                <p>Nankana Sahib</p>
-            </div>
-            <div class="footer-section">
-                <h4>Email</h4>
-                <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-            </div>
-        </div>
-        <div class="footer-divider"></div>
+
+    <footer style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-bottom: none;">
         <div class="footer-bottom">
-            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-            <p>AI Offline Learning Platform</p>
+            <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; AI Offline Learning Platform</p>
         </div>
     </footer>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

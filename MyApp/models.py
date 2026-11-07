@@ -1,3 +1,4 @@
+from django.utils import timezone
 # pyrefly: ignore [missing-import]
 import re
 from django.db import models
@@ -18,6 +19,7 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('student', 'Student'),
         ('teacher', 'Teacher'),
+        ('hod', 'Head of Department (HOD)'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone_number = models.CharField(max_length=20, blank=True, default='')
@@ -48,9 +50,10 @@ class Invitation(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=200, unique=True)
     code = models.CharField(max_length=50, blank=True, null=True)
+    teacher = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_courses')
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.code})" if self.code else self.name
 
 
 class Enrollment(models.Model):
@@ -170,3 +173,106 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender.username} to {self.recipient.username}"
+
+
+class TeacherTask(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+    PRIORITY_CHOICES = [
+        ('normal', 'Normal'),
+        ('urgent', 'Urgent'),
+    ]
+    hod = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_tasks')
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='assigned_tasks')
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    due_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='normal')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Task for {self.teacher.username}: {self.title}"
+
+
+class TeacherAttendance(models.Model):
+    STATUS_CHOICES = [
+        ('present', 'Present (Conducted)'),
+        ('absent', 'Absent / Rescheduled'),
+        ('leave', 'Official Leave'),
+    ]
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='attendance_records')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='attendance_records')
+    date = models.DateField(default=timezone.now)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='present')
+    topic_covered = models.CharField(max_length=255, blank=True)
+    students_present = models.PositiveIntegerField(default=0)
+    remarks = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date', '-created_at']
+
+    def __str__(self):
+        return f"{self.teacher.username} - {self.course.name} on {self.date}"
+
+
+class MarksheetSubmission(models.Model):
+    STATUS_CHOICES = [
+        ('submitted', 'Pending HOD Approval'),
+        ('approved', 'Approved by HOD'),
+        ('revision_requested', 'Revision Requested'),
+    ]
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='submitted_marksheets')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='marksheets')
+    assignment = models.ForeignKey('Assignment', on_delete=models.SET_NULL, null=True, blank=True, related_name='marksheets')
+    title = models.CharField(max_length=255)
+    file = models.FileField(upload_to='marksheets/', blank=True, null=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='submitted')
+    hod_feedback = models.TextField(blank=True)
+    total_students = models.PositiveIntegerField(default=0)
+    average_score = models.FloatField(default=0.0)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.teacher.username} ({self.get_status_display()})"
+
+
+class Notification(models.Model):
+    PRIORITY_CHOICES = [
+        ('normal', 'Standard Notice'),
+        ('urgent', 'Urgent / Priority 🚨'),
+        ('exam', 'Exam & Marks Notice 📑'),
+        ('meeting', 'Faculty / Official Meeting 🏛️'),
+    ]
+
+    AUDIENCE_CHOICES = [
+        ('individual_teacher', 'Specific Teacher'),
+        ('all_teachers', 'All Faculty Members'),
+        ('all_students', 'All Enrolled Students'),
+        ('course_relevant', 'Relevant Course Teacher & Students'),
+        ('everyone', 'Campus Wide (Everyone)'),
+    ]
+
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_notifications')
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_notifications', null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='normal')
+    audience_type = models.CharField(max_length=30, choices=AUDIENCE_CHOICES, default='individual_teacher')
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        recip = self.recipient.username if self.recipient else "Broadcast"
+        return f"[{self.priority.upper()}] {self.title} -> {recip}"

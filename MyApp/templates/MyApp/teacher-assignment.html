@@ -6,313 +6,506 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Assignment Upload - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib · Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Assignment Upload Center</h2>
-                <p>Upload new assignments and quizzes for your courses, review what’s already published, and keep your offline learning resources organized for every student.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Assignments Uploaded</span>
-                        <strong>{{ assignments_uploaded_count }}</strong>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">F</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Faculty Member</span>
+                        <span class="user-role-badge">Instructor</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Quizzes Published</span>
-                        <strong>{{ quizzes_published_count }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Pending Review</span>
-                        <strong>{{ pending_review_count }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Create Coursework &amp; Quizzes</span>
                     </div>
                 </div>
-            </article>
-            <aside class="summary-panel panel">
-                <h3>Quick Summary</h3>
-                <p>Track your latest uploads and see which course materials are ready for offline access. This page collects assignment and quiz data in a single teacher workflow.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Last Upload</span>
-                        <strong>{% if last_upload_time %}{{ last_upload_time|timesince }} ago{% else %}Never{% endif %}</strong>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <span>Course Focus</span>
-                        <strong>{{ course_focus }}</strong>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Today’s Actions</span>
-                        <strong>{{ today_actions_count }}</strong>
-                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </aside>
-        </section>
+            </header>
 
-        <div class="grid-two">
-            <article class="upload-panel panel">
-                <h3>Upload New Assignment</h3>
-                <p>Select the course, add a description, and upload your assignment file or quiz package. Students will see the published work immediately after you publish it.</p>
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 32px;">
+                    <article class="hero-panel">
+                        <h2>Assignment Upload Center</h2>
+                        <p>Upload new assignments and quizzes for your courses, review what’s already published, and keep your offline learning resources organized for every student.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Assignments Uploaded</span>
+                                <strong>{{ assignments_uploaded_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Quizzes Published</span>
+                                <strong>{{ quizzes_published_count }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Pending Review</span>
+                                <strong>{{ pending_review_count }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                    <aside class="summary-panel" style="margin-top: 16px;">
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Last Upload</span>
+                                <strong>{% if last_upload_time %}{{ last_upload_time|timesince }} ago{% else %}Never{% endif %}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Course Focus</span>
+                                <strong>{{ course_focus }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Today’s Actions</span>
+                                <strong>{{ today_actions_count }}</strong>
+                            </div>
+                        </div>
+                    </aside>
+                </section>
 
-                {% if messages %}
-                    <div class="messages">
-                        {% for message in messages %}
-                            <div class="message {{ message.tags }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <div class="grid-two" style="margin-bottom: 32px;">
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 12px;">Upload New Assignment</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 18px;">
+                            Select the course, add a description, and upload your assignment file or homework task. Students will see the published work immediately after you publish it.
+                        </p>
 
-                <form method="post" action="{% url 'teacher_assignment' %}" enctype="multipart/form-data" class="assignment-form">
-                    {% csrf_token %}
-                    <label for="course">Course</label>
-                    <select id="course" name="course">
-                        {% for c in courses %}
-                            <option value="{{ c.name }}">{{ c.name }}</option>
-                        {% endfor %}
-                    </select>
+                        {% if messages %}
+                            <div class="messages" style="margin-bottom: 16px;">
+                                {% for message in messages %}
+                                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
-                    <label for="title">Assignment Title</label>
-                    <input id="title" name="title" type="text" placeholder="Enter assignment title" required>
+                        <form method="post" action="{% url 'teacher_assignment' %}" enctype="multipart/form-data" class="assignment-form">
+                            {% csrf_token %}
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="course" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course</label>
+                                <select id="course" name="course" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                    {% for c in courses %}
+                                        <option value="{{ c.name }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                    <label for="kind">Kind</label>
-                    <select id="kind" name="kind">
-                        <option value="homework">Homework</option>
-                        <option value="quiz">Quiz</option>
-                        <option value="project">Project</option>
-                    </select>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="title" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Assignment Title</label>
+                                <input id="title" name="title" type="text" placeholder="Enter assignment title" required style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
 
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" placeholder="Add assignment instructions and submission details"></textarea>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="kind" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Kind</label>
+                                <select id="kind" name="kind" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                    <option value="homework">Homework</option>
+                                    <option value="quiz">Quiz</option>
+                                    <option value="project">Project</option>
+                                </select>
+                            </div>
 
-                    <label for="file">Attach file (optional)</label>
-                    <input id="file" name="file" type="file">
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="description" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Description &amp; Instructions</label>
+                                <textarea id="description" name="description" placeholder="Add assignment instructions and submission details" style="width: 100%; min-height: 90px; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);"></textarea>
+                            </div>
 
-                    <label class="inline"><input type="checkbox" name="publish" value="1"> Publish now</label>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="file" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Attach file (optional)</label>
+                                <input id="file" name="file" type="file" style="width: 100%; padding: 8px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                            </div>
 
-                    <div style="margin-top:12px; display:flex; gap:12px;">
-                        <button class="btn" type="submit">Publish Assignment</button>
-                        <a href="{% url 'teacher_materials' %}" class="btn" style="background:transparent; color:var(--text); border-color:rgba(255,255,255,0.12);">Go to Materials</a>
-                    </div>
-                </form>
-            </article>
+                            <label class="inline" style="display: flex; align-items: center; gap: 8px; font-weight: 500; margin-bottom: 16px; cursor: pointer;">
+                                <input type="checkbox" name="publish" value="1"> Publish immediately for student view
+                            </label>
 
-            <aside class="summary-panel panel">
-                <h3>Published Assignments & Quizzes</h3>
-                {% if teacher_assignments %}
-                    <div class="recent-list">
-                        {% for a in teacher_assignments %}
-                            <div class="list-item">
-                                <strong>{{ a.title }}</strong>
-                                <div class="meta"><span>{{ a.course.name }}</span><span>{{ a.created_at }}</span></div>
-                                <span>{{ a.description|default:"No description" }}</span>
-                                <div style="margin-top:8px; display:flex; gap:8px;">
-                                    {% if a.file %}<a href="{{ a.file.url }}" class="btn" style="padding:8px 12px; font-weight:600;">Download</a>{% endif %}
-                                    <a href="{% url 'teacher_submissions' a.id %}" class="btn" style="padding:8px 12px;">Submissions</a>
+                            <div style="display:flex; gap:12px; align-items: center;">
+                                <button class="btn" type="submit" style="padding: 10px 22px;">Publish Assignment</button>
+                                <a href="{% url 'teacher_materials' %}" class="btn btn-outline" style="padding: 10px 18px;">Go to Materials</a>
+                            </div>
+                        </form>
+                    </article>
+
+                    <aside class="summary-panel panel">
+                        <h3 style="margin-bottom: 16px;">Published Assignments &amp; Quizzes</h3>
+                        {% if teacher_assignments %}
+                            <div class="recent-list">
+                                {% for a in teacher_assignments %}
+                                    <div class="list-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                            <strong>{{ a.title }}</strong>
+                                            <span class="badge badge-info">{{ a.course.name }}</span>
+                                        </div>
+                                        <div class="meta"><span>Published: {{ a.created_at|date:"M d, Y" }}</span></div>
+                                        <span style="color: var(--secondary-text); font-size: 0.875rem;">{{ a.description|default:"No description" }}</span>
+                                        <div style="margin-top:10px; display:flex; gap:8px;">
+                                            {% if a.file %}<a href="{{ a.file.url }}" download class="btn btn-outline" style="padding:6px 12px; font-size: 0.8rem;">Download</a>{% endif %}
+                                            <a href="{% url 'teacher_submissions' a.id %}" class="btn" style="padding:6px 14px; font-size: 0.8rem;">Submissions &rarr;</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No assignments created yet.</p>
+                        {% endif %}
+                    </aside>
+                </div>
+
+                <section class="grid-two">
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 12px;">Upload New Timed Quiz</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 18px;">
+                            Create a timed quiz and optionally assign it to a specific student. Students will only see the quiz when it is published.
+                        </p>
+                        <form method="post" action="{% url 'teacher_assignment' %}" enctype="multipart/form-data" class="assignment-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="quiz">
+
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="quiz_course" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course</label>
+                                <select id="quiz_course" name="course" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                    {% for c in courses %}
+                                        <option value="{{ c.name }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="assigned_student" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Assign to Student</label>
+                                <select id="assigned_student" name="assigned_student" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                    <option value="">All enrolled students</option>
+                                    {% for s in students %}
+                                        <option value="{{ s.id }}" data-course-names="{% for enrollment in s.enrollments.all %}{{ enrollment.course.name }}{% if not forloop.last %}|{% endif %}{% endfor %}">{{ s.get_full_name|default:s.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="title" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Quiz Title</label>
+                                <input id="title" name="title" type="text" placeholder="Enter quiz title" required style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="form-row" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                                <div style="flex: 1;">
+                                    <label for="quiz_type" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Quiz Type</label>
+                                    <select id="quiz_type" name="quiz_type" onchange="renderQuestionInputs()" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                        <option value="manual">Manual question answer</option>
+                                        <option value="mcq">MCQ</option>
+                                        <option value="fillblank">Fill in the blanks</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label for="question_count" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Number of Questions</label>
+                                    <select id="question_count" name="question_count" onchange="renderQuestionInputs()" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5" selected>5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
                                 </div>
                             </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p>No assignments created yet.</p>
-                {% endif %}
-            </aside>
-        </div>
 
-        <section class="grid-two">
-            <article class="upload-panel panel">
-                <h3>Upload New Quiz</h3>
-                <p>Create a timed quiz and optionally assign it to a specific student. Students will only see the quiz when it is published.</p>
-                <form method="post" action="{% url 'teacher_assignment' %}" enctype="multipart/form-data" class="assignment-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="form_type" value="quiz">
+                            <div id="quiz_questions_container" style="margin-bottom: 18px;"></div>
 
-                    <label for="quiz_course">Course</label>
-                    <select id="quiz_course" name="course">
-                        {% for c in courses %}
-                            <option value="{{ c.name }}">{{ c.name }}</option>
-                        {% endfor %}
-                    </select>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="description" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Quiz Description</label>
+                                <textarea id="description" name="description" placeholder="Add quiz instructions and any question details" style="width: 100%; min-height: 80px; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);"></textarea>
+                            </div>
 
-                    <label for="assigned_student">Assign to Student</label>
-                    <select id="assigned_student" name="assigned_student">
-                        <option value="">All enrolled students</option>
-                        {% for s in students %}
-                            <option value="{{ s.id }}" data-course-names="{% for enrollment in s.enrollments.all %}{{ enrollment.course.name }}{% if not forloop.last %}|{% endif %}{% endfor %}">{{ s.get_full_name|default:s.username }}</option>
-                        {% endfor %}
-                    </select>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="deadline" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Due Date &amp; Time</label>
+                                <input id="deadline" name="deadline" type="datetime-local" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                            </div>
 
-                    <label for="title">Quiz Title</label>
-                    <input id="title" name="title" type="text" placeholder="Enter quiz title" required>
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="file" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Attach file (optional)</label>
+                                <input id="file" name="file" type="file" style="width: 100%; padding: 8px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--primary-bg);">
+                            </div>
 
-                    <label for="quiz_type">Quiz Type</label>
-                    <select id="quiz_type" name="quiz_type" onchange="renderQuestionInputs()">
-                        <option value="manual">Manual question answer</option>
-                        <option value="mcq">MCQ</option>
-                        <option value="fillblank">Fill in the blanks</option>
-                    </select>
+                            <label class="inline" style="display: flex; align-items: center; gap: 8px; font-weight: 500; margin-bottom: 16px; cursor: pointer;">
+                                <input type="checkbox" name="publish" value="1"> Publish quiz now
+                            </label>
 
-                    <label for="question_count">Number of Questions</label>
-                    <select id="question_count" name="question_count" onchange="renderQuestionInputs()">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5" selected>5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
+                            <div style="display:flex; gap:12px; align-items: center;">
+                                <button class="btn" type="submit" style="padding: 10px 22px;">Publish Quiz</button>
+                                <a href="{% url 'teacher_materials' %}" class="btn btn-outline" style="padding: 10px 18px;">Go to Materials</a>
+                            </div>
+                        </form>
 
-                    <div id="quiz_questions_container"></div>
-
-                    <label for="description">Quiz Description</label>
-                    <textarea id="description" name="description" placeholder="Add quiz instructions and any question details"></textarea>
-
-                    <label for="deadline">Due Date & Time</label>
-                    <input id="deadline" name="deadline" type="datetime-local">
-
-                    <label for="file">Attach file (optional)</label>
-                    <input id="file" name="file" type="file">
-
-                    <label class="inline"><input type="checkbox" name="publish" value="1"> Publish now</label>
-
-                    <div style="margin-top:12px; display:flex; gap:12px;">
-                        <button class="btn" type="submit">Publish Quiz</button>
-                        <a href="{% url 'teacher_materials' %}" class="btn" style="background:transparent; color:var(--text); border-color:rgba(255,255,255,0.12);">Go to Materials</a>
-                    </div>
-                </form>
-                <script>
-                    function getAssignedStudentOptions() {
-                        return Array.from(document.querySelectorAll('#assigned_student option'));
-                    }
-
-                    function filterStudentOptionsForCourse(courseName) {
-                        const options = getAssignedStudentOptions();
-                        options.forEach(option => {
-                            if (!option.value) {
-                                option.hidden = false;
-                                option.disabled = false;
-                                return;
-                            }
-                            const courseNames = option.dataset.courseNames ? option.dataset.courseNames.split('|') : [];
-                            const matches = courseNames.includes(courseName);
-                            option.hidden = !matches;
-                            option.disabled = !matches;
-                        });
-                        const selected = document.querySelector('#assigned_student option:checked');
-                        if (selected && selected.value && selected.hidden) {
-                            document.getElementById('assigned_student').value = '';
-                        }
-                    }
-
-                    function renderQuestionInputs() {
-                        const container = document.getElementById('quiz_questions_container');
-                        const quizType = document.getElementById('quiz_type').value;
-                        const count = parseInt(document.getElementById('question_count').value, 10) || 1;
-                        container.innerHTML = '';
-
-                        for (let index = 0; index < count; index++) {
-                            const block = document.createElement('div');
-                            block.className = 'question-block';
-                            block.style.border = '1px solid rgba(255,255,255,0.12)';
-                            block.style.padding = '14px';
-                            block.style.marginBottom = '14px';
-                            block.style.borderRadius = '8px';
-                            block.innerHTML = `
-                                <h4>Question ${index + 1}</h4>
-                                <label>Question text</label>
-                                <textarea name="question_text_${index}" placeholder="Enter the question text"></textarea>
-                            `;
-
-                            if (quizType === 'manual') {
-                                block.innerHTML += `
-                                    <label>Expected answer</label>
-                                    <textarea name="question_answer_${index}" placeholder="Teacher answer text (optional)"></textarea>
-                                `;
-                            } else if (quizType === 'mcq') {
-                                block.innerHTML += `
-                                    <label>Option A</label>
-                                    <input type="text" name="question_option_${index}_A" placeholder="Choice A">
-                                    <label>Option B</label>
-                                    <input type="text" name="question_option_${index}_B" placeholder="Choice B">
-                                    <label>Option C</label>
-                                    <input type="text" name="question_option_${index}_C" placeholder="Choice C">
-                                    <label>Option D</label>
-                                    <input type="text" name="question_option_${index}_D" placeholder="Choice D">
-                                    <label>Correct answer</label>
-                                    <select name="question_correct_${index}">
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="C">C</option>
-                                        <option value="D">D</option>
-                                    </select>
-                                `;
-                            } else {
-                                block.innerHTML += `
-                                    <p style="margin-top:8px;color:var(--muted);font-size:0.95rem;">Enter the question with blanks using <strong>[[...]]</strong> or long underscores <strong>____</strong>.</p>
-                                    <label>Expected answer(s)</label>
-                                    <textarea name="question_answer_${index}" placeholder="Comma-separated correct answers (optional)"></textarea>
-                                `;
+                        <script>
+                            function getAssignedStudentOptions() {
+                                return Array.from(document.querySelectorAll('#assigned_student option'));
                             }
 
-                            container.appendChild(block);
-                        }
-                    }
+                            function filterStudentOptionsForCourse(courseName) {
+                                const options = getAssignedStudentOptions();
+                                options.forEach(option => {
+                                    if (!option.value) {
+                                        option.hidden = false;
+                                        option.disabled = false;
+                                        return;
+                                    }
+                                    const courseNames = option.dataset.courseNames ? option.dataset.courseNames.split('|') : [];
+                                    const matches = courseNames.includes(courseName);
+                                    option.hidden = !matches;
+                                    option.disabled = !matches;
+                                });
+                                const selected = document.querySelector('#assigned_student option:checked');
+                                if (selected && selected.value && selected.hidden) {
+                                    document.getElementById('assigned_student').value = '';
+                                }
+                            }
 
-                    window.addEventListener('load', function() {
-                        renderQuestionInputs();
-                        const courseSelect = document.getElementById('quiz_course');
-                        if (courseSelect) {
-                            filterStudentOptionsForCourse(courseSelect.value);
-                            courseSelect.addEventListener('change', function() {
-                                filterStudentOptionsForCourse(this.value);
+                            function renderQuestionInputs() {
+                                const container = document.getElementById('quiz_questions_container');
+                                const quizType = document.getElementById('quiz_type').value;
+                                const count = parseInt(document.getElementById('question_count').value, 10) || 1;
+                                container.innerHTML = '';
+
+                                for (let index = 0; index < count; index++) {
+                                    const block = document.createElement('div');
+                                    block.className = 'question-block';
+                                    block.style.border = '1px solid var(--borders)';
+                                    block.style.padding = '14px';
+                                    block.style.marginBottom = '14px';
+                                    block.style.borderRadius = 'var(--radius-sm)';
+                                    block.style.background = 'var(--primary-bg)';
+                                    block.innerHTML = `
+                                        <h4 style="margin-bottom: 6px; color: var(--primary-accent);">Question ${index + 1}</h4>
+                                        <label style="display: block; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">Question text</label>
+                                        <textarea name="question_text_${index}" placeholder="Enter the question text" style="width: 100%; min-height: 60px; padding: 8px; border: 1px solid var(--borders); border-radius: 4px; margin-bottom: 8px;"></textarea>
+                                    `;
+
+                                    if (quizType === 'manual') {
+                                        block.innerHTML += `
+                                            <label style="display: block; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">Expected answer (optional)</label>
+                                            <textarea name="question_answer_${index}" placeholder="Teacher answer text" style="width: 100%; min-height: 60px; padding: 8px; border: 1px solid var(--borders); border-radius: 4px;"></textarea>
+                                        `;
+                                    } else if (quizType === 'mcq') {
+                                        block.innerHTML += `
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                                <div>
+                                                    <label style="display: block; font-size: 0.75rem; font-weight: 600;">Option A</label>
+                                                    <input type="text" name="question_option_${index}_A" placeholder="Choice A" style="width: 100%; padding: 6px 8px; border: 1px solid var(--borders); border-radius: 4px;">
+                                                </div>
+                                                <div>
+                                                    <label style="display: block; font-size: 0.75rem; font-weight: 600;">Option B</label>
+                                                    <input type="text" name="question_option_${index}_B" placeholder="Choice B" style="width: 100%; padding: 6px 8px; border: 1px solid var(--borders); border-radius: 4px;">
+                                                </div>
+                                                <div>
+                                                    <label style="display: block; font-size: 0.75rem; font-weight: 600;">Option C</label>
+                                                    <input type="text" name="question_option_${index}_C" placeholder="Choice C" style="width: 100%; padding: 6px 8px; border: 1px solid var(--borders); border-radius: 4px;">
+                                                </div>
+                                                <div>
+                                                    <label style="display: block; font-size: 0.75rem; font-weight: 600;">Option D</label>
+                                                    <input type="text" name="question_option_${index}_D" placeholder="Choice D" style="width: 100%; padding: 6px 8px; border: 1px solid var(--borders); border-radius: 4px;">
+                                                </div>
+                                            </div>
+                                            <label style="display: block; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">Correct answer</label>
+                                            <select name="question_correct_${index}" style="width: 100%; padding: 8px; border: 1px solid var(--borders); border-radius: 4px; background: #FFFFFF;">
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="D">D</option>
+                                            </select>
+                                        `;
+                                    } else {
+                                        block.innerHTML += `
+                                            <p style="margin: 6px 0; color: var(--secondary-text); font-size: 0.8125rem;">Enter the question with blanks using <strong>[[...]]</strong> or long underscores <strong>____</strong>.</p>
+                                            <label style="display: block; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">Expected answer(s)</label>
+                                            <textarea name="question_answer_${index}" placeholder="Comma-separated correct answers (optional)" style="width: 100%; min-height: 60px; padding: 8px; border: 1px solid var(--borders); border-radius: 4px;"></textarea>
+                                        `;
+                                    }
+
+                                    container.appendChild(block);
+                                }
+                            }
+
+                            window.addEventListener('load', function() {
+                                renderQuestionInputs();
+                                const courseSelect = document.getElementById('quiz_course');
+                                if (courseSelect) {
+                                    filterStudentOptionsForCourse(courseSelect.value);
+                                    courseSelect.addEventListener('change', function() {
+                                        filterStudentOptionsForCourse(this.value);
+                                    });
+                                }
                             });
-                        }
-                    });
-                </script>
-            </article>
-        </section>
+                        </script>
+                    </article>
+                </section>
+            </main>
 
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Contact Us</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Address</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Faculty Tools</h4>
+                        <p><a href="{% url 'teacher_dashboard' %}">Faculty Dashboard</a></p>
+                    </div>
                 </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
+                    <p>AI Offline Learning Platform</p>
                 </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
+            </footer>
+        </div>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

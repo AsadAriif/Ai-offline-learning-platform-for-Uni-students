@@ -4,157 +4,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share Results - AI Offline Learning Platform</title>
+    <title>Share Results &amp; Submit Marksheets - Faculty Portal - Baba Guru Nanak University</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
-            </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Share Assessment Results</h2>
-                <p>Upload grades and provide detailed feedback for quizzes and assignments. Students can view their performance in their personalized dashboards.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Assessments Graded</span>
-                        <strong>{{ assessments_graded }}</strong>
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Log Lecture / Duties</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">👨‍🏫</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge">Faculty</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Class Average</span>
-                        <strong>{{ class_average }}%</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Pending Grading</span>
-                        <strong>{{ pending_grading }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Assessment Grades &amp; HOD Marksheet Submission</span>
                     </div>
                 </div>
-            </article>
-        </section>
 
-        <div class="grid-two">
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
 
-
-            <article class="upload-panel panel">
-                <h3>Submit Grades</h3>
-                <form method="post" id="marksForm">
-                    {% csrf_token %}
-                    <div class="field-group">
-                        <label for="assignment_id">Select Assessment</label>
-                        <p class="field-help">Choose an assessment you created earlier and enter grades or feedback for enrolled students.</p>
-                        <select name="assignment_id" id="assignment_id" onchange="showStudents()">
-                            <option value="" disabled>-- Select Assessment --</option>
-                            {% for ctx in assignment_contexts %}
-                                <option value="{{ ctx.assignment.id }}" {% if forloop.first %}selected{% endif %}>{{ ctx.assignment.title }} ({{ ctx.assignment.course.name }})</option>
-                            {% endfor %}
-                        </select>
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
 
-                    {% for ctx in assignment_contexts %}
-                    <div class="students-table" id="students_{{ ctx.assignment.id }}" style="display:none;">
-                        <table class="results-table">
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Assessment Grading &amp; Marksheet Submissions</h2>
+                        <p>Upload grades, provide personalized feedback, export gradebooks to Excel CSV, and submit official marksheets back to the Head of Department (HOD) for verification.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Assessments Graded</span>
+                                <strong>{{ assessments_graded }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Class Average</span>
+                                <strong>{{ class_average }}%</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Pending Grading</span>
+                                <strong>{{ pending_grading }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Submitted Marksheets</span>
+                                <strong>{{ submitted_marksheets|length }}</strong>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+                            <a href="{% url 'export_results_csv' %}" class="btn" style="padding: 9px 18px; display: inline-flex; align-items: center; gap: 6px;">
+                                📥 Export All Grades to Excel (CSV)
+                            </a>
+                        </div>
+                    </article>
+                </section>
+
+                {% if messages %}
+                <div class="messages-container" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Submit Marksheet to HOD Section -->
+                <article class="panel" style="margin-bottom: 28px; border: 1px solid rgba(110, 168, 254, 0.4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <h3 style="margin: 0; font-size: 1.15rem; color: var(--primary-accent);">🏛️ Submit Graded Marksheet to HOD for Official Approval</h3>
+                        <span class="badge" style="background: rgba(110, 168, 254, 0.15); color: #6EA8FE;">Department Policy</span>
+                    </div>
+                    <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 16px;">
+                        Upload your completed grades as an Excel or CSV marksheet file, or submit coursework grades directly to the HOD for official academic review.
+                    </p>
+                    <form method="POST" action="{% url 'teacher_results' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="submit_to_hod">
+                        <div class="grid-two" style="margin-bottom: 14px;">
+                            <div class="field-group">
+                                <label for="ms_course" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem;">Allocated Course</label>
+                                <select id="ms_course" name="course_id" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="" disabled selected>-- Choose Course --</option>
+                                    {% for c in teacher_courses %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="ms_title" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem;">Marksheet Title</label>
+                                <input id="ms_title" name="title" type="text" placeholder="e.g. Midterm Examination Marksheet - CS101" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+                        </div>
+
+                        <div class="grid-two" style="margin-bottom: 16px;">
+                            <div class="field-group">
+                                <label for="ms_assignment" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem;">Link to Coursework (Optional)</label>
+                                <select id="ms_assignment" name="assignment_id" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="">-- No Direct Link / External Sheet --</option>
+                                    {% for ctx in assignment_contexts %}
+                                    <option value="{{ ctx.assignment.id }}">{{ ctx.assignment.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="marksheet_file" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem;">Marksheet File (.csv / spreadsheet)</label>
+                                <input id="marksheet_file" name="marksheet_file" type="file" accept=".csv,.xlsx,.xls,.txt" style="width: 100%; padding: 7px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card);">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="padding: 10px 24px;">🚀 Submit Marksheet to HOD &rarr;</button>
+                    </form>
+                </article>
+
+                <!-- Marksheets Status Table -->
+                {% if submitted_marksheets %}
+                <article class="panel" style="margin-bottom: 28px;">
+                    <h3 style="margin-bottom: 14px;">My Submitted Marksheets &amp; HOD Status</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
                             <thead>
-                                <tr>
-                                    <th>Student</th>
-                                    <th>Marks</th>
-                                    <th>Grade</th>
-                                    <th>Feedback</th>
+                                <tr style="border-bottom: 2px solid var(--borders); background: var(--bg-surface);">
+                                    <th style="padding: 10px 12px;">Title</th>
+                                    <th style="padding: 10px 12px;">Course</th>
+                                    <th style="padding: 10px 12px;">Submitted At</th>
+                                    <th style="padding: 10px 12px;">HOD Status</th>
+                                    <th style="padding: 10px 12px;">HOD Remarks / Feedback</th>
+                                    <th style="padding: 10px 12px;">Sheet File</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for stu in ctx.students %}
-                                {% with sub=ctx.submissions|dict_get:stu.id %}
-                                <tr>
-                                    <td>{{ stu.get_full_name|default:stu.username }}</td>
-                                    <td><input type="number" step="0.01" name="marks_{{ stu.id }}" value="{{ sub.marks|default_if_none:'' }}" style="width:80px;"></td>
-                                    <td><input type="text" name="grade_{{ stu.id }}" value="{{ sub.grade|default_if_none:'' }}" style="width:80px;"></td>
-                                    <td><input type="text" name="feedback_{{ stu.id }}" value="{{ sub.feedback|default_if_none:'' }}" style="width:180px;"></td>
+                                {% for ms in submitted_marksheets %}
+                                <tr style="border-bottom: 1px solid var(--borders);">
+                                    <td style="padding: 10px 12px; font-weight: 600;">{{ ms.title }}</td>
+                                    <td style="padding: 10px 12px;">{{ ms.course.name }}</td>
+                                    <td style="padding: 10px 12px; font-family: var(--font-mono); font-size: 0.82rem;">{{ ms.submitted_at|date:"Y-m-d H:i" }}</td>
+                                    <td style="padding: 10px 12px;">
+                                        {% if ms.status == 'approved' %}
+                                        <span class="badge badge-success">✅ Approved by HOD</span>
+                                        {% elif ms.status == 'revision_requested' %}
+                                        <span class="badge" style="background: rgba(196, 92, 82, 0.15); color: #C45C52;">⚠️ Revision Requested</span>
+                                        {% else %}
+                                        <span class="badge" style="background: rgba(197, 139, 58, 0.15); color: #C58B3A;">⏳ Pending HOD Review</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="padding: 10px 12px; font-size: 0.83rem;">
+                                        {{ ms.hod_feedback|default:"No notes provided yet." }}
+                                    </td>
+                                    <td style="padding: 10px 12px;">
+                                        {% if ms.file %}
+                                        <a href="{{ ms.file.url }}" download class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">⬇️ Download</a>
+                                        {% else %}
+                                        <span style="color: var(--secondary-text); font-size: 0.8rem;">Direct Entry</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
-                                {% endwith %}
-                            {% empty %}
-                                <tr><td colspan="4">No enrolled students found.</td></tr>
-                            {% endfor %}
+                                {% endfor %}
                             </tbody>
                         </table>
-                        <div class="button-row">
-                            <button type="submit" name="publish" value="1">Publish Results</button>
-                            <button type="submit">Save (Draft)</button>
-                        </div>
                     </div>
-                    {% endfor %}
-                </form>
-            </article>
-
-            <script>
-            function showStudents() {
-                var sel = document.getElementById('assignment_id');
-                var val = sel.value;
-                var tables = document.querySelectorAll('.students-table');
-                tables.forEach(function(tbl) { tbl.style.display = 'none'; });
-                if (val) {
-                    var t = document.getElementById('students_' + val);
-                    if (t) t.style.display = 'block';
-                }
-            }
-            // Show table if assignment selected on reload
-            window.onload = function() {
-                showStudents();
-            };
-            </script>
-
-            <article class="list-panel panel">
-                <h3>Latest Published Results</h3>
-                {% if latest_published_results %}
-                    {% for res in latest_published_results %}
-                    <div class="list-item" style="border-left-color: #2e7d32;">
-                        <strong>{{ res.assignment.title }}</strong>
-                        <div class="meta"><span>{{ res.assignment.course.name }}</span><span>Published: {{ res.assignment.created_at|timesince }} ago</span></div>
-                        <span>Average: {{ res.avg_score }}% | {{ res.student_count }} Students Graded</span>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="color: var(--muted); padding: 12px 0;">No published results found.</p>
+                </article>
                 {% endif %}
-            </article>
-        </div>
 
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
+                <!-- Standard Grade Entry Form -->
+                <div class="grid-two">
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 14px;">Direct Assessment Grade Entry</h3>
+                        <form method="post" id="marksForm">
+                            {% csrf_token %}
+                            <div class="field-group" style="margin-bottom: 20px;">
+                                <label for="assignment_id" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">Select Assessment</label>
+                                <p style="color: var(--secondary-text); font-size: 0.8125rem; margin-bottom: 8px;">Choose an assessment and enter scores or feedback for enrolled students.</p>
+                                <select name="assignment_id" id="assignment_id" onchange="showStudents()" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="" disabled>-- Select Assessment --</option>
+                                    {% for ctx in assignment_contexts %}
+                                        <option value="{{ ctx.assignment.id }}" {% if forloop.first %}selected{% endif %}>{{ ctx.assignment.title }} ({{ ctx.assignment.course.name }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            {% for ctx in assignment_contexts %}
+                            <div class="students-table" id="students_{{ ctx.assignment.id }}" style="display:none;">
+                                <table class="results-table" style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
+                                    <thead>
+                                        <tr style="background: var(--bg-surface); border-bottom: 1px solid var(--borders);">
+                                            <th style="padding: 10px; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: var(--secondary-text);">Student</th>
+                                            <th style="padding: 10px; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: var(--secondary-text); width: 90px;">Marks</th>
+                                            <th style="padding: 10px; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: var(--secondary-text); width: 90px;">Grade</th>
+                                            <th style="padding: 10px; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: var(--secondary-text);">Feedback</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for stu in ctx.students %}
+                                        {% with sub=ctx.submissions|dict_get:stu.id %}
+                                        <tr style="border-bottom: 1px solid var(--borders);">
+                                            <td style="padding: 10px; font-weight: 500;">{{ stu.get_full_name|default:stu.username }}</td>
+                                            <td style="padding: 10px;"><input type="number" step="0.01" name="marks_{{ ctx.assignment.id }}_{{ stu.id }}" value="{{ sub.marks|default_if_none:'' }}" style="width:80px; padding: 6px; border: 1px solid var(--borders); border-radius: 4px;"></td>
+                                            <td style="padding: 10px;"><input type="text" name="grade_{{ ctx.assignment.id }}_{{ stu.id }}" value="{{ sub.grade|default_if_none:'' }}" style="width:80px; padding: 6px; border: 1px solid var(--borders); border-radius: 4px;"></td>
+                                            <td style="padding: 10px;"><input type="text" name="feedback_{{ ctx.assignment.id }}_{{ stu.id }}" value="{{ sub.feedback|default_if_none:'' }}" style="width:100%; min-width:140px; padding: 6px; border: 1px solid var(--borders); border-radius: 4px;"></td>
+                                        </tr>
+                                        {% endwith %}
+                                    {% empty %}
+                                        <tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--secondary-text);">No enrolled students found.</td></tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="button-row" style="display: flex; gap: 10px;">
+                                    <button type="submit" name="publish" value="1" class="btn" style="padding: 10px 22px;">Publish Results</button>
+                                    <button type="submit" class="btn btn-outline" style="padding: 10px 18px;">Save Draft</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </form>
+                    </article>
+
+                    <script>
+                    function showStudents() {
+                        var sel = document.getElementById('assignment_id');
+                        if (!sel) return;
+                        var val = sel.value;
+                        var tables = document.querySelectorAll('.students-table');
+                        tables.forEach(function(tbl) {
+                            tbl.style.display = 'none';
+                            tbl.querySelectorAll('input, button').forEach(function(el) { el.disabled = true; });
+                        });
+                        if (val) {
+                            var t = document.getElementById('students_' + val);
+                            if (t) {
+                                t.style.display = 'block';
+                                t.querySelectorAll('input, button').forEach(function(el) { el.disabled = false; });
+                            }
+                        }
+                    }
+                    window.addEventListener('load', function() {
+                        showStudents();
+                    });
+                    </script>
+
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">Latest Published Results</h3>
+                        {% if latest_published_results %}
+                            {% for res in latest_published_results %}
+                            <div class="list-item" style="border-left: 3px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <strong>{{ res.assignment.title }}</strong>
+                                    <span class="badge badge-success">Average: {{ res.avg_score }}%</span>
+                                </div>
+                                <div class="meta"><span>{{ res.assignment.course.name }}</span><span>Published: {{ res.assignment.created_at|timesince }} ago</span></div>
+                                <span style="color: var(--secondary-text); font-size: 0.85rem;">{{ res.student_count }} Students Graded</span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No published results found.</p>
+                        {% endif %}
+                    </article>
                 </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Contact Us</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Faculty Tools</h4>
+                        <p><a href="{% url 'teacher_dashboard' %}">Faculty Dashboard</a></p>
+                    </div>
                 </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; AI Offline Learning Platform</p>
                 </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
+            </footer>
+        </div>
     </div>
+
+    <!-- Floating BGNU AI Study Tutor -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
 </body>
 </html>

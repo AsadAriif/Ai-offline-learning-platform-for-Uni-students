@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,104 +6,255 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Analytics - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar (Obsidian Black #111D5E) -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Dept Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">Offline Mode Enabled</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Learning Analytics Review</h2>
-                <p>Track student engagement, material download trends, and assessment performance across all your courses. Use these insights to optimize your teaching strategy.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Active Engagement</span>
-                        <strong>92%</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Avg. Completion</span>
-                        <strong>84%</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Top Course</span>
-                        <strong>CS110</strong>
-                    </div>
-                </div>
-            </article>
-        </section>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY CONTROLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Faculty Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Scanner</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Task / Quiz</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_submissions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📥</span>
+                        <span class="sidebar-link-text">Submissions &amp; Grading</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Share Results</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Upload Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">Faculty Directory</span>
+                    </a>
+                </nav>
 
-        <div class="grid-two">
-            <article class="activity-panel panel">
-                <h3>Course Engagement Trends</h3>
-                <div class="list-item">
-                    <strong>CS102 - Data Structures</strong>
-                    <div class="progress-bar"><div class="progress-fill" style="width: 88%;"></div></div>
-                    <div class="meta"><span>88% Material Downloaded</span><span>High Engagement</span></div>
-                </div>
-                <div class="list-item">
-                    <strong>CS110 - AI Fundamentals</strong>
-                    <div class="progress-bar"><div class="progress-fill" style="width: 95%;"></div></div>
-                    <div class="meta"><span>95% Quiz Participation</span><span>Excellent</span></div>
-                </div>
-                <div class="list-item">
-                    <strong>CS120 - Database Systems</strong>
-                    <div class="progress-bar"><div class="progress-fill" style="width: 72%;"></div></div>
-                    <div class="meta"><span>72% Material Access</span><span>Average</span></div>
-                </div>
-            </article>
+                <div class="sidebar-group-label" style="margin-top: 14px;">SYSTEM &amp; PROFILE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Account Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
 
-            <article class="list-panel panel">
-                <h3>Key Performance Indicators</h3>
-                <div class="list-item">
-                    <strong>Average Quiz Score</strong>
-                    <div class="meta"><span>All Courses</span><span>76%</span></div>
-                    <span>Based on last 10 quizzes published.</span>
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">T</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Faculty Account</span>
+                        <span class="user-role-badge">Verified Instructor</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Workspace</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-parent"><a href="{% url 'teacher_actions' %}" style="color: inherit; text-decoration: none;">Directory</a></span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Learning Analytics Review</span>
+                    </div>
                 </div>
-                <div class="list-item">
-                    <strong>Material Reach</strong>
-                    <div class="meta"><span>Total Students</span><span>1,240+</span></div>
-                    <span>Number of unique students accessing offline packages.</span>
+
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Engine</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Faculty Portal</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </article>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 32px;">
+                    <article class="hero-panel">
+                        <h2>Learning Analytics Review</h2>
+                        <p>Track student engagement, material download trends, and assessment performance across all your courses. Use these insights to optimize your teaching strategy.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Active Engagement</span>
+                                <strong>92%</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Avg. Completion</span>
+                                <strong>84%</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Top Course</span>
+                                <strong>CS110</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <div class="grid-two">
+                    <article class="activity-panel panel">
+                        <h3 style="margin-bottom: 20px;">Course Engagement Trends</h3>
+                        <div class="list-item" style="padding: 16px 0; border-bottom: 1px solid var(--borders);">
+                            <strong style="font-size: 1rem;">CS102 - Data Structures</strong>
+                            <div class="progress-bar" style="margin: 10px 0;"><div class="progress-fill" style="width: 88%;"></div></div>
+                            <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text);">
+                                <span>88% Material Downloaded</span>
+                                <span class="badge badge-success">High Engagement</span>
+                            </div>
+                        </div>
+                        <div class="list-item" style="padding: 16px 0; border-bottom: 1px solid var(--borders);">
+                            <strong style="font-size: 1rem;">CS110 - AI Fundamentals</strong>
+                            <div class="progress-bar" style="margin: 10px 0;"><div class="progress-fill" style="width: 95%;"></div></div>
+                            <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text);">
+                                <span>95% Quiz Participation</span>
+                                <span class="badge badge-success">Excellent</span>
+                            </div>
+                        </div>
+                        <div class="list-item" style="padding: 16px 0;">
+                            <strong style="font-size: 1rem;">CS120 - Database Systems</strong>
+                            <div class="progress-bar" style="margin: 10px 0;"><div class="progress-fill" style="width: 72%;"></div></div>
+                            <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text);">
+                                <span>72% Material Access</span>
+                                <span class="badge badge-warning">Average</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 20px;">Key Performance Indicators</h3>
+                        <div class="list-item" style="padding: 16px 0; border-bottom: 1px solid var(--borders);">
+                            <strong style="font-size: 1rem;">Average Quiz Score</strong>
+                            <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text); margin: 6px 0;">
+                                <span>All Courses</span>
+                                <span style="font-family: var(--font-mono); font-weight: 600; color: var(--primary-accent);">76%</span>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--secondary-text);">Based on last 10 quizzes published.</span>
+                        </div>
+                        <div class="list-item" style="padding: 16px 0;">
+                            <strong style="font-size: 1rem;">Material Reach</strong>
+                            <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text); margin: 6px 0;">
+                                <span>Total Students</span>
+                                <span style="font-family: var(--font-mono); font-weight: 600; color: var(--primary-accent);">1,240+</span>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--secondary-text);">Number of unique students accessing offline packages.</span>
+                        </div>
+                    </article>
+                </div>
+
+                <footer class="app-footer" style="margin-top: 48px;">
+                    <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--secondary-text);">
+                        <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of CS &amp; IT</p>
+                        <p>AI Offline Learning Platform &bull; Obsidian &amp; Champagne Edition</p>
+                    </div>
+                </footer>
+            </main>
         </div>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
+
+    <!-- Mobile Drawer Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('appSidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('sidebarBackdrop');
+
+            if (toggle && sidebar && backdrop) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    backdrop.classList.toggle('open');
+                });
+                backdrop.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                    backdrop.classList.remove('open');
+                });
+            }
+        });
+    </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

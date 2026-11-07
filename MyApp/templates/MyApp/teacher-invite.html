@@ -1,159 +1,419 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invite Students - AI Offline Learning Platform</title>
+    <title>Invite &amp; Enroll Students - Faculty Portal - Baba Guru Nanak University</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Invite Students</h2>
-                <p>Generate invitation links or send direct emails to students to join your courses. Once they accept, they will have access to all your published materials and assessments.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Invites Sent</span>
-                        <strong>{{ invitations|length }}</strong>
-                    </div>
-                </div>
-            </article>
-        </section>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY TOOLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Log Lecture / Duties</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
 
-        {% if messages %}
-            <div class="messages-container" style="max-width: 1200px; margin: 1rem auto; padding: 0 2rem;">
-                {% for message in messages %}
-                <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; {% if message.tags == 'success' %}background: #e6f4ea; color: #1e8e3e;{% else %}background: #fce8e6; color: #d93025;{% endif %}">
-                    {{ message }}
-                </div>
-                {% endfor %}
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
             </div>
-        {% endif %}
 
-        <div class="grid-two">
-            <article class="upload-panel panel">
-                <h3>Invite / Enroll Students (Manual)</h3>
-                <p>Provide a single course (name and optional code) and then add students for that course. For bulk invites, put one entry per line in the format <code>roll,password,Full Name</code>. Full Name is optional.</p>
-                <form method="POST" action="{% url 'teacher_invite' %}">
-                    {% csrf_token %}
-                    <div class="field-group">
-                        <label for="course_name">Course Name</label>
-                        <input id="course_name" name="course_name" type="text" value="{{ course_name_prefill }}" placeholder="e.g., CS110 - AI Fundamentals" required>
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">👨‍🏫</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge">Faculty</span>
                     </div>
-                    <div class="field-group">
-                        <label for="course_code">Course ID / Code (optional)</label>
-                        <input id="course_code" name="course_code" type="text" value="{{ course_code_prefill }}" placeholder="e.g., CS110">
-                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
 
-                    <div class="field-group">
-                        <label for="students">Bulk students (one per line: <em>roll,password</em>)</label>
-                        <textarea id="students" name="students" rows="6" placeholder="s12345,Password123,Asad Arif\ns12346,Password456"></textarea>
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Invite &amp; Enroll Students</span>
                     </div>
-
-                    <div class="field-row">
-                        <div class="field-group" style="flex:1;">
-                            <label for="student_roll">Single student roll</label>
-                            <input id="student_roll" name="student_roll" type="text" placeholder="s12345">
-                        </div>
-                        <div class="field-group" style="flex:1;">
-                            <label for="student_password">Password</label>
-                            <input id="student_password" name="student_password" type="text" placeholder="Password123">
-                        </div>
-                        <div class="field-group" style="flex:1;">
-                            <label for="student_name">Full Name (optional)</label>
-                            <input id="student_name" name="student_name" type="text" placeholder="Asad Arif">
-                        </div>
-                    </div>
-
-                    <div class="button-row">
-                        <button type="submit" id="btn-send">Add / Enroll Students</button>
-                    </div>
-                </form>
-            </article>
-
-            <article class="list-panel panel">
-                <h3>Recent Enrollments</h3>
-                <div id="enroll-list">
-                    {% for e in recent_enrollments %}
-                    <div class="list-item">
-                        <strong>{{ e.student.username }}</strong>
-                        <div class="meta"><span>{{ e.course.name }}</span><span>{{ e.enrolled_at|timesince }} ago</span></div>
-                    </div>
-                    {% empty %}
-                    <p>No recent enrollments.</p>
-                    {% endfor %}
                 </div>
-            </article>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Teacher Dashboard</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 24px;">
+                    <article class="hero-panel">
+                        <h2>Invite &amp; Enroll Students into Courses</h2>
+                        <p>Enroll students into <strong>Course 1</strong>, <strong>Course 2</strong>, or <strong>All your assigned courses</strong>. Students immediately get offline access to all your published coursework and quizzes.</p>
+
+                        <!-- HOD Course Allocation Notice -->
+                        <div style="margin-top: 14px; padding: 10px 14px; background: rgba(110, 168, 254, 0.12); border-left: 3px solid var(--secondary-accent); border-radius: 4px; font-size: 0.85rem;">
+                            🏛️ <strong>Courses Allocated by HOD:</strong>
+                            {% for ac in teacher_courses %}
+                            <span class="badge" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--borders); margin-left: 6px;">📚 {{ ac.name }}</span>
+                            {% empty %}
+                            <span style="color: var(--secondary-text); margin-left: 6px;">No courses allocated yet by HOD.</span>
+                            {% endfor %}
+                        </div>
+                    </article>
+                </section>
+
+                {% if messages %}
+                    <div class="messages-container" style="margin-bottom: 24px;">
+                        {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Method 1: Upload HOD Student Roster File -->
+                <article class="panel" style="margin-bottom: 24px; border: 1px solid rgba(110, 168, 254, 0.4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <h3 style="margin: 0; font-size: 1.15rem; color: var(--primary-accent);">📑 Upload HOD Student Roster Sheet (Excel / CSV)</h3>
+                        <span class="badge" style="background: rgba(39, 133, 104, 0.15); color: #278568;">Recommended by HOD</span>
+                    </div>
+                    <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 16px;">
+                        Upload the roster sheet provided by the HOD. Select <strong>Course 1</strong>, <strong>Course 2</strong>, or <strong>All Assigned Courses</strong>. All student accounts will be created with their exact details and enrolled into your chosen course(s).
+                    </p>
+                    <form method="POST" action="{% url 'teacher_invite' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="field-group" style="margin-bottom: 16px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.875rem;">Select Course Allocation for Roster (Choose 1, 2, or All):</label>
+                            <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--borders);">
+                                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; cursor: pointer; color: var(--primary-accent);">
+                                    <input type="checkbox" name="all_courses" value="1" id="roster_all_courses" onchange="toggleRosterCourses(this)">
+                                    <span>🌟 Enroll into ALL My Assigned Courses</span>
+                                </label>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-top: 8px;">
+                                    {% for c in teacher_courses %}
+                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; cursor: pointer; padding: 6px 10px; background: var(--bg-card); border-radius: 4px; border: 1px solid var(--borders);">
+                                        <input type="checkbox" name="selected_courses" value="{{ c.id }}" class="roster_course_item" {% if forloop.first %}checked{% endif %}>
+                                        <span>📚 {{ c.name }}</span>
+                                    </label>
+                                    {% empty %}
+                                    <span style="color: var(--secondary-text); font-size: 0.85rem;">No courses assigned by HOD yet.</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-group" style="margin-bottom: 16px;">
+                            <label for="roster_file" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">HOD Roster File (.csv / spreadsheet)</label>
+                            <input id="roster_file" name="roster_file" type="file" accept=".csv,.txt" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card);">
+                        </div>
+
+                        <button type="submit" class="btn" style="padding: 10px 24px;">📥 Import &amp; Enroll All Students from Roster &rarr;</button>
+                    </form>
+                </article>
+
+                <div class="grid-two">
+                    <!-- Method 2: Manual & Bulk Text Entry -->
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 12px;">Manual &amp; Line-by-Line Student Enrollment</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 18px;">Type or paste student credentials. For bulk entry, use one student per line: <code>roll,password,Full Name</code>.</p>
+                        <form method="POST" action="{% url 'teacher_invite' %}">
+                            {% csrf_token %}
+
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Select Target Subject(s) (Choose 1, 2, or All):</label>
+                                <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--borders);">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; cursor: pointer; color: var(--primary-accent);">
+                                        <input type="checkbox" name="all_courses" value="1" id="manual_all_courses" onchange="toggleManualCourses(this)">
+                                        <span>🌟 Enroll into ALL My Assigned Courses</span>
+                                    </label>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 8px;">
+                                        {% for c in teacher_courses %}
+                                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; cursor: pointer; padding: 6px 10px; background: var(--bg-card); border-radius: 4px; border: 1px solid var(--borders);">
+                                            <input type="checkbox" name="selected_courses" value="{{ c.name }}" class="manual_course_item" {% if forloop.first %}checked{% endif %}>
+                                            <span>📚 {{ c.name }}</span>
+                                        </label>
+                                        {% empty %}
+                                        <input id="course_name" name="course_name" type="text" value="{{ course_name_prefill }}" placeholder="e.g., CS101 - Intro to AI" required style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 14px;">
+                                <label for="students" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Bulk students (one per line: <em>roll,password,Full Name</em>)</label>
+                                <textarea id="students" name="students" rows="4" placeholder="s12345,Password123,Asad Arif&#10;s12346,Password456,Bilal Khan" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem;"></textarea>
+                            </div>
+
+                            <div class="field-row" style="display: flex; gap: 10px; margin-bottom: 16px;">
+                                <div class="field-group" style="flex:1;">
+                                    <label for="student_roll" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Single Student Roll</label>
+                                    <input id="student_roll" name="student_roll" type="text" placeholder="s12345" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                </div>
+                                <div class="field-group" style="flex:1;">
+                                    <label for="student_password" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Password</label>
+                                    <input id="student_password" name="student_password" type="text" placeholder="Password123" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                </div>
+                                <div class="field-group" style="flex:1;">
+                                    <label for="student_name" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Full Name (optional)</label>
+                                    <input id="student_name" name="student_name" type="text" placeholder="Asad Arif" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                </div>
+                            </div>
+
+                            <button type="submit" id="btn-send" class="btn" style="padding: 10px 22px;">Add / Enroll Students</button>
+                        </form>
+                    </article>
+
+                    <!-- Recent Enrollments List -->
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">Recent Course Enrollments</h3>
+                        <div id="enroll-list" class="recent-list">
+                            {% for e in recent_enrollments %}
+                            <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--bg-card);">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+                                        <strong>{{ e.student.username }}</strong>
+                                        <span class="badge badge-success">Enrolled</span>
+                                    </div>
+                                    <div class="meta" style="font-size: 0.8rem; color: var(--secondary-text);">
+                                        <span>Name: {{ e.student.get_full_name|default:e.student.username }}</span>
+                                        <span>&bull; Course: {{ e.course.name }}</span>
+                                        {% if e.student.phone_number %}<span>&bull; Phone: {{ e.student.phone_number }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <button type="button" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="openEditStudentModal('{{ e.student.id }}', '{{ e.student.username|escapejs }}', '{{ e.student.get_full_name|escapejs }}', '{{ e.student.email|escapejs }}', '{{ e.student.phone_number|escapejs }}', '{{ e.course.id }}')">✏️ Edit</button>
+                                    <form method="POST" action="{% url 'teacher_invite' %}" onsubmit="return confirm('Remove student {{ e.student.username }} from {{ e.course.name }}?');" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_student">
+                                        <input type="hidden" name="student_id" value="{{ e.student.id }}">
+                                        <input type="hidden" name="course_id" value="{{ e.course.id }}">
+                                        <button type="submit" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; color: #DC2626; border-color: #DC2626;">🗑️ Unenroll</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No recent enrollments recorded.</p>
+                            {% endfor %}
+                        </div>
+                    </article>
+                </div>
+            
+                <!-- Edit Student Modal -->
+                <div id="editStudentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.55); z-index: 100000; align-items: center; justify-content: center;">
+                    <div style="background: var(--bg-card, #FFFFFF); border-radius: 16px; padding: 24px; width: 480px; max-width: 92vw; box-shadow: 0 20px 45px rgba(0,0,0,0.25); border: 1px solid var(--borders);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 id="editStudentModalTitle" style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Edit Student Record</h3>
+                            <button type="button" onclick="closeEditStudentModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--secondary-text);">&times;</button>
+                        </div>
+                        <form method="POST" action="{% url 'teacher_invite' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="edit_student">
+                            <input type="hidden" name="student_id" id="edit_std_id">
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Full Name</label>
+                                <input type="text" name="full_name" id="edit_std_fullname" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Student Roll / Username</label>
+                                <input type="text" name="username" id="edit_std_username" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Change Password <span style="font-weight: normal; color: var(--secondary-text); font-size: 0.78rem;">(Leave blank to keep current)</span></label>
+                                <input type="password" name="password" id="edit_std_password" placeholder="Enter new password" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Email</label>
+                                <input type="email" name="email" id="edit_std_email" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Phone Number</label>
+                                <input type="text" name="phone_number" id="edit_std_phone" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <div style="margin-bottom: 18px;">
+                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Enrolled Course</label>
+                                <select name="course_id" id="edit_std_course" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg-card); color: var(--text-primary);">
+                                    {% for c in teacher_courses %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                <button type="button" onclick="closeEditStudentModal()" class="btn btn-outline" style="padding: 8px 16px;">Cancel</button>
+                                <button type="submit" class="btn" style="padding: 8px 18px;">Update Student &rarr;</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <script>
+                function openEditStudentModal(id, roll, name, email, phone, courseId) {
+                    document.getElementById('edit_std_id').value = id;
+                    document.getElementById('edit_std_username').value = roll;
+                    document.getElementById('edit_std_fullname').value = name;
+                    document.getElementById('edit_std_email').value = email;
+                    document.getElementById('edit_std_phone').value = phone;
+                    document.getElementById('edit_std_password').value = '';
+                    if (courseId) {
+                        document.getElementById('edit_std_course').value = courseId;
+                    }
+                    document.getElementById('editStudentModalTitle').textContent = 'Edit Student: ' + roll;
+                    document.getElementById('editStudentModal').style.display = 'flex';
+                }
+
+                function closeEditStudentModal() {
+                    document.getElementById('editStudentModal').style.display = 'none';
+                }
+                </script>
+
+            </main>
+
+            <!-- Institutional Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171 / 0300-1199358</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura, Nankana Sahib, Punjab</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Institutional Info</h4>
+                        <p>Department of Computer Science &amp; IT &middot; Baba Guru Nanak University</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; All Rights Reserved</p>
+                </div>
+            </footer>
         </div>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
 
-
-</body>
-<script>
-document.addEventListener('click', function(e){
-    if(e.target && e.target.classList.contains('copy-btn')){
-        const url = e.target.dataset.url;
-        if(navigator.clipboard){
-            navigator.clipboard.writeText(url).then(()=>{
-                const original = e.target.textContent;
-                e.target.textContent = 'Copied!';
-                setTimeout(()=> e.target.textContent = original, 1500);
+    <!-- Floating BGNU AI Study Tutor -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <script>
+        function toggleRosterCourses(master) {
+            document.querySelectorAll('.roster_course_item').forEach(function(cb) {
+                cb.checked = master.checked;
             });
-        } else {
-            // fallback
-            const tmp = document.createElement('textarea');
-            tmp.value = url;
-            document.body.appendChild(tmp);
-            tmp.select();
-            document.execCommand('copy');
-            document.body.removeChild(tmp);
-            const original = e.target.textContent;
-            e.target.textContent = 'Copied!';
-            setTimeout(()=> e.target.textContent = original, 1500);
         }
-    }
-});
-</script>
+        function toggleManualCourses(master) {
+            document.querySelectorAll('.manual_course_item').forEach(function(cb) {
+                cb.checked = master.checked;
+            });
+        }
+    </script>
+</body>
 </html>

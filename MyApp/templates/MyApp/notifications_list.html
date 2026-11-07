@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Notices &amp; Announcements - Baba Guru Nanak University</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
+    <style>
+        .filter-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--secondary-text);
+            background: var(--card-bg);
+            border: 1px solid var(--borders);
+            transition: var(--transition-fast);
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+        }
+        .filter-pill .pill-counter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+        }
+        .filter-pill:not(.active) .pill-counter {
+            background: var(--pale-blue);
+            color: var(--primary);
+        }
+        .notice-card {
+            background: var(--card-bg);
+            border: 1px solid var(--borders);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            transition: var(--transition-fast);
+            position: relative;
+        }
+        .notice-card.unread {
+            border-left: 4px solid var(--secondary-accent);
+            background: #F8FAFF;
+        }
+        .notice-card:hover {
+            box-shadow: 0 4px 18px rgba(17, 29, 94, 0.08);
+            transform: translateY(-1px);
+        }
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .priority-urgent { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+        .priority-exam { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
+        .priority-meeting { background: #CCFBF1; color: #115E59; border: 1px solid #99F6E4; }
+        .priority-normal { background: #E2E8F0; color: #334155; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Universal App Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">NAVIGATION</div>
+                <nav class="sidebar-nav">
+                    {% if user.role == 'student' %}
+                        <a href="{% url 'student_dashboard' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📊</span>
+                            <span class="sidebar-link-text">Student Dashboard</span>
+                        </a>
+                        <a href="{% url 'student_materials' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📚</span>
+                            <span class="sidebar-link-text">Study Materials</span>
+                        </a>
+                        <a href="{% url 'student_assignments' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📋</span>
+                            <span class="sidebar-link-text">Coursework</span>
+                        </a>
+                    {% elif user.role == 'teacher' %}
+                        <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📊</span>
+                            <span class="sidebar-link-text">Faculty Dashboard</span>
+                        </a>
+                        <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📚</span>
+                            <span class="sidebar-link-text">Course Materials</span>
+                        </a>
+                        <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">🗓️</span>
+                            <span class="sidebar-link-text">Lecture Logs &amp; Tasks</span>
+                        </a>
+                    {% elif user.role == 'hod' %}
+                        <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📊</span>
+                            <span class="sidebar-link-text">HOD Dashboard</span>
+                        </a>
+                        <a href="{% url 'hod_notifications' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📢</span>
+                            <span class="sidebar-link-text">Dispatch Notices</span>
+                        </a>
+                        <a href="{% url 'hod_courses' %}" class="sidebar-link">
+                            <span class="sidebar-link-icon">📚</span>
+                            <span class="sidebar-link-text">Course Allocations</span>
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'notifications_list' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">🔔</span>
+                        <span class="sidebar-link-text">Notifications Inbox</span>
+                        {% if user_unread_notifications_count > 0 %}
+                        <span class="sidebar-badge" style="background: #EF4444; color: #fff;">{{ user_unread_notifications_count }}</span>
+                        {% endif %}
+                    </a>
+
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">{{ user.get_full_name|default:user.username|slice:":1"|upper }}</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">{{ user.get_role_display|default:user.role|title }}</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        {% if user.role == 'student' %}
+                            <a href="{% url 'student_dashboard' %}" class="breadcrumb-parent">Student Portal</a>
+                        {% elif user.role == 'teacher' %}
+                            <a href="{% url 'teacher_dashboard' %}" class="breadcrumb-parent">Faculty Portal</a>
+                        {% else %}
+                            <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
+                        {% endif %}
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Official Announcements &amp; Notice Inbox</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Hero Header -->
+                <section class="hero panel" style="margin-bottom: 24px;">
+                    <article class="hero-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <h2>Official University Notices &amp; Circulars</h2>
+                            <p>All institutional alerts, departmental circulars from the Head of Department, and course announcements in one place.</p>
+                        </div>
+                        {% if unread_count > 0 %}
+                        <a href="{% url 'mark_all_notifications_read' %}" class="btn btn-secondary" style="background: #FFFFFF; color: var(--primary); padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 600; text-decoration: none; border: 1px solid var(--borders); display: inline-flex; align-items: center; gap: 8px;">
+                            <span>✓ Mark All as Read</span>
+                        </a>
+                        {% endif %}
+                    </article>
+                </section>
+
+                <!-- Filter Pills -->
+                <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;">
+                    <a href="{% url 'notifications_list' %}?filter=all" class="filter-pill {% if filter_type == 'all' %}active{% endif %}">
+                        <span>All Notices</span>
+                        <span class="pill-counter">{{ total_count }}</span>
+                    </a>
+                    <a href="{% url 'notifications_list' %}?filter=unread" class="filter-pill {% if filter_type == 'unread' %}active{% endif %}">
+                        <span>Unread Only</span>
+                        <span class="pill-counter">{{ unread_count }}</span>
+                    </a>
+                    <a href="{% url 'notifications_list' %}?filter=urgent" class="filter-pill {% if filter_type == 'urgent' %}active{% endif %}">
+                        <span>🚨 Urgent</span>
+                        <span class="pill-counter">{{ urgent_count }}</span>
+                    </a>
+                    <a href="{% url 'notifications_list' %}?filter=course" class="filter-pill {% if filter_type == 'course' %}active{% endif %}">
+                        <span>📚 Course Notices</span>
+                    </a>
+                </div>
+
+                <!-- Notifications List Feed -->
+                {% if notifications %}
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    {% for notif in notifications %}
+                    <div class="notice-card {% if not notif.is_read %}unread{% endif %}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                {% if not notif.is_read %}
+                                <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--secondary-accent); display: inline-block;" title="Unread Notice"></span>
+                                {% endif %}
+                                <h3 style="margin: 0; font-size: 1.05rem; font-family: var(--font-heading); color: var(--primary);">
+                                    {{ notif.title }}
+                                </h3>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                {% if notif.priority == 'urgent' %}
+                                    <span class="priority-badge priority-urgent">🚨 Urgent Priority</span>
+                                {% elif notif.priority == 'exam' %}
+                                    <span class="priority-badge priority-exam">📑 Exam Circular</span>
+                                {% elif notif.priority == 'meeting' %}
+                                    <span class="priority-badge priority-meeting">🏛️ Meeting Notice</span>
+                                {% else %}
+                                    <span class="priority-badge priority-normal">Standard</span>
+                                {% endif %}
+
+                                {% if not notif.is_read %}
+                                <a href="{% url 'mark_notification_read' notif.id %}" class="btn" style="font-size: 0.75rem; padding: 4px 10px; background: #EEF4FF; color: var(--primary); border: 1px solid var(--secondary-accent); border-radius: var(--radius-sm); text-decoration: none; font-weight: 600;">
+                                    Mark as Read
+                                </a>
+                                {% else %}
+                                <span style="font-size: 0.75rem; color: #10B981; font-weight: 600;">✓ Read</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Message Body -->
+                        <div style="font-size: 0.92rem; color: var(--primary-text); line-height: 1.6; margin-bottom: 14px; white-space: pre-line;">
+                            {{ notif.message }}
+                        </div>
+
+                        <!-- Footer Details -->
+                        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--secondary-text); border-top: 1px solid var(--borders); padding-top: 10px;">
+                            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                                <span><strong>From:</strong> {{ notif.sender.get_full_name|default:notif.sender.username }} ({{ notif.sender.get_role_display|default:notif.sender.role|title }})</span>
+                                {% if notif.course %}
+                                <span><strong>Course:</strong> {{ notif.course.name }}</span>
+                                {% endif %}
+                                <span><strong>Audience:</strong> {{ notif.get_audience_type_display }}</span>
+                            </div>
+                            <div>
+                                <span>{{ notif.created_at|date:"F d, Y &bull; h:i A" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="card-box" style="padding: 48px; text-align: center; color: var(--secondary-text);">
+                    <div style="font-size: 3rem; margin-bottom: 12px;">📭</div>
+                    <h3 style="margin: 0 0 8px 0; color: var(--primary); font-family: var(--font-heading);">No Notifications Found</h3>
+                    <p style="margin: 0; font-size: 0.9rem;">
+                        {% if filter_type == 'unread' %}
+                        You have read all of your notifications. Great job staying up to date!
+                        {% else %}
+                        No announcements or notices have been posted yet. Check back later.
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+
+            </main>
+        </div>
+    </div>
+
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+</body>
+</html>
+

@@ -16,6 +16,21 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file if it exists
+_env_path = BASE_DIR / '.env'
+if _env_path.is_file():
+    try:
+        with open(_env_path, 'r', encoding='utf-8') as _env_file:
+            for _line in _env_file:
+                _line = _line.strip()
+                if _line and not _line.startswith('#') and '=' in _line:
+                    _k, _v = _line.split('=', 1)
+                    os.environ[_k.strip()] = _v.strip()
+    except Exception:
+        pass
+
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -24,9 +39,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-vm-fxm_rrb_7y*xh#rlglwdml6%q#ufj@=r&1zqq-c!e&r-cyd')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() in {'1', 'true', 'yes', 'on'}
+DEBUG = os.getenv('DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
 
-allowed_hosts = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,ai-offline-learning-platform-for-un.vercel.app').split(',')
+allowed_hosts = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,ai-offline-learning-platform-for-un.vercel.app,*').split(',')
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts if host.strip()]
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://ai-offline-learning-platform-for-un.vercel.app').split(',') if origin.strip()]
 
@@ -66,6 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'MyApp.context_processors.notification_context',
             ],
         },
     },
@@ -89,11 +105,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', ''),
     }
 }
-
-
-
-
-
 
 
 # Password validation

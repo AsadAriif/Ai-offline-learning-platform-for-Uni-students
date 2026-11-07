@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Attendance &amp; Assigned Duties - Faculty Portal - Baba Guru Nanak University</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Faculty Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY MANAGEMENT</div>
+                <nav class="sidebar-nav">
+                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous Faculty AI Co-Pilot">
+                          <span class="sidebar-link-icon">🤖</span>
+                          <span class="sidebar-link-text">Faculty AI Co-Pilot ✨</span>
+                      </a>
+
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_attendance' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Log Lecture / Duties</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Coursework</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📤</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Publish Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🎯</span>
+                        <span class="sidebar-link-text">Grade &amp; Results</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Detector</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Faculty Actions</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Faculty Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">👨‍🏫</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge">Faculty</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <a href="{% url 'teacher_dashboard' %}" class="breadcrumb-parent">Faculty Portal</a>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Lecture Attendance &amp; HOD Assigned Duties</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Lecture Attendance Conduction &amp; HOD Tasks</h2>
+                        <p>Log your daily lecture conduction, topic coverage, and student attendance count for departmental records. Check duties and instructions assigned to you by the Head of Department.</p>
+                        <div class="stats-row" style="margin-top: 18px;">
+                            <div class="stat-card">
+                                <span>My Logged Lectures</span>
+                                <strong>{{ my_logs|length }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Assigned Duties</span>
+                                <strong>{{ my_tasks|length }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                {% if messages %}
+                <div class="messages-container" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Duties Assigned by HOD Section -->
+                {% if my_tasks %}
+                <article class="panel" style="margin-bottom: 28px; border-left: 4px solid var(--secondary-accent);">
+                    <h3 style="margin-bottom: 12px;">📋 Duties &amp; Tasks Assigned by HOD</h3>
+                    <div class="recent-list">
+                        {% for task in my_tasks %}
+                        <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <strong>{{ task.title }}</strong>
+                                    {% if task.priority == 'urgent' %}
+                                    <span class="badge" style="background: rgba(196, 92, 82, 0.15); color: #C45C52;">🚨 Urgent</span>
+                                    {% endif %}
+                                </div>
+                                <div class="meta" style="margin-top: 4px;">
+                                    {% if task.course %}<span>Course: {{ task.course.name }}</span>{% endif %}
+                                    {% if task.due_date %}<span>Due Date: {{ task.due_date }}</span>{% endif %}
+                                    <span>Assigned by: {{ task.hod.get_full_name|default:"HOD" }}</span>
+                                </div>
+                                {% if task.description %}
+                                <div style="font-size: 0.85rem; color: var(--text-primary); margin-top: 4px;">{{ task.description }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <form method="POST" action="{% url 'teacher_attendance' %}" style="display: flex; align-items: center; gap: 6px;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="update_task">
+                                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                                    <select name="status" onchange="this.form.submit()" style="padding: 6px 10px; font-size: 0.8rem; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                        <option value="pending" {% if task.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="completed" {% if task.status == 'completed' %}selected{% endif %}>Completed</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </article>
+                {% endif %}
+
+                <div class="grid-two">
+                    <!-- Log Lecture Form -->
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 12px;">🗓️ Log Daily Lecture Conduction</h3>
+                        <p style="color: var(--secondary-text); font-size: 0.85rem; margin-bottom: 18px;">Submit your class conduction log directly to the HOD's monitoring dashboard.</p>
+                        <form method="POST" action="{% url 'teacher_attendance' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="log_lecture">
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="course_id" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Allocated Course</label>
+                                <select id="course_id" name="course_id" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <option value="" disabled selected>-- Select Your Course --</option>
+                                    {% for c in courses %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="grid-two" style="margin-bottom: 12px;">
+                                <div class="field-group">
+                                    <label for="date" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Lecture Date</label>
+                                    <input id="date" name="date" type="date" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                </div>
+                                <div class="field-group">
+                                    <label for="status" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Conduction Status</label>
+                                    <select id="status" name="status" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                        <option value="present">Class Conducted (Present)</option>
+                                        <option value="leave">Official Leave</option>
+                                        <option value="absent">Rescheduled / Postponed</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="topic_covered" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Syllabus Topic Covered</label>
+                                <input id="topic_covered" name="topic_covered" type="text" placeholder="e.g. Chapter 4: Relational Algebra and SQL Joins" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 12px;">
+                                <label for="students_present" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Number of Students Attended</label>
+                                <input id="students_present" name="students_present" type="number" min="0" value="0" placeholder="e.g. 42" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <div class="field-group" style="margin-bottom: 16px;">
+                                <label for="remarks" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem;">Remarks / Notes for HOD (Optional)</label>
+                                <textarea id="remarks" name="remarks" rows="2" placeholder="Any lab issues, makeup class details, or notes..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.85rem;"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn" style="padding: 9px 20px;">Submit Lecture Log to HOD &rarr;</button>
+                        </form>
+                    </article>
+
+                    <!-- Recent Logs List -->
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 14px;">Recent Conduction Records</h3>
+                        <div class="recent-list">
+                            {% for log in my_logs %}
+                            <div class="list-item" style="border-left: 3px solid {% if log.status == 'present' %}#278568{% elif log.status == 'leave' %}#6EA8FE{% else %}#C45C52{% endif %};">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <strong>{{ log.course.name }}</strong>
+                                    {% if log.status == 'present' %}
+                                    <span class="badge badge-success">Conducted</span>
+                                    {% elif log.status == 'leave' %}
+                                    <span class="badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Leave</span>
+                                    {% else %}
+                                    <span class="badge" style="background: rgba(196, 92, 82, 0.15); color: #C45C52;">Postponed</span>
+                                    {% endif %}
+                                </div>
+                                <div class="meta" style="margin-bottom: 4px;">
+                                    <span>Date: {{ log.date }}</span>
+                                    <span>Attendance: {{ log.students_present }} students</span>
+                                </div>
+                                {% if log.topic_covered %}
+                                <div style="font-size: 0.82rem; color: var(--text-primary);">
+                                    <strong>Topic:</strong> {{ log.topic_covered }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <p style="color: var(--secondary-text); padding: 12px 0;">No lecture logs submitted yet.</p>
+                            {% endfor %}
+                        </div>
+                    </article>
+                </div>
+            </main>
+
+            <footer class="app-footer">
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    {% include 'MyApp/chatbot_widget.html' %}
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <script>
+        // Default today's date into the date field
+        const dateInput = document.getElementById('date');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
+    </script>
+</body>
+</html>
+

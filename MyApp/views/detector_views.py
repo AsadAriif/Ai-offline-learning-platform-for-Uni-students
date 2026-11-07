@@ -17,7 +17,7 @@ def _allowed_file(filename):
 @login_required
 @require_POST
 def detect_file(request):
-    if not request.user.is_staff:
+    if not (getattr(request.user, 'role', '') == 'teacher' or request.user.is_staff):
         return HttpResponseForbidden('Only teachers can use this endpoint.')
     uploaded = request.FILES.get('file')
     if not uploaded:
@@ -35,7 +35,8 @@ def detect_file(request):
         result = detector.predict(tmp_path)
     finally:
         try:
-            os.remove(tmp_path)
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
         except OSError:
             pass
     return JsonResponse(result)

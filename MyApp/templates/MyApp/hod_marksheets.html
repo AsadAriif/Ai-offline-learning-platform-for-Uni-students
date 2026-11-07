@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Faculty Marksheets - HOD Portal - Baba Guru Nanak University</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- HOD Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; HOD Portal</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">DEPARTMENT GOVERNANCE</div>
+                <nav class="sidebar-nav">
+                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous HOD AI Co-Pilot">
+                          <span class="sidebar-link-icon">🤖</span>
+                          <span class="sidebar-link-text">HOD AI Co-Pilot ✨</span>
+                      </a>
+
+                    <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">HOD Dashboard</span>
+                    </a>
+                    <a href="{% url 'hod_notifications' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📢</span>
+                        <span class="sidebar-link-text">Official Announcements</span>
+                    </a>
+                    <a href="{% url 'hod_courses' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Course Allocations</span>
+                    </a>
+                    <a href="{% url 'hod_tasks' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Faculty Duties &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'hod_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Faculty Lecture Logs</span>
+                    </a>
+                    <a href="{% url 'hod_marksheets' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Review Marksheets</span>
+                    </a>
+                    <a href="{% url 'hod_student_roster' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Student Roster Template</span>
+                    </a>
+                    <a href="{% url 'hod_manage_users' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span class="sidebar-link-text">Manage Faculty &amp; HODs</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👨‍🏫</span>
+                        <span class="sidebar-link-text">Faculty Workspace</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">🏛️</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head of Dept</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Official Marksheets Review &amp; Approval</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span>{{ user.get_full_name|default:user.username }} (HOD)</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Official Marksheet Submissions &amp; Academic Review</h2>
+                        <p>Verify grade distributions, assessment scores, and marksheets uploaded by instructors. Approve marksheets for official university notification or request necessary revisions.</p>
+                        <div class="stats-row" style="margin-top: 18px;">
+                            <div class="stat-card" style="border-left-color: #C58B3A;">
+                                <span>Pending Approval</span>
+                                <strong style="color: #C58B3A;">{{ pending_count }}</strong>
+                            </div>
+                            <div class="stat-card" style="border-left-color: #278568;">
+                                <span>Approved Marksheets</span>
+                                <strong style="color: #278568;">{{ approved_count }}</strong>
+                            </div>
+                            <div class="stat-card" style="border-left-color: #C45C52;">
+                                <span>Revision Requested</span>
+                                <strong style="color: #C45C52;">{{ revision_count }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                {% if messages %}
+                <div class="messages-container" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Marksheets List -->
+                <article class="panel">
+                    <h3 style="margin-bottom: 16px;">Submitted Marksheet Records</h3>
+                    <div class="recent-list">
+                        {% for ms in marksheets %}
+                        <div class="list-item" style="padding: 18px; margin-bottom: 14px; border: 1px solid var(--borders); border-left: 4px solid {% if ms.status == 'approved' %}#278568{% elif ms.status == 'revision_requested' %}#C45C52{% else %}#C58B3A{% endif %}; border-radius: var(--radius-sm); background: var(--bg-card);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+                                <div>
+                                    <h4 style="margin: 0 0 4px 0; font-size: 1.05rem; color: var(--text-primary);">{{ ms.title }}</h4>
+                                    <div class="meta" style="gap: 16px;">
+                                        <span>Course: <strong>{{ ms.course.name }}</strong></span>
+                                        <span>Instructor: <strong>{{ ms.teacher.get_full_name|default:ms.teacher.username }}</strong></span>
+                                        <span>Students Graded: <strong>{{ ms.total_students }}</strong></span>
+                                        {% if ms.average_score > 0 %}
+                                        <span>Average Score: <strong>{{ ms.average_score }}%</strong></span>
+                                        {% endif %}
+                                        <span>Submitted: {{ ms.submitted_at|date:"Y-m-d H:i" }}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    {% if ms.status == 'approved' %}
+                                    <span class="badge badge-success" style="font-size: 0.85rem; padding: 6px 14px;">✅ Approved by HOD</span>
+                                    {% elif ms.status == 'revision_requested' %}
+                                    <span class="badge" style="background: rgba(196, 92, 82, 0.15); color: #C45C52; font-size: 0.85rem; padding: 6px 14px;">⚠️ Revision Requested</span>
+                                    {% else %}
+                                    <span class="badge" style="background: rgba(197, 139, 58, 0.15); color: #C58B3A; font-size: 0.85rem; padding: 6px 14px;">⏳ Awaiting Approval</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if ms.hod_feedback %}
+                            <div style="margin: 10px 0; padding: 10px 14px; background: rgba(110, 168, 254, 0.08); border-radius: 6px; font-size: 0.85rem; border-left: 3px solid var(--primary-accent);">
+                                <strong>HOD Remarks:</strong> {{ ms.hod_feedback }}
+                            </div>
+                            {% endif %}
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--borders); flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    {% if ms.file %}
+                                    <a href="{{ ms.file.url }}" download class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">
+                                        ⬇️ Download Marksheet Spreadsheet
+                                    </a>
+                                    {% else %}
+                                    <span style="font-size: 0.8rem; color: var(--secondary-text);">Submitted directly via portal marks entry</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- HOD Action Form -->
+                                <form method="POST" action="{% url 'hod_marksheets' %}" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="marksheet_id" value="{{ ms.id }}">
+                                    <input type="text" name="hod_feedback" value="{{ ms.hod_feedback }}" placeholder="HOD Review remarks..." style="padding: 6px 10px; font-size: 0.8rem; border: 1px solid var(--borders); border-radius: var(--radius-sm); min-width: 220px; background: var(--bg-surface); color: var(--text-primary);">
+                                    
+                                    <button type="submit" name="status" value="approved" class="btn" style="padding: 6px 14px; font-size: 0.8rem; background: #278568; border-color: #278568;">
+                                        ✓ Approve
+                                    </button>
+                                    <button type="submit" name="status" value="revision_requested" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem; color: #C45C52; border-color: #C45C52;">
+                                        Request Revision
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="color: var(--secondary-text); padding: 20px 0; text-align: center;">No marksheets submitted by faculty instructors yet.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+            </main>
+
+            <footer class="app-footer">
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    {% include 'MyApp/chatbot_widget.html' %}
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+</body>
+</html>
+

@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,164 +6,312 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Session - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar (Obsidian Black #111D5E) -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Dept Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; Faculty</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'teacher_actions' %}">Actions</a>
-                <a href="{% url 'teacher_dashboard' %}" class="primary">Teacher Dashboard</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">Offline Mode Enabled</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel panel">
-                <h2>Schedule Academic Sessions</h2>
-                <p>Plan your upcoming lectures, lab sessions, and tutorials. These will appear on the students' dashboard calendars.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Sessions This Week</span>
-                        <strong>12</strong>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">FACULTY CONTROLS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Faculty Dashboard</span>
+                    </a>
+                    <a href="{% url 'teacher_detect' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🤖</span>
+                        <span class="sidebar-link-text">AI Content Scanner</span>
+                    </a>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Create Task / Quiz</span>
+                    </a>
+                    <a href="{% url 'teacher_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Upload Materials</span>
+                    </a>
+                    <a href="{% url 'teacher_submissions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📥</span>
+                        <span class="sidebar-link-text">Submissions &amp; Grading</span>
+                    </a>
+                    <a href="{% url 'teacher_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Share Results</span>
+                    </a>
+                    <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Upload Past Papers</span>
+                    </a>
+                    <a href="{% url 'teacher_invite' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">✉️</span>
+                        <span class="sidebar-link-text">Invite Students</span>
+                    </a>
+                    <a href="{% url 'teacher_actions' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">Faculty Directory</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">SYSTEM &amp; PROFILE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">Account Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">T</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">Faculty Account</span>
+                        <span class="user-role-badge">Verified Instructor</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Upcoming Labs</span>
-                        <strong>4</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Revision Classes</span>
-                        <strong>2</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Faculty Workspace</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-parent"><a href="{% url 'teacher_actions' %}" style="color: inherit; text-decoration: none;">Directory</a></span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Schedule Academic Sessions</span>
                     </div>
                 </div>
-            </article>
-        </section>
 
-        <div class="grid-two">
-            <article class="upload-panel panel">
-                <h3>Schedule New Session</h3>
-                <form>
-                    {% csrf_token %}
-                    <div class="field-group">
-                        <label for="course">Course</label>
-                        <select id="course">
-                            <option>CS102 - Data Structures</option>
-                            <option>CS110 - AI Fundamentals</option>
-                            <option>CS120 - Database Systems</option>
-                        </select>
-                    </div>
-                    <div class="field-group">
-                        <label for="type">Session Type</label>
-                        <select id="type">
-                            <option>Lecture</option>
-                            <option>Lab Practical</option>
-                            <option>Tutorial</option>
-                            <option>Exam/Quiz</option>
-                        </select>
-                    </div>
-                    <div class="field-group">
-                        <label for="title">Session Title</label>
-                        <input id="title" type="text" placeholder="e.g. Graph Theory Intro">
-                    </div>
-                    <div class="field-group">
-                        <label for="datetime">Date & Time</label>
-                        <input id="datetime" type="datetime-local">
-                    </div>
-                    <div class="field-group">
-                        <label for="location">Location / Venue</label>
-                        <input id="location" type="text" placeholder="e.g. Lab 2, CS Department">
-                    </div>
-                    <div class="button-row">
-                        <button type="button" id="btn-add-session">Add to Schedule</button>
-                    </div>
-                </form>
-            </article>
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
 
-            <article class="list-panel panel">
-                <h3>Upcoming Schedule</h3>
-                <div id="session-list">
-                    <div class="list-item">
-                        <strong>Lecture: DFS & BFS Algorithms</strong>
-                        <div class="meta"><span>CS102</span><span>Today, 11:30 AM</span></div>
-                        <span>Venue: Main Lecture Hall 1</span>
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Recent Academic Alerts</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                <a href="{% url 'student_materials' %}" class="notif-item">
+                                    <span class="notif-item-title">📚 Course Materials Uploaded</span>
+                                    <span class="notif-item-meta">New lecture slides and notes are available offline.</span>
+                                </a>
+                                <a href="{% url 'student_quiz' %}" class="notif-item">
+                                    <span class="notif-item-title">⏱️ Quiz Scheduled</span>
+                                    <span class="notif-item-meta">Practice timed quizzes are ready in the quiz portal.</span>
+                                </a>
+                                <a href="{% url 'student_pastpapers' %}" class="notif-item">
+                                    <span class="notif-item-title">📑 Past Exam Papers Archive</span>
+                                    <span class="notif-item-meta">Previous semester examination papers are downloadable.</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <strong>Lab: Neural Network Setup</strong>
-                        <div class="meta"><span>CS110</span><span>Tomorrow, 09:00 AM</span></div>
-                        <span>Venue: AI Research Lab</span>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Engine</span>
                     </div>
+                    <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link">
+                        <span>Faculty Portal</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
-            </article>
+            </header>
+
+            <main class="app-workspace">
+                <section class="hero panel" style="margin-bottom: 32px;">
+                    <article class="hero-panel">
+                        <h2>Schedule Academic Sessions</h2>
+                        <p>Plan your upcoming lectures, lab sessions, and tutorials. These will appear on the students' dashboard calendars.</p>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Sessions This Week</span>
+                                <strong>12</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Upcoming Labs</span>
+                                <strong>4</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Revision Classes</span>
+                                <strong>2</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <div class="grid-two">
+                    <article class="upload-panel panel">
+                        <h3 style="margin-bottom: 16px;">Schedule New Session</h3>
+                        <form>
+                            {% csrf_token %}
+                            <div class="field-group">
+                                <label for="course">Course</label>
+                                <select id="course">
+                                    <option>CS102 - Data Structures</option>
+                                    <option>CS110 - AI Fundamentals</option>
+                                    <option>CS120 - Database Systems</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="type">Session Type</label>
+                                <select id="type">
+                                    <option>Lecture</option>
+                                    <option>Lab Practical</option>
+                                    <option>Tutorial</option>
+                                    <option>Exam/Quiz</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="title">Session Title</label>
+                                <input id="title" type="text" placeholder="e.g. Graph Theory Intro">
+                            </div>
+                            <div class="field-group">
+                                <label for="datetime">Date &amp; Time</label>
+                                <input id="datetime" type="datetime-local">
+                            </div>
+                            <div class="field-group">
+                                <label for="location">Location / Venue</label>
+                                <input id="location" type="text" placeholder="e.g. Lab 2, CS Department">
+                            </div>
+                            <div class="button-row" style="margin-top: 20px;">
+                                <button type="button" id="btn-add-session" class="btn" style="padding: 10px 24px;">Add to Schedule</button>
+                            </div>
+                        </form>
+                    </article>
+
+                    <article class="list-panel panel">
+                        <h3 style="margin-bottom: 16px;">Upcoming Schedule</h3>
+                        <div id="session-list">
+                            <div class="list-item" style="padding: 14px 0; border-bottom: 1px solid var(--borders);">
+                                <strong style="font-size: 1rem;">Lecture: DFS &amp; BFS Algorithms</strong>
+                                <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text); margin: 4px 0;">
+                                    <span>CS102</span>
+                                    <span style="font-family: var(--font-mono); font-weight: 500;">Today, 11:30 AM</span>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--secondary-text);">Venue: Main Lecture Hall 1</span>
+                            </div>
+                            <div class="list-item" style="padding: 14px 0;">
+                                <strong style="font-size: 1rem;">Lab: Neural Network Setup</strong>
+                                <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text); margin: 4px 0;">
+                                    <span>CS110</span>
+                                    <span style="font-family: var(--font-mono); font-weight: 500;">Tomorrow, 09:00 AM</span>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--secondary-text);">Venue: AI Research Lab</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <footer class="app-footer" style="margin-top: 48px;">
+                    <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--secondary-text);">
+                        <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of CS &amp; IT</p>
+                        <p>AI Offline Learning Platform &bull; Obsidian &amp; Champagne Edition</p>
+                    </div>
+                </footer>
+            </main>
         </div>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
 
+    <!-- Mobile Drawer Toggle Script -->
     <script>
-        document.getElementById('btn-add-session').addEventListener('click', function() {
-            const course = document.getElementById('course').value;
-            const type = document.getElementById('type').value;
-            const title = document.getElementById('title').value.trim();
-            const datetime = document.getElementById('datetime').value;
-            const location = document.getElementById('location').value.trim();
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('appSidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('sidebarBackdrop');
 
-            if (!title || !datetime || !location) {
-                alert("Please fill in all the details (Title, Date/Time, and Location).");
-                return;
+            if (toggle && sidebar && backdrop) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    backdrop.classList.toggle('open');
+                });
+                backdrop.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                    backdrop.classList.remove('open');
+                });
             }
 
-            // Format date for display
-            const dateObj = new Date(datetime);
-            const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const btnAdd = document.getElementById('btn-add-session');
+            if (btnAdd) {
+                btnAdd.addEventListener('click', function() {
+                    const course = document.getElementById('course').value;
+                    const type = document.getElementById('type').value;
+                    const title = document.getElementById('title').value.trim();
+                    const datetime = document.getElementById('datetime').value;
+                    const location = document.getElementById('location').value.trim();
 
-            alert(`Session Scheduled Successfully!\n\n${type}: ${title}\nCourse: ${course}\nTime: ${dateStr} at ${timeStr}\nVenue: ${location}`);
+                    if (!title || !datetime || !location) {
+                        alert("Please fill in all the details (Title, Date/Time, and Location).");
+                        return;
+                    }
 
-            // Add to the list
-            const sessionList = document.getElementById('session-list');
-            const newItem = document.createElement('div');
-            newItem.className = 'list-item';
-            newItem.innerHTML = `
-                <strong>${type}: ${title}</strong>
-                <div class="meta"><span>${course}</span><span>${dateStr}, ${timeStr}</span></div>
-                <span>Venue: ${location}</span>
-            `;
-            sessionList.prepend(newItem);
+                    // Format date for display
+                    const dateObj = new Date(datetime);
+                    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-            // Clear inputs
-            document.getElementById('title').value = '';
-            document.getElementById('datetime').value = '';
-            document.getElementById('location').value = '';
+                    alert(`Session Scheduled Successfully!\n\n${type}: ${title}\nCourse: ${course}\nTime: ${dateStr} at ${timeStr}\nVenue: ${location}`);
+
+                    // Add to the list
+                    const sessionList = document.getElementById('session-list');
+                    const newItem = document.createElement('div');
+                    newItem.className = 'list-item';
+                    newItem.style.padding = '14px 0';
+                    newItem.style.borderBottom = '1px solid var(--borders)';
+                    newItem.innerHTML = `
+                        <strong style="font-size: 1rem;">${type}: ${title}</strong>
+                        <div class="meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary-text); margin: 4px 0;">
+                            <span>${course}</span>
+                            <span style="font-family: var(--font-mono); font-weight: 500;">${dateStr}, ${timeStr}</span>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--secondary-text);">Venue: ${location}</span>
+                    `;
+                    sessionList.prepend(newItem);
+
+                    // Clear inputs
+                    document.getElementById('title').value = '';
+                    document.getElementById('datetime').value = '';
+                    document.getElementById('location').value = '';
+                });
+            }
         });
     </script>
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
 </body>
 </html>

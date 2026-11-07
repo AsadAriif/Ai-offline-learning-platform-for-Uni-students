@@ -33,4 +33,24 @@ urlpatterns = [
     path('teacher/material/<int:material_id>/delete/', views.delete_material, name='delete_material'),
     path('teacher/invitation/<int:invitation_id>/delete/', views.delete_invitation, name='delete_invitation'),
     path('teacher/results/', views.teacher_results, name='teacher_results'),
+    path('results/export/', views.export_results_csv, name='export_results_csv'),
+    path('api/chatbot/', views.ai_chatbot_api, name='ai_chatbot_api'),
+
+    # Teacher Attendance & Lecture Conduction
+    path('teacher/attendance/', views.teacher_attendance, name='teacher_attendance'),
+
+    # HOD (Head of Department) Portal
+    path('hod/dashboard/', views.hod_dashboard, name='hod_dashboard'),
+    path('hod/courses/', views.hod_courses, name='hod_courses'),
+    path('hod/tasks/', views.hod_tasks, name='hod_tasks'),
+    path('hod/attendance/', views.hod_attendance, name='hod_attendance'),
+    path('hod/marksheets/', views.hod_marksheets, name='hod_marksheets'),
+    path('hod/student-roster/', views.hod_student_roster, name='hod_student_roster'),
+    path('hod/users/', views.hod_manage_users, name='hod_manage_users'),
+    path('hod/notifications/', views.hod_notifications, name='hod_notifications'),
+
+    # Notifications Center
+    path('notifications/', views.notifications_list, name='notifications_list'),
+    path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/read-all/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

@@ -1,189 +1,386 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - AI Offline Learning Platform</title>
+    <title>Student Portal - AI Offline Learning Platform</title>
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div class="brand">
-                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo">
-                <div class="brand-info">
-                    <h1>AI Offline Learning Platform</h1>
-                    <p>Baba Guru Nanak University Nankana Sahib.
-                         Department of Computer Science &amp; IT</p>
+    <div class="app-shell">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Fixed Desktop Sidebar (Obsidian Black #111D5E) -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; CS &amp; IT</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'student_actions' %}">Actions</a>
-                <a href="{% url 'profile' %}">Profile</a>
-                <a href="{% url 'login' %}" class="primary">Logout</a>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
             </div>
-        </header>
 
-        <section class="hero">
-            <article class="hero-panel">
-                <h2>Welcome back, {{ display_name }}</h2>
-                <p>Access your offline learning materials, track courses, take tests, and review past papers for your enrolled courses.</p>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <span>Active Courses</span>
-                        <strong>{{ total_courses }}</strong>
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">ACADEMIC WORKSPACE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'student_dashboard' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">Dashboard</span>
+                    </a>
+                    <a href="{% url 'student_materials' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Study Materials</span>
+                    </a>
+                    <a href="{% url 'student_assignments' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Coursework &amp; Tasks</span>
+                        {% if total_remaining %}<span class="sidebar-badge">{{ total_remaining }}</span>{% endif %}
+                    </a>
+                    <a href="{% url 'student_quiz' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⏱️</span>
+                        <span class="sidebar-link-text">Attempt Quizzes</span>
+                    </a>
+                    <a href="{% url 'student_progress' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📈</span>
+                        <span class="sidebar-link-text">Progress Tracking</span>
+                    </a>
+                    <a href="{% url 'student_results' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏆</span>
+                        <span class="sidebar-link-text">Assessment Results</span>
+                    </a>
+                    <a href="{% url 'student_pastpapers' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Past Exam Papers</span>
+                    </a>
+                    <a href="{% url 'student_actions' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">⚡</span>
+                        <span class="sidebar-link-text">All Actions Directory</span>
+                    </a>
+                    <a href="{% url 'notifications_list' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🔔</span>
+                        <span class="sidebar-link-text">Official Notices</span>
+                        {% if user_unread_notifications_count > 0 %}<span class="sidebar-badge" style="background: #EF4444; color: #FFFFFF;">{{ user_unread_notifications_count }}</span>{% endif %}
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">{{ display_name|slice:":1"|upper }}</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ display_name }}</span>
+                        <span class="user-role-badge">Student &bull; Offline Enabled</span>
                     </div>
-                    <div class="stat-card">
-                        <span>Materials Available</span>
-                        <strong>{{ total_materials }}</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Remaining Assignments/Quizzes</span>
-                        <strong>{{ total_remaining }}</strong>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area (Warm Ivory #F4F7FC) -->
+        <div class="app-main">
+            <!-- Clean Top Navigation Bar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="breadcrumb-parent">Student Portal</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Academic Dashboard</span>
                     </div>
                 </div>
-            </article>
-            <aside class="profile-panel">
-                <h3>Student Profile</h3>
-                <div class="profile-list">
-                    <div class="profile-item">
-                        <strong>Name</strong>
-                        <span>{{ display_name }}</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Role</strong>
-                        <span>Student</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Department</strong>
-                        <span>Computer Science &amp; IT</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>University</strong>
-                        <span>Baba Guru Nanak University Nankana Sahib</span>
-                    </div>
-                    <div class="profile-item">
-                        <strong>Platform</strong>
-                        <span>AI Offline Learning</span>
+
+                <div class="topbar-center">
+                    <div class="topbar-search-box">
+                        <span class="topbar-search-icon">🔍</span>
+                        <input type="text" placeholder="Search courses, study notes, assignments..." aria-label="Search">
                     </div>
                 </div>
-            </aside>
-        </section>
 
-        <div class="section-grid">
-            <article class="messages-panel">
-                <h3>Messages from Teachers</h3>
-                {% if student_messages %}
-                    <ul>
-                        {% for msg in student_messages %}
-                            <li>
-                                <strong>{{ msg.sender.get_full_name|default:msg.sender.username }}</strong> ({{ msg.created_at|date:"Y-m-d H:i" }})<br>
-                                <span>{{ msg.content }}</span>
-                                {% if msg.course %}<div><em>Course: {{ msg.course.name }}</em></div>{% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No messages yet.</p>
-                {% endif %}
-            </article>
-            <article class="activity-panel">
-                <h3>Recent Activities</h3>
-                <div class="recent-list">
-                    <div class="list-item">
-                        <strong>New study notes uploaded</strong>
-                        <div class="meta"><span>CS110 - AI Fundamentals</span><span>1 hour ago</span></div>
-                        <span>Lecture notes and practice material are now available for download.</span>
-                    </div>
-                    <div class="list-item">
-                        <strong>Assignment released</strong>
-                        <div class="meta"><span>CS102 - Data Structures</span><span>Yesterday</span></div>
-                        <span>Assignment 4 is live with offline submission instructions.</span>
-                    </div>
-                    <div class="list-item">
-                        <strong>Result published</strong>
-                        <div class="meta"><span>CS120 - Database Systems</span><span>2 days ago</span></div>
-                        <span>Your midterm result has been shared with feedback.</span>
-                    </div>
-                </div>
-            </article>
+                <div class="topbar-right">
+                    <!-- Night Study Dark Mode Toggle -->
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
 
-            <article class="courses-panel">
-                <h3>My Courses</h3>
-                <div class="courses-list">
-                    {% for stat in course_stats %}
-                    <div class="course-row">
-                        <div class="course-info">
-                            <strong>{{ stat.course.name }}</strong>
-                            <ul>
-                                <li>Active Assignments: {{ stat.total_assignments }}</li>
-                                <li>Quizzes: {{ stat.total_quizzes }}</li>
-                                <li>Homework: {{ stat.total_homework }}</li>
-                                <li>Projects: {{ stat.total_projects }}</li>
-                                <li>Materials Available: {{ stat.total_materials }}</li>
-                                <li>Assignments/Quizzes Remaining: {{ stat.not_submitted }}</li>
-                                <li>Quizzes Remaining: {{ stat.not_submitted_quiz }}</li>
-                                <li>Homework Remaining: {{ stat.not_submitted_homework }}</li>
-                                <li>Projects Remaining: {{ stat.not_submitted_project }}</li>
-                            </ul>
+                    <!-- Academic Notifications Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            {% if user_unread_notifications_count > 0 %}
+                            <span class="notif-badge">{{ user_unread_notifications_count }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Official Notices</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                {% if user_notifications %}
+                                    {% for n in user_notifications %}
+                                    <a href="{% url 'notifications_list' %}" class="notif-item">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                                            <span class="notif-item-title">{{ n.title }}</span>
+                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">🚨 Urgent</span>{% endif %}
+                                        </div>
+                                        <span class="notif-item-meta">{{ n.message|truncatewords:10 }}</span>
+                                    </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <div style="padding: 18px; text-align: center; color: var(--secondary-text); font-size: 0.8rem;">No unread announcements.</div>
+                                {% endif %}
+                            </div>
+                            <div style="padding: 8px 14px; background: var(--main-bg); border-top: 1px solid var(--borders); display: flex; justify-content: space-between; font-size: 0.75rem;">
+                                <a href="{% url 'notifications_list' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">View All Notices →</a>
+                                {% if user_unread_notifications_count > 0 %}
+                                <a href="{% url 'mark_all_notifications_read' %}" style="color: var(--secondary-text); text-decoration: none;">Mark All Read</a>
+                                {% endif %}
+                            </div>
                         </div>
-                        <span class="course-badge">Enrolled</span>
                     </div>
-                    {% empty %}
-                    <p>You are not enrolled in any courses yet.</p>
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Self-Hosted</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span class="user-avatar-circle" style="width: 26px; height: 26px; font-size: 0.75rem;">{{ display_name|slice:":1"|upper }}</span>
+                        <span>{{ display_name }}</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <!-- Main Workspace Canvas -->
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
                     {% endfor %}
                 </div>
-            </article>
+                {% endif %}
+
+                <!-- Welcome Banner & Profile Card -->
+                <section class="hero" style="margin-bottom: 32px;">
+                    <article class="hero-panel panel">
+                        <div>
+                            <span class="badge badge-info" style="margin-bottom: 8px;">Academic Dashboard</span>
+                            <h2>Welcome back, {{ display_name }}</h2>
+                            <p>Access your offline learning materials, track your enrolled courses, attempt scheduled quizzes, and review past examination papers without an active internet connection.</p>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span>Enrolled Courses</span>
+                                <strong>{{ total_courses }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Offline Materials</span>
+                                <strong>{{ total_materials }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Pending Tasks</span>
+                                <strong>{{ total_remaining }}</strong>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="profile-panel panel">
+                        <h3>Student Profile</h3>
+                        <div class="profile-list">
+                            <div class="profile-item">
+                                <strong>Student Name</strong>
+                                <span>{{ display_name }}</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Portal Role</strong>
+                                <span class="badge badge-success" style="padding: 2px 8px;">Student</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Department</strong>
+                                <span>Computer Science &amp; IT</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>University</strong>
+                                <span>Baba Guru Nanak University</span>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Mode</strong>
+                                <span style="color: var(--primary-accent); font-weight: 600;">Offline Enabled</span>
+                            </div>
+                        </div>
+                    </aside>
+                </section>
+
+                <!-- Continue Learning & Quick Actions -->
+                <section class="quick-actions" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 14px; font-size: 1.15rem;">Student Actions &amp; Tools</h3>
+                    <div class="action-row">
+                        <a href="{% url 'student_materials' %}" class="action-tile">
+                            <strong>📚 Study Materials</strong>
+                            <span>Download lecture notes, slides, and offline documents for all your enrolled courses.</span>
+                        </a>
+                        <a href="{% url 'student_assignments' %}" class="action-tile">
+                            <strong>📋 Coursework &amp; Tasks</strong>
+                            <span>Work on assignments and homework tasks, and upload your offline submissions.</span>
+                        </a>
+                        <a href="{% url 'student_quiz' %}" class="action-tile">
+                            <strong>⏱️ Attempt Quizzes</strong>
+                            <span>Take scheduled online and offline quizzes to test your course knowledge.</span>
+                        </a>
+                        <a href="{% url 'student_progress' %}" class="action-tile">
+                            <strong>📈 Progress Tracking</strong>
+                            <span>Check your module completion rates and view upcoming pending study tasks.</span>
+                        </a>
+                        <a href="{% url 'student_results' %}" class="action-tile">
+                            <strong>🏆 Assessment Results</strong>
+                            <span>Review scores, grades, and teacher feedback on completed assessments.</span>
+                        </a>
+                        <a href="{% url 'student_pastpapers' %}" class="action-tile">
+                            <strong>📑 Past Exam Papers</strong>
+                            <span>Access past semester exam papers published by your teachers for revision.</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Content Grid (Announcements, Activity, Courses) -->
+                <div class="section-grid">
+                    <article class="messages-panel panel">
+                        <h3>📢 Announcements &amp; Messages</h3>
+                        {% if student_messages %}
+                            <ul>
+                                {% for msg in student_messages %}
+                                    <li>
+                                        <strong>{{ msg.sender.get_full_name|default:msg.sender.username }}</strong>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); float: right;">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+                                        <span style="margin-top: 6px;">{{ msg.content }}</span>
+                                        {% if msg.course %}<div><em style="color: var(--primary-accent);">Course: {{ msg.course.name }}</em></div>{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="color: var(--text-muted); padding: 16px 0;">No new announcements or messages from your teachers.</p>
+                        {% endif %}
+                    </article>
+
+                    <article class="activity-panel panel">
+                        <h3>🕒 Recent Activity Feed</h3>
+                        <div class="recent-list">
+                            <div class="list-item">
+                                <strong>New study material uploaded</strong>
+                                <div class="meta"><span>Computer Science Core</span><span>Recently</span></div>
+                                <span>Course lecture notes and slides are ready for offline download.</span>
+                            </div>
+                            <div class="list-item">
+                                <strong>Coursework published</strong>
+                                <div class="meta"><span>Database Systems</span><span>Yesterday</span></div>
+                                <span>Check assignments tab for new offline assignment tasks and requirements.</span>
+                            </div>
+                            <div class="list-item">
+                                <strong>Assessment graded</strong>
+                                <div class="meta"><span>AI &amp; Machine Learning</span><span>2 days ago</span></div>
+                                <span>Your instructor published feedback and scores in the results section.</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="courses-panel panel">
+                        <h3>📖 Enrolled Courses &amp; Metrics</h3>
+                        <div class="courses-list">
+                            {% for stat in course_stats %}
+                            <div class="course-row">
+                                <div class="course-info">
+                                    <strong>{{ stat.course.name }}</strong>
+                                    <ul>
+                                        <li>Active Assignments: <strong>{{ stat.total_assignments }}</strong></li>
+                                        <li>Quizzes: <strong>{{ stat.total_quizzes }}</strong></li>
+                                        <li>Materials: <strong>{{ stat.total_materials }}</strong></li>
+                                        <li>Remaining Tasks: <strong>{{ stat.not_submitted }}</strong></li>
+                                    </ul>
+                                </div>
+                                <span class="course-badge">Enrolled</span>
+                            </div>
+                            {% empty %}
+                            <p style="color: var(--text-muted); padding: 16px 0;">You are not enrolled in any courses yet.</p>
+                            {% endfor %}
+                        </div>
+                    </article>
+                </div>
+            </main>
+
+            <!-- Institutional University Footer -->
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div class="app-footer-col">
+                        <h4>Department Contact</h4>
+                        <p><strong>Phone:</strong> 056-9201171</p>
+                        <p><strong>Mobile:</strong> 0300-1199358</p>
+                        <p><strong>Email:</strong> <a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Campus Location</h4>
+                        <p>Adam Pura</p>
+                        <p>Nankana Sahib, Punjab, Pakistan</p>
+                        <p>Baba Guru Nanak University</p>
+                    </div>
+                    <div class="app-footer-col">
+                        <h4>Portal Navigation</h4>
+                        <p><a href="{% url 'student_actions' %}">All Student Actions</a></p>
+                        <p><a href="{% url 'profile' %}">Account Settings</a></p>
+                        <p><a href="{% url 'logout' %}">Sign Out</a></p>
+                    </div>
+                </div>
+                <div class="app-footer-bottom">
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                    <p>AI Offline Learning Platform &mdash; Student Portal</p>
+                </div>
+            </footer>
         </div>
-
-        <section class="quick-actions">
-            <h3>Student Actions</h3>
-            <div class="action-row">
-                <div class="action-tile">
-                    <strong>Download Study Material</strong>
-                    <span>Get lecture notes, slides, and offline resources for your current courses.</span>
-                </div>
-                <div class="action-tile">
-                    <strong>Watch Materials</strong>
-                    <span>View recorded lessons and tutorial videos directly in the student dashboard.</span>
-                </div>
-                <div class="action-tile">
-                    <strong>Give Test</strong>
-                    <span>Open scheduled assessments and complete tests for your enrolled courses.</span>
-                </div>
-                <div class="action-tile">
-                    <strong>View Past Papers</strong>
-                    <span>Access previously published papers and practice exams for revision.</span>
-                </div>
-            </div>
-        </section>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p><strong>Phone:</strong></p>
-                    <p>056-9201171</p>
-                    <p>0300-1199358</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Address</h4>
-                    <p>Adam Pura</p>
-                    <p>Nankana Sahib</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Email</h4>
-                    <p><a href="mailto:info@bgnu.edu.pk">info@bgnu.edu.pk</a></p>
-                </div>
-            </div>
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib</p>
-                <p>AI Offline Learning Platform</p>
-            </div>
-        </footer>
     </div>
+
+    <!-- Offline Navigation Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('is-open');
+                    if (backdrop) backdrop.classList.toggle('is-visible');
+                });
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-visible');
+                });
+            }
+        });
+    </script>
+
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+    <!-- Collapsible Sidebar & Mobile Drawer Controller -->
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
 </body>
 </html>

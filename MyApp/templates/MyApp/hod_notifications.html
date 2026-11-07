@@ -1,0 +1,466 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Broadcasts &amp; Announcements - HOD Portal - Baba Guru Nanak University</title>
+    <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
+    <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
+    <style>
+        .notif-audience-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .audience-card {
+            border: 2px solid var(--borders);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            background: var(--card-bg);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .audience-card:hover {
+            border-color: var(--secondary-accent);
+            background: var(--pale-blue);
+        }
+        .audience-card input[type="radio"] {
+            margin-top: 3px;
+        }
+        .audience-card.selected {
+            border-color: var(--primary);
+            background: #EEF4FF;
+        }
+        .priority-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .priority-pill-normal { background: #E2E8F0; color: #334155; }
+        .priority-pill-urgent { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+        .priority-pill-exam { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
+        .priority-pill-meeting { background: #CCFBF1; color: #115E59; border: 1px solid #99F6E4; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- HOD Fixed Desktop Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'MyApp/department_logo.png' %}" alt="BGNU Department Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">AI Learning Platform</span>
+                    <span class="sidebar-brand-sub">For BGNU Students &bull; HOD Portal</span>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <span class="status-indicator-dot"></span>
+                <span class="status-indicator-text">100% Offline Mode Active</span>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">DEPARTMENT GOVERNANCE</div>
+                <nav class="sidebar-nav">
+                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous HOD AI Co-Pilot">
+                          <span class="sidebar-link-icon">🤖</span>
+                          <span class="sidebar-link-text">HOD AI Co-Pilot ✨</span>
+                      </a>
+
+                    <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span class="sidebar-link-text">HOD Dashboard</span>
+                    </a>
+                    <a href="{% url 'hod_notifications' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-icon">📢</span>
+                        <span class="sidebar-link-text">Official Announcements</span>
+                    </a>
+                    <a href="{% url 'hod_courses' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📚</span>
+                        <span class="sidebar-link-text">Course Allocations</span>
+                    </a>
+                    <a href="{% url 'hod_tasks' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span class="sidebar-link-text">Faculty Duties &amp; Tasks</span>
+                    </a>
+                    <a href="{% url 'hod_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🗓️</span>
+                        <span class="sidebar-link-text">Faculty Lecture Logs</span>
+                    </a>
+                    <a href="{% url 'hod_marksheets' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📝</span>
+                        <span class="sidebar-link-text">Review Marksheets</span>
+                    </a>
+                    <a href="{% url 'hod_student_roster' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">📑</span>
+                        <span class="sidebar-link-text">Student Roster Template</span>
+                    </a>
+                    <a href="{% url 'hod_manage_users' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span class="sidebar-link-text">Manage Faculty &amp; HODs</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👨‍🏫</span>
+                        <span class="sidebar-link-text">Faculty Workspace</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">👤</span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏛️</span>
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">🏛️</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head of Dept</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <div class="topbar-breadcrumbs">
+                        <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
+                        <span class="breadcrumb-divider">/</span>
+                        <span class="breadcrumb-current">Official Announcements &amp; Circulars</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="topbar-notifications">
+                        <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
+                            <span>🔔</span>
+                            {% if user_unread_notifications_count > 0 %}
+                            <span class="notif-badge">{{ user_unread_notifications_count }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span>Official Department Notices</span>
+                                <span style="font-size: 0.75rem; color: #6EA8FE;">BGNU</span>
+                            </div>
+                            <div class="notif-list">
+                                {% if user_notifications %}
+                                    {% for n in user_notifications %}
+                                    <a href="{% url 'notifications_list' %}" class="notif-item">
+                                        <span class="notif-item-title">{{ n.title }}</span>
+                                        <span class="notif-item-meta">{{ n.message|truncatewords:12 }}</span>
+                                    </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <div style="padding: 20px; text-align: center; color: var(--secondary-text); font-size: 0.85rem;">No active alerts.</div>
+                                {% endif %}
+                            </div>
+                            <div style="padding: 10px 16px; background: var(--main-bg); border-top: 1px solid var(--borders); display: flex; justify-content: space-between; font-size: 0.75rem;">
+                                <a href="{% url 'notifications_list' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">View All Notices →</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="topbar-offline-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>Offline Ready</span>
+                    </div>
+                    <a href="{% url 'profile' %}" class="topbar-user-link">
+                        <span>{{ user.get_full_name|default:user.username }} (HOD)</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
+                </div>
+            </header>
+
+            <main class="app-workspace">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 24px;">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Hero Section -->
+                <section class="hero panel" style="margin-bottom: 28px;">
+                    <article class="hero-panel">
+                        <h2>Official Announcements &amp; Notice Board Hub</h2>
+                        <p>Dispatch targeted notifications from the Head of Department to an individual faculty member, all department teachers, all university students, or relevant instructors and students of a specific course.</p>
+                        <div class="stats-row" style="margin-top: 18px;">
+                            <div class="stat-card">
+                                <span>Notices Dispatched</span>
+                                <strong>{{ stats.total_sent }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Faculty Members</span>
+                                <strong>{{ stats.total_faculty }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Enrolled Students</span>
+                                <strong>{{ stats.total_students }}</strong>
+                            </div>
+                            <div class="stat-card">
+                                <span>Urgent Dispatches</span>
+                                <strong>{{ stats.urgent_count }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Grid: Dispatch Form & Logs -->
+                <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr); gap: 24px; align-items: start;">
+                    
+                    <!-- Composer Form Panel -->
+                    <section class="card-box" style="padding: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid var(--borders); padding-bottom: 12px;">
+                            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--primary);">📢 Dispatch New Notification</h3>
+                            <span style="font-size: 0.8rem; color: var(--secondary-text);">BGNU Official Circulars</span>
+                        </div>
+
+                        <form method="POST" action="{% url 'hod_notifications' %}" id="notificationForm">
+                            {% csrf_token %}
+
+                            <!-- 1. Target Audience Selection -->
+                            <div style="margin-bottom: 18px;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary);">1. Select Target Audience *</label>
+                                <div class="notif-audience-box">
+                                    <label class="audience-card selected" id="card_individual_teacher">
+                                        <input type="radio" name="audience_type" value="individual_teacher" checked onchange="handleAudienceChange('individual_teacher')">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.85rem;">👨‍🏫 Specific Teacher</div>
+                                            <div style="font-size: 0.72rem; color: var(--secondary-text);">Single faculty member</div>
+                                        </div>
+                                    </label>
+
+                                    <label class="audience-card" id="card_all_teachers">
+                                        <input type="radio" name="audience_type" value="all_teachers" onchange="handleAudienceChange('all_teachers')">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.85rem;">🏛️ All Faculty</div>
+                                            <div style="font-size: 0.72rem; color: var(--secondary-text);">All teachers circular</div>
+                                        </div>
+                                    </label>
+
+                                    <label class="audience-card" id="card_all_students">
+                                        <input type="radio" name="audience_type" value="all_students" onchange="handleAudienceChange('all_students')">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.85rem;">🎓 All Students</div>
+                                            <div style="font-size: 0.72rem; color: var(--secondary-text);">Campus student notice</div>
+                                        </div>
+                                    </label>
+
+                                    <label class="audience-card" id="card_course_relevant">
+                                        <input type="radio" name="audience_type" value="course_relevant" onchange="handleAudienceChange('course_relevant')">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.85rem;">📚 Relevant Course</div>
+                                            <div style="font-size: 0.72rem; color: var(--secondary-text);">Teacher + enrolled students</div>
+                                        </div>
+                                    </label>
+
+                                    <label class="audience-card" id="card_everyone">
+                                        <input type="radio" name="audience_type" value="everyone" onchange="handleAudienceChange('everyone')">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.85rem;">🌐 Campus Wide</div>
+                                            <div style="font-size: 0.72rem; color: var(--secondary-text);">Everyone (faculty &amp; students)</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 2. Dynamic Dropdowns based on Audience Selection -->
+                            <!-- Specific Teacher Dropdown -->
+                            <div id="wrapper_teacher_select" style="margin-bottom: 18px;">
+                                <label for="teacher_id" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">Select Faculty Member *</label>
+                                <select name="teacher_id" id="teacher_id" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                                    <option value="">-- Choose Faculty Member --</option>
+                                    {% for t in teachers %}
+                                    <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }} (Username: {{ t.username }}{% if t.phone_number %} &bull; {{ t.phone_number }}{% endif %})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Specific Course Dropdown -->
+                            <div id="wrapper_course_select" style="display: none; margin-bottom: 18px;">
+                                <label for="course_id" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">Select Relevant Course *</label>
+                                <select name="course_id" id="course_id" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                                    <option value="">-- Choose Department Course --</option>
+                                    {% for c in courses %}
+                                    <option value="{{ c.id }}">{{ c.name }} [Instructor: {% if c.teacher %}{{ c.teacher.get_full_name|default:c.teacher.username }}{% else %}Unassigned{% endif %} &bull; {{ c.enrollments.count }} Students Enrolled]</option>
+                                    {% endfor %}
+                                </select>
+                                <p style="font-size: 0.75rem; color: var(--secondary-text); margin-top: 4px;">Notice will be delivered instantly to the allocated instructor AND all enrolled students in this course.</p>
+                            </div>
+
+                            <!-- 3. Notice Priority -->
+                            <div style="margin-bottom: 18px;">
+                                <label for="priority" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">2. Notice Priority &amp; Category *</label>
+                                <select name="priority" id="priority" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                                    <option value="normal">Standard Academic Circular</option>
+                                    <option value="urgent">Urgent / Priority Notice 🚨</option>
+                                    <option value="exam">Examination &amp; Marksheet Notice 📑</option>
+                                    <option value="meeting">Faculty Council &amp; Official Meeting 🏛️</option>
+                                </select>
+                            </div>
+
+                            <!-- 4. Notice Title -->
+                            <div style="margin-bottom: 18px;">
+                                <label for="title" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">3. Announcement Title *</label>
+                                <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Mandatory Faculty Meeting Regarding Midterm Marksheets Submission" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                            </div>
+
+                            <!-- 5. Notice Message -->
+                            <div style="margin-bottom: 22px;">
+                                <label for="message" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">4. Official Message Body *</label>
+                                <textarea name="message" id="message" rows="5" class="form-control" placeholder="Type official communication details, deadlines, guidelines, or instructions here..." required style="width: 100%; padding: 12px 14px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.5;"></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <button type="submit" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600; background: var(--primary); color: #FFFFFF; border: none; border-radius: var(--radius-sm); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                    <span>📢 Dispatch Notice Now</span>
+                                </button>
+                                <button type="reset" class="btn btn-secondary" style="padding: 12px 18px; border: 1px solid var(--borders); background: var(--card-bg); border-radius: var(--radius-sm); cursor: pointer;">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Dispatch History & Logs Panel -->
+                    <section class="card-box" style="padding: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--borders); padding-bottom: 12px;">
+                            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--primary);">📋 Dispatch History</h3>
+                            <span style="font-size: 0.75rem; color: var(--secondary-text);">Recent {{ sent_notifications|length }} Records</span>
+                        </div>
+
+                        {% if sent_notifications %}
+                        <div style="display: flex; flex-direction: column; gap: 14px; max-height: 640px; overflow-y: auto; padding-right: 4px;">
+                            {% for notif in sent_notifications %}
+                            <div style="border: 1px solid var(--borders); border-radius: var(--radius-sm); padding: 14px; background: var(--card-bg); transition: var(--transition-fast);">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+                                    <h4 style="margin: 0; font-size: 0.9rem; color: var(--primary); font-family: var(--font-heading);">{{ notif.title }}</h4>
+                                    {% if notif.priority == 'urgent' %}
+                                        <span class="priority-badge-pill priority-pill-urgent">🚨 Urgent</span>
+                                    {% elif notif.priority == 'exam' %}
+                                        <span class="priority-badge-pill priority-pill-exam">📑 Exam</span>
+                                    {% elif notif.priority == 'meeting' %}
+                                        <span class="priority-badge-pill priority-pill-meeting">🏛️ Meeting</span>
+                                    {% else %}
+                                        <span class="priority-badge-pill priority-pill-normal">Standard</span>
+                                    {% endif %}
+                                </div>
+
+                                <p style="font-size: 0.8rem; color: var(--secondary-text); margin: 0 0 8px 0; line-height: 1.4;">
+                                    {{ notif.message|truncatewords:20 }}
+                                </p>
+
+                                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; font-size: 0.75rem; border-top: 1px solid #F1F5F9; padding-top: 8px; color: var(--secondary-text); gap: 6px;">
+                                    <div>
+                                        <strong>Audience:</strong>
+                                        {% if notif.audience_type == 'individual_teacher' %}
+                                            <span>Faculty ({% if notif.recipient %}{{ notif.recipient.get_full_name|default:notif.recipient.username }}{% else %}Broadcast{% endif %})</span>
+                                        {% elif notif.audience_type == 'all_teachers' %}
+                                            <span>All Faculty Members</span>
+                                        {% elif notif.audience_type == 'all_students' %}
+                                            <span>All Students</span>
+                                        {% elif notif.audience_type == 'course_relevant' %}
+                                            <span>Course: {{ notif.course.name|default:"Assigned Course" }}{% if notif.recipient %} ({{ notif.recipient.username }}){% endif %}</span>
+                                        {% else %}
+                                            <span>Campus Wide</span>
+                                        {% endif %}
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span>{{ notif.created_at|date:"M d, H:i" }}</span>
+                                        {% if notif.is_read %}
+                                            <span style="color: #10B981; font-weight: 600;" title="Read by recipient">✓ Read</span>
+                                        {% else %}
+                                            <span style="color: #F59E0B;" title="Delivered, pending reading">Delivered</span>
+                                        {% endif %}
+                                        <form method="POST" action="{% url 'hod_notifications' %}" style="display: inline;" onsubmit="return confirm('Remove this notice from history?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_notification">
+                                            <input type="hidden" name="notification_id" value="{{ notif.id }}">
+                                            <button type="submit" style="background: none; border: none; color: #EF4444; cursor: pointer; font-size: 0.75rem; padding: 0 2px;" title="Delete Record">✕</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div style="padding: 32px; text-align: center; color: var(--secondary-text);">
+                            <div style="font-size: 2.2rem; margin-bottom: 8px;">📭</div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">No Dispatches Recorded</div>
+                            <p style="font-size: 0.8rem; margin: 0;">Compose and send your first official announcement above.</p>
+                        </div>
+                        {% endif %}
+                    </section>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{% static 'MyApp/sidebar.js' %}"></script>
+    <script>
+        function handleAudienceChange(type) {
+            // Update cards selected state
+            document.querySelectorAll('.audience-card').forEach(c => c.classList.remove('selected'));
+            const targetCard = document.getElementById('card_' + type);
+            if (targetCard) targetCard.classList.add('selected');
+
+            // Toggle select dropdowns
+            const teacherSelect = document.getElementById('wrapper_teacher_select');
+            const courseSelect = document.getElementById('wrapper_course_select');
+            const teacherInput = document.getElementById('teacher_id');
+            const courseInput = document.getElementById('course_id');
+
+            if (type === 'individual_teacher') {
+                teacherSelect.style.display = 'block';
+                teacherInput.required = true;
+                courseSelect.style.display = 'none';
+                courseInput.required = false;
+            } else if (type === 'course_relevant') {
+                teacherSelect.style.display = 'none';
+                teacherInput.required = false;
+                courseSelect.style.display = 'block';
+                courseInput.required = true;
+            } else {
+                teacherSelect.style.display = 'none';
+                teacherInput.required = false;
+                courseSelect.style.display = 'none';
+                courseInput.required = false;
+            }
+        }
+    </script>
+    <!-- Floating BGNU AI Study Tutor (Powered by Gemini) -->
+    {% include 'MyApp/chatbot_widget.html' %}
+</body>
+</html>
+
