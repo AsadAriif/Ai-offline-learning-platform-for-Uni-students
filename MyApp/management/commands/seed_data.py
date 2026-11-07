@@ -9,6 +9,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.NOTICE('Seeding demo data for AI Offline Learning Platform...'))
 
+        # 0. Create or get Demo HOD
+        hod, h_created = CustomUser.objects.get_or_create(
+            username='hod',
+            defaults={
+                'role': 'hod',
+                'first_name': 'HOD',
+                'last_name': 'Administrator',
+                'phone_number': '03009876543',
+                'is_staff': True,
+                'is_superuser': True,
+            }
+        )
+        hod.set_password('hod123')
+        hod.save()
+        if h_created:
+            self.stdout.write(self.style.SUCCESS('Created HOD account: username="hod", password="hod123"'))
+        else:
+            self.stdout.write('HOD account already exists. Password updated to "hod123".')
+
         # 1. Create or get Demo Teacher
         teacher, t_created = CustomUser.objects.get_or_create(
             username='teacher',

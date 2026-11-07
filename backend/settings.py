@@ -43,7 +43,19 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
 
 allowed_hosts = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,ai-offline-learning-platform-for-un.vercel.app,*').split(',')
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts if host.strip()]
-CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://ai-offline-learning-platform-for-un.vercel.app').split(',') if origin.strip()]
+
+csrf_trusted_default = (
+    'https://*.vercel.app,'
+    'https://*.now.sh,'
+    'https://ai-offline-learning-platform-for-un.vercel.app,'
+    'http://localhost:8000,'
+    'http://127.0.0.1:8000'
+)
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', csrf_trusted_default).split(',')
+    if origin.strip()
+]
 
 
 # Application definition
@@ -91,20 +103,63 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database
-# Use SQLite by default for local development and deployment simplicity.
-# Set DB_ENGINE, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT to use Postgres.
-DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
-DB_NAME = os.getenv('DB_NAME', str(BASE_DIR / 'db.sqlite3'))
-DATABASES = {
-    'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME,
-        'USER': os.getenv('DB_USER', ''),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', ''),
+# Support DATABASE_URL (PostgreSQL, Neon, Supabase) or SQLite with serverless /tmp fallback
+import shutil
+
+IS_VERCEL = bool(os.getenv('VERCEL') or os.getenv('VERCEL_ENV') or os.getenv('AWS_LAMBDA_FUNCTION_NAME'))
+DATABASE_URL = os.getenv('DATABASE_URL', '')
+
+if DATABASE_URL:
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    except Exception:
+        import urllib.parse
+        _url = urllib.parse.urlparse(DATABASE_URL)
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': _url.path[1:] if _url.path else '',
+                'USER': _url.username or '',
+                'PASSWORD': _url.password or '',
+                'HOST': _url.hostname or '',
+                'PORT': _url.port or 5432,
+            }
+        }
+else:
+    DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+    if IS_VERCEL and DB_ENGINE == 'django.db.backends.sqlite3':
+        # /var/task is read-only on Vercel serverless functions.
+        # Writable file operations must use /tmp.
+        _tmp_db = Path('/tmp/db.sqlite3')
+        _seed_db = BASE_DIR / 'db.sqlite3'
+        _tmp_db.parent.mkdir(parents=True, exist_ok=True)
+        if not _tmp_db.exists() or _tmp_db.stat().st_size == 0:
+            if _seed_db.exists() and _seed_db.is_file():
+                try:
+                    shutil.copy2(_seed_db, _tmp_db)
+                except Exception:
+                    pass
+        DB_NAME = str(_tmp_db)
+    else:
+        DB_NAME = os.getenv('DB_NAME', str(BASE_DIR / 'db.sqlite3'))
+
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': DB_NAME,
+            'USER': os.getenv('DB_USER', ''),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', ''),
+        }
     }
-}
 
 
 # Password validation
@@ -145,7 +200,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if IS_VERCEL:
+    MEDIA_ROOT = '/tmp/media'
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
