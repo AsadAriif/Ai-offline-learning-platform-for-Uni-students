@@ -246,9 +246,9 @@ class MarksheetSubmission(models.Model):
 class Notification(models.Model):
     PRIORITY_CHOICES = [
         ('normal', 'Standard Notice'),
-        ('urgent', 'Urgent / Priority 🚨'),
-        ('exam', 'Exam & Marks Notice 📑'),
-        ('meeting', 'Faculty / Official Meeting 🏛️'),
+        ('urgent', 'Urgent / Priority'),
+        ('exam', 'Exam & Marks Notice'),
+        ('meeting', 'Faculty / Official Meeting'),
     ]
 
     AUDIENCE_CHOICES = [

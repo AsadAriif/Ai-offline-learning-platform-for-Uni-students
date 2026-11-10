@@ -32,48 +32,37 @@
                 <div class="sidebar-group-label">FACULTY MANAGEMENT</div>
                 <nav class="sidebar-nav">
                       <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous Faculty AI Co-Pilot">
-                          <span class="sidebar-link-icon">🤖</span>
-                          <span class="sidebar-link-text">Faculty AI Co-Pilot ✨</span>
+                          <span class="sidebar-link-text">Faculty AI Co-Pilot </span>
                       </a>
 
                     <a href="{% url 'teacher_dashboard' %}" class="sidebar-link active" aria-current="page">
-                        <span class="sidebar-link-icon">📊</span>
                         <span class="sidebar-link-text">Dashboard</span>
                     </a>
                     <a href="{% url 'teacher_attendance' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🗓️</span>
                         <span class="sidebar-link-text">Log Lecture / Duties</span>
                     </a>
                     <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📝</span>
                         <span class="sidebar-link-text">Create Coursework / Quiz</span>
                     </a>
                     <a href="{% url 'teacher_materials' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📤</span>
                         <span class="sidebar-link-text">Upload Study Notes</span>
                     </a>
                     <a href="{% url 'teacher_pastpaper' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📑</span>
                         <span class="sidebar-link-text">Publish Past Papers</span>
                     </a>
                     <a href="{% url 'teacher_results' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🎯</span>
                         <span class="sidebar-link-text">Grade &amp; Share Results</span>
                     </a>
                     <a href="{% url 'teacher_invite' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">✉️</span>
                         <span class="sidebar-link-text">Invite Students</span>
                     </a>
                     <a href="{% url 'teacher_detect' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🤖</span>
                         <span class="sidebar-link-text">AI Content Detector</span>
                     </a>
                     <a href="{% url 'teacher_actions' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">⚡</span>
                         <span class="sidebar-link-text">All Faculty Actions</span>
                     </a>
                     <a href="{% url 'notifications_list' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🔔</span>
                         <span class="sidebar-link-text">Notices &amp; Directives</span>
                         {% if user_unread_notifications_count > 0 %}<span class="sidebar-badge" style="background: #EF4444; color: #FFFFFF;">{{ user_unread_notifications_count }}</span>{% endif %}
                     </a>
@@ -82,11 +71,9 @@
                 <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
                 <nav class="sidebar-nav">
                     <a href="{% url 'profile' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👤</span>
                         <span class="sidebar-link-text">Faculty Profile</span>
                     </a>
                     <a href="{% url 'index' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🏛️</span>
                         <span class="sidebar-link-text">University Home</span>
                     </a>
                 </nav>
@@ -100,7 +87,7 @@
                         <span class="user-role-badge">Faculty Instructor</span>
                     </div>
                 </a>
-                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
             </div>
         </aside>
 
@@ -109,7 +96,7 @@
             <!-- Clean Top Navigation Bar -->
             <header class="app-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
                     <div class="topbar-breadcrumbs">
                         <span class="breadcrumb-parent">Faculty Portal</span>
                         <span class="breadcrumb-divider">/</span>
@@ -119,19 +106,19 @@
 
                 <div class="topbar-center">
                     <div class="topbar-search-box">
-                        <span class="topbar-search-icon">🔍</span>
+                        <span class="topbar-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                         <input type="text" placeholder="Search courses, submissions, materials..." aria-label="Search">
                     </div>
                 </div>
 
                 <div class="topbar-right">
                     <!-- Night Study Dark Mode Toggle -->
-                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
 
                     <!-- Academic Notifications Bell -->
                     <div class="topbar-notifications">
                         <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
-                            <span>🔔</span>
+                            <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
                             {% if user_unread_notifications_count > 0 %}
                             <span class="notif-badge">{{ user_unread_notifications_count }}</span>
                             {% endif %}
@@ -147,7 +134,7 @@
                                     <a href="{% url 'notifications_list' %}" class="notif-item">
                                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
                                             <span class="notif-item-title">{{ n.title }}</span>
-                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">🚨 Urgent</span>{% endif %}
+                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">Urgent</span>{% endif %}
                                         </div>
                                         <span class="notif-item-meta">{{ n.message|truncatewords:10 }}</span>
                                     </a>
@@ -244,27 +231,27 @@
                     <h3 style="margin-bottom: 14px; font-size: 1.15rem;">Faculty Quick Actions &amp; Tools</h3>
                     <div class="action-row">
                         <a href="{% url 'teacher_invite' %}" class="action-tile">
-                            <strong>✉️ Invite Students</strong>
+                            <strong> Invite Students</strong>
                             <span>Issue course enrollment links and register new students into your department courses.</span>
                         </a>
                         <a href="{% url 'teacher_assignment' %}" class="action-tile">
-                            <strong>📝 Create Coursework / Quiz</strong>
+                            <strong> Create Coursework / Quiz</strong>
                             <span>Publish assignments, homework, and timed quizzes for offline student access.</span>
                         </a>
                         <a href="{% url 'teacher_materials' %}" class="action-tile">
-                            <strong>📤 Upload Study Notes</strong>
+                            <strong>Upload Study Notes</strong>
                             <span>Distribute slides, lecture notes, syllabus documents, and offline study files.</span>
                         </a>
                         <a href="{% url 'teacher_pastpaper' %}" class="action-tile">
-                            <strong>📑 Publish Past Papers</strong>
+                            <strong> Publish Past Papers</strong>
                             <span>Upload previous examination papers to assist students in test preparation.</span>
                         </a>
                         <a href="{% url 'teacher_results' %}" class="action-tile">
-                            <strong>🎯 Grade &amp; Share Results</strong>
+                            <strong> Grade &amp; Share Results</strong>
                             <span>Enter student marks, compute class averages, and share feedback transparently.</span>
                         </a>
                         <a href="{% url 'teacher_detect' %}" class="action-tile">
-                            <strong>🤖 AI Content Detector</strong>
+                            <strong> AI Content Detector</strong>
                             <span>Scan student submissions and documents to detect AI generation vs human authorship.</span>
                         </a>
                     </div>
@@ -273,7 +260,7 @@
                 <!-- Content Grid (Assignments & Courses) -->
                 <div class="section-grid" style="margin-bottom: 32px;">
                     <article class="activity-panel panel">
-                        <h3>📋 Recent Coursework Published</h3>
+                        <h3> Recent Coursework Published</h3>
                         <div class="recent-list">
                             {% if assignments %}
                                 {% for assignment in assignments %}
@@ -281,9 +268,9 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <strong>{{ assignment.title }}</strong>
                                         {% if assignment.published %}
-                                            <span class="badge badge-success">✓ Published</span>
+                                            <span class="badge badge-success">Published</span>
                                         {% else %}
-                                            <span class="badge badge-warning">⚠ Draft</span>
+                                            <span class="badge badge-warning">Draft</span>
                                         {% endif %}
                                     </div>
                                     <div class="meta">
@@ -305,7 +292,7 @@
                     </article>
 
                     <article class="courses-panel panel">
-                        <h3>📖 Assigned Department Courses</h3>
+                        <h3> Assigned Department Courses</h3>
                         <div class="courses-list">
                             {% if teacher_courses %}
                                 {% for course in teacher_courses %}
@@ -330,7 +317,7 @@
                 <!-- Materials Section -->
                 <section class="materials-panel panel" style="margin-bottom: 28px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin: 0;">📚 Uploaded Course Materials</h3>
+                        <h3 style="margin: 0;"> Uploaded Course Materials</h3>
                         <a href="{% url 'teacher_materials' %}" class="btn" style="padding: 7px 16px; font-size: 0.85rem;">Manage All Materials</a>
                     </div>
                     <div class="materials-list">

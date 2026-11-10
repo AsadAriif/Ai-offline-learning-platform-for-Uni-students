@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'MyApp/styles.css' %}">
     <link rel="manifest" href="{% static 'MyApp/manifest.json' %}">
 </head>
+
 <body>
     <div class="app-shell">
         <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -30,41 +32,36 @@
             <div class="sidebar-nav-group">
                 <div class="sidebar-group-label">DEPARTMENT GOVERNANCE</div>
                 <nav class="sidebar-nav">
-                      <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous HOD AI Co-Pilot">
-                          <span class="sidebar-link-icon">🤖</span>
-                          <span class="sidebar-link-text">HOD AI Co-Pilot ✨</span>
-                      </a>
+                    <a href="javascript:void(0)"
+                        onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;"
+                        class="sidebar-link"
+                        style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;"
+                        title="Open Autonomous HOD AI Co-Pilot">
+                        <span class="sidebar-link-text">HOD AI Co-Pilot </span>
+                    </a>
 
                     <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📊</span>
                         <span class="sidebar-link-text">HOD Dashboard</span>
                     </a>
                     <a href="{% url 'hod_notifications' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📢</span>
                         <span class="sidebar-link-text">Official Announcements</span>
                     </a>
                     <a href="{% url 'hod_courses' %}" class="sidebar-link active" aria-current="page">
-                        <span class="sidebar-link-icon">📚</span>
                         <span class="sidebar-link-text">Course Allocations</span>
                     </a>
                     <a href="{% url 'hod_tasks' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📋</span>
                         <span class="sidebar-link-text">Faculty Duties &amp; Tasks</span>
                     </a>
                     <a href="{% url 'hod_attendance' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🗓️</span>
                         <span class="sidebar-link-text">Faculty Lecture Logs</span>
                     </a>
                     <a href="{% url 'hod_marksheets' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📝</span>
                         <span class="sidebar-link-text">Review Marksheets</span>
                     </a>
                     <a href="{% url 'hod_student_roster' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📑</span>
                         <span class="sidebar-link-text">Student Roster Template</span>
                     </a>
                     <a href="{% url 'hod_manage_users' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👥</span>
                         <span class="sidebar-link-text">Manage Faculty &amp; HODs</span>
                     </a>
                 </nav>
@@ -72,15 +69,12 @@
                 <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
                 <nav class="sidebar-nav">
                     <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👨‍🏫</span>
                         <span class="sidebar-link-text">Faculty Workspace</span>
                     </a>
                     <a href="{% url 'profile' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👤</span>
                         <span class="sidebar-link-text">My Profile</span>
                     </a>
                     <a href="{% url 'index' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🏛️</span>
                         <span class="sidebar-link-text">University Home</span>
                     </a>
                 </nav>
@@ -88,13 +82,14 @@
 
             <div class="sidebar-user-footer">
                 <a href="{% url 'profile' %}" class="sidebar-user-info">
-                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">🏛️</div>
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE; font-weight: 700;">{{ user.username|slice:":1"|upper }}</div>
                     <div class="user-text-meta">
                         <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
-                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head of Dept</span>
+                        <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head
+                            of Dept</span>
                     </div>
                 </a>
-                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
             </div>
         </aside>
 
@@ -102,7 +97,7 @@
         <div class="app-main">
             <header class="app-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
                     <div class="topbar-breadcrumbs">
                         <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
                         <span class="breadcrumb-divider">/</span>
@@ -111,7 +106,7 @@
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
                     <div class="topbar-offline-pill">
                         <span class="status-indicator-dot"></span>
                         <span>Offline Ready</span>
@@ -127,7 +122,9 @@
                 <section class="hero panel" style="margin-bottom: 28px;">
                     <article class="hero-panel">
                         <h2>Course Allocation &amp; Subject Assignment</h2>
-                        <p>Assign department courses to specific faculty members. Instructors are strictly authorized to enroll students, publish materials, and submit marksheets exclusively for courses allocated by the HOD.</p>
+                        <p>Assign department courses to specific faculty members. Instructors are strictly authorized to
+                            enroll students, publish materials, and submit marksheets exclusively for courses allocated
+                            by the HOD.</p>
                         <div class="stats-row" style="margin-top: 18px;">
                             <div class="stat-card">
                                 <span>Total Department Courses</span>
@@ -155,24 +152,36 @@
                     <!-- Create or Update Course Form -->
                     <article class="upload-panel panel">
                         <h3 style="margin-bottom: 12px;">Add New Department Course</h3>
-                        <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 18px;">Create a syllabus course and immediately assign it to an instructor.</p>
+                        <p style="color: var(--secondary-text); font-size: 0.875rem; margin-bottom: 18px;">Create a
+                            syllabus course and immediately assign it to an instructor.</p>
                         <form method="POST" action="{% url 'hod_courses' %}">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="create">
                             <div class="field-group" style="margin-bottom: 14px;">
-                                <label for="name" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course Title / Name</label>
-                                <input id="name" name="name" type="text" placeholder="e.g. CS101 - Introduction to Artificial Intelligence" required style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                <label for="name"
+                                    style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course
+                                    Title / Name</label>
+                                <input id="name" name="name" type="text"
+                                    placeholder="e.g. CS101 - Introduction to Artificial Intelligence" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
                             </div>
                             <div class="field-group" style="margin-bottom: 14px;">
-                                <label for="code" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course Code</label>
-                                <input id="code" name="code" type="text" placeholder="e.g. CS-101" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
+                                <label for="code"
+                                    style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Course
+                                    Code</label>
+                                <input id="code" name="code" type="text" placeholder="e.g. CS-101"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm);">
                             </div>
                             <div class="field-group" style="margin-bottom: 18px;">
-                                <label for="teacher_id" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Assign to Faculty Instructor</label>
-                                <select id="teacher_id" name="teacher_id" style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                <label for="teacher_id"
+                                    style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem;">Assign
+                                    to Faculty Instructor</label>
+                                <select id="teacher_id" name="teacher_id"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
                                     <option value="">-- Unassigned (Assign Later) --</option>
                                     {% for t in teachers %}
-                                    <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }} ({{ t.username }})</option>
+                                    <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }} ({{ t.username
+                                        }})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -181,20 +190,29 @@
                     </article>
 
                     <!-- Information Callout -->
-                    <article class="panel" style="background: rgba(110, 168, 254, 0.08); border-color: rgba(110, 168, 254, 0.3);">
-                        <h3 style="margin-bottom: 12px; color: var(--primary-accent);">📋 Institutional Policy on Course Allocation</h3>
-                        <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary); margin-bottom: 14px;">
+                    <article class="panel"
+                        style="background: rgba(110, 168, 254, 0.08); border-color: rgba(110, 168, 254, 0.3);">
+                        <h3 style="margin-bottom: 12px; color: var(--primary-accent);"> Institutional Policy on Course
+                            Allocation</h3>
+                        <p
+                            style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary); margin-bottom: 14px;">
                             Under BGNU academic regulations:
                         </p>
-                        <ul style="padding-left: 20px; font-size: 0.875rem; color: var(--text-primary); line-height: 1.6; margin-bottom: 16px;">
-                            <li>Teachers can <strong>only</strong> enroll students into courses formally allocated to them by the HOD.</li>
+                        <ul
+                            style="padding-left: 20px; font-size: 0.875rem; color: var(--text-primary); line-height: 1.6; margin-bottom: 16px;">
+                            <li>Teachers can <strong>only</strong> enroll students into courses formally allocated to
+                                them by the HOD.</li>
                             <li>The HOD provides the authorized student roster spreadsheet to each teacher.</li>
                             <li>Teachers submit their final graded marksheets back to the HOD for verification.</li>
                         </ul>
-                        <div style="padding: 12px; background: var(--bg-card); border-radius: 6px; border: 1px solid var(--borders);">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary-accent);">💡 Need a roster template?</span>
+                        <div
+                            style="padding: 12px; background: var(--bg-card); border-radius: 6px; border: 1px solid var(--borders);">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary-accent);"> Need a
+                                roster template?</span>
                             <div style="margin-top: 6px;">
-                                <a href="{% url 'hod_student_roster' %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Download Official Student Roster (CSV)</a>
+                                <a href="{% url 'hod_student_roster' %}" class="btn btn-outline"
+                                    style="padding: 6px 14px; font-size: 0.8rem;">Download Official Student Roster
+                                    (CSV)</a>
                             </div>
                         </div>
                     </article>
@@ -217,7 +235,8 @@
                             <tbody>
                                 {% for c in courses %}
                                 <tr style="border-bottom: 1px solid var(--borders);">
-                                    <td style="padding: 12px 14px; font-family: var(--font-mono); font-weight: 600; color: var(--primary-accent);">
+                                    <td
+                                        style="padding: 12px 14px; font-family: var(--font-mono); font-weight: 600; color: var(--primary-accent);">
                                         {{ c.code|default:"N/A" }}
                                     </td>
                                     <td style="padding: 12px 14px; font-weight: 600;">
@@ -225,61 +244,86 @@
                                     </td>
                                     <td style="padding: 12px 14px;">
                                         {% if c.teacher %}
-                                        <span class="badge" style="background: rgba(39, 133, 104, 0.15); color: #278568; font-weight: 600;">
-                                            👨‍🏫 {{ c.teacher.get_full_name|default:c.teacher.username }}
+                                        <span class="badge"
+                                            style="background: rgba(39, 133, 104, 0.15); color: #278568; font-weight: 600;">
+                                            {{ c.teacher.get_full_name|default:c.teacher.username }}
                                         </span>
                                         {% else %}
-                                        <span class="badge" style="background: rgba(197, 139, 58, 0.15); color: #C58B3A;">
-                                            ⚠️ Unassigned
+                                        <span class="badge"
+                                            style="background: rgba(197, 139, 58, 0.15); color: #C58B3A;">
+                                            Unassigned
                                         </span>
                                         {% endif %}
                                     </td>
                                     <td style="padding: 12px 14px;">
-                                        <span style="font-family: var(--font-mono); font-weight: 600;">{{ c.student_count }}</span> students
+                                        <span style="font-family: var(--font-mono); font-weight: 600;">{{
+                                            c.student_count }}</span> students
                                     </td>
                                     <td style="padding: 12px 14px;">
                                         <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                            <form method="POST" action="{% url 'hod_courses' %}" style="display: flex; gap: 6px; align-items: center;">
+                                            <form method="POST" action="{% url 'hod_courses' %}"
+                                                style="display: flex; gap: 6px; align-items: center;">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="assign">
                                                 <input type="hidden" name="course_id" value="{{ c.id }}">
-                                                <select name="teacher_id" style="padding: 5px 8px; font-size: 0.8rem; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                                <select name="teacher_id"
+                                                    style="padding: 5px 8px; font-size: 0.8rem; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
                                                     <option value="">-- Unassigned --</option>
                                                     {% for t in teachers %}
-                                                    <option value="{{ t.id }}" {% if c.teacher and c.teacher.id == t.id %}selected{% endif %}>
+                                                    <option value="{{ t.id }}" {% if c.teacher and c.teacher.id==t.id
+                                                        %}selected{% endif %}>
                                                         {{ t.get_full_name|default:t.username }}
                                                     </option>
                                                     {% endfor %}
                                                 </select>
-                                                <button type="submit" class="btn btn-outline" style="padding: 5px 8px; font-size: 0.75rem;" title="Save Instructor Assignment">Save</button>
+                                                <button type="submit" class="btn btn-outline"
+                                                    style="padding: 5px 8px; font-size: 0.75rem;"
+                                                    title="Save Instructor Assignment">Save</button>
                                             </form>
-                                            <button type="button" class="btn btn-outline" style="padding: 5px 8px; font-size: 0.75rem;" onclick="openEditCourseModal('{{ c.id }}', '{{ c.name|escapejs }}', '{{ c.code|default:''|escapejs }}', '{% if c.teacher %}{{ c.teacher.id }}{% endif %}')">✏️ Edit</button>
-                                            <a href="{% url 'hod_student_roster' %}?course_id={{ c.id }}" class="btn btn-outline" style="padding: 5px 8px; font-size: 0.75rem;" title="Download Student Roster">📑 Roster</a>
-                                            <form method="POST" action="{% url 'hod_courses' %}" onsubmit="return confirm('Permanently delete course {{ c.name }}? This will also unenroll students.');" style="margin: 0;">
+                                            <button type="button" class="btn btn-outline"
+                                                style="padding: 5px 8px; font-size: 0.75rem;"
+                                                onclick="openEditCourseModal('{{ c.id }}', '{{ c.name|escapejs }}', '{{ c.code|default:''|escapejs }}', '{% if c.teacher %}{{ c.teacher.id }}{% endif %}')">
+                                                Edit</button>
+                                            <a href="{% url 'hod_student_roster' %}?course_id={{ c.id }}"
+                                                class="btn btn-outline" style="padding: 5px 8px; font-size: 0.75rem;"
+                                                title="Download Student Roster">Roster</a>
+                                            <form method="POST" action="{% url 'hod_courses' %}"
+                                                onsubmit="return confirm('Permanently delete course {{ c.name }}? This will also unenroll students.');"
+                                                style="margin: 0;">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="delete_course">
                                                 <input type="hidden" name="course_id" value="{{ c.id }}">
-                                                <button type="submit" class="btn btn-outline" style="padding: 5px 8px; font-size: 0.75rem; color: #DC2626; border-color: #DC2626;" title="Delete Course">🗑️</button>
+                                                <button type="submit" class="btn btn-outline"
+                                                    style="padding: 5px 8px; font-size: 0.75rem; color: #DC2626; border-color: #DC2626;"
+                                                    title="Delete Course">Delete</button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="5" style="padding: 24px; text-align: center; color: var(--secondary-text);">No courses found. Add a course using the form above.</td>
+                                    <td colspan="5"
+                                        style="padding: 24px; text-align: center; color: var(--secondary-text);">No
+                                        courses found. Add a course using the form above.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </article>
-            
+
                 <!-- Edit Course Modal -->
-                <div id="editCourseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.55); z-index: 100000; align-items: center; justify-content: center;">
-                    <div style="background: var(--bg-card, #FFFFFF); border-radius: 16px; padding: 24px; width: 480px; max-width: 92vw; box-shadow: 0 20px 45px rgba(0,0,0,0.25); border: 1px solid var(--borders);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 id="editCourseModalTitle" style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Edit Course Details</h3>
-                            <button type="button" onclick="closeEditCourseModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--secondary-text);">&times;</button>
+                <div id="editCourseModal"
+                    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.55); z-index: 100000; align-items: center; justify-content: center;">
+                    <div
+                        style="background: var(--bg-card, #FFFFFF); border-radius: 16px; padding: 24px; width: 480px; max-width: 92vw; box-shadow: 0 20px 45px rgba(0,0,0,0.25); border: 1px solid var(--borders);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 id="editCourseModalTitle"
+                                style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Edit Course Details
+                            </h3>
+                            <button type="button" onclick="closeEditCourseModal()"
+                                style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--secondary-text);">&times;</button>
                         </div>
                         <form method="POST" action="{% url 'hod_courses' %}">
                             {% csrf_token %}
@@ -287,18 +331,27 @@
                             <input type="hidden" name="course_id" id="edit_course_pk">
 
                             <div style="margin-bottom: 12px;">
-                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Course Name</label>
-                                <input type="text" name="name" id="edit_course_name" required style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                                <label
+                                    style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Course
+                                    Name</label>
+                                <input type="text" name="name" id="edit_course_name" required
+                                    style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
                             </div>
 
                             <div style="margin-bottom: 12px;">
-                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Course Code</label>
-                                <input type="text" name="code" id="edit_course_code" placeholder="e.g. CS102" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                                <label
+                                    style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Course
+                                    Code</label>
+                                <input type="text" name="code" id="edit_course_code" placeholder="e.g. CS102"
+                                    style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem;">
                             </div>
 
                             <div style="margin-bottom: 18px;">
-                                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Allocated Instructor</label>
-                                <select name="teacher_id" id="edit_course_teacher" style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg-card); color: var(--text-primary);">
+                                <label
+                                    style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Allocated
+                                    Instructor</label>
+                                <select name="teacher_id" id="edit_course_teacher"
+                                    style="width: 100%; padding: 8px 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg-card); color: var(--text-primary);">
                                     <option value="">-- Unassigned --</option>
                                     {% for t in teachers %}
                                     <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }}</option>
@@ -307,33 +360,36 @@
                             </div>
 
                             <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                                <button type="button" onclick="closeEditCourseModal()" class="btn btn-outline" style="padding: 8px 16px;">Cancel</button>
-                                <button type="submit" class="btn" style="padding: 8px 18px;">Update Course &rarr;</button>
+                                <button type="button" onclick="closeEditCourseModal()" class="btn btn-outline"
+                                    style="padding: 8px 16px;">Cancel</button>
+                                <button type="submit" class="btn" style="padding: 8px 18px;">Update Course
+                                    &rarr;</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
                 <script>
-                function openEditCourseModal(id, name, code, teacherId) {
-                    document.getElementById('edit_course_pk').value = id;
-                    document.getElementById('edit_course_name').value = name;
-                    document.getElementById('edit_course_code').value = code || '';
-                    document.getElementById('edit_course_teacher').value = teacherId || '';
-                    document.getElementById('editCourseModalTitle').textContent = 'Edit Course: ' + name;
-                    document.getElementById('editCourseModal').style.display = 'flex';
-                }
+                    function openEditCourseModal(id, name, code, teacherId) {
+                        document.getElementById('edit_course_pk').value = id;
+                        document.getElementById('edit_course_name').value = name;
+                        document.getElementById('edit_course_code').value = code || '';
+                        document.getElementById('edit_course_teacher').value = teacherId || '';
+                        document.getElementById('editCourseModalTitle').textContent = 'Edit Course: ' + name;
+                        document.getElementById('editCourseModal').style.display = 'flex';
+                    }
 
-                function closeEditCourseModal() {
-                    document.getElementById('editCourseModal').style.display = 'none';
-                }
+                    function closeEditCourseModal() {
+                        document.getElementById('editCourseModal').style.display = 'none';
+                    }
                 </script>
 
             </main>
 
             <footer class="app-footer">
                 <div class="footer-bottom">
-                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science &amp; IT</p>
+                    <p>&copy; 2026 Baba Guru Nanak University Nankana Sahib &middot; Department of Computer Science
+                        &amp; IT</p>
                 </div>
             </footer>
         </div>
@@ -342,5 +398,5 @@
     {% include 'MyApp/chatbot_widget.html' %}
     <script src="{% static 'MyApp/sidebar.js' %}"></script>
 </body>
-</html>
 
+</html>

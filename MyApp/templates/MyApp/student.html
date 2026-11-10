@@ -32,40 +32,31 @@
                 <div class="sidebar-group-label">ACADEMIC WORKSPACE</div>
                 <nav class="sidebar-nav">
                     <a href="{% url 'student_dashboard' %}" class="sidebar-link active" aria-current="page">
-                        <span class="sidebar-link-icon">📊</span>
                         <span class="sidebar-link-text">Dashboard</span>
                     </a>
                     <a href="{% url 'student_materials' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📚</span>
                         <span class="sidebar-link-text">Study Materials</span>
                     </a>
                     <a href="{% url 'student_assignments' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📋</span>
                         <span class="sidebar-link-text">Coursework &amp; Tasks</span>
                         {% if total_remaining %}<span class="sidebar-badge">{{ total_remaining }}</span>{% endif %}
                     </a>
                     <a href="{% url 'student_quiz' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">⏱️</span>
                         <span class="sidebar-link-text">Attempt Quizzes</span>
                     </a>
                     <a href="{% url 'student_progress' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📈</span>
                         <span class="sidebar-link-text">Progress Tracking</span>
                     </a>
                     <a href="{% url 'student_results' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🏆</span>
                         <span class="sidebar-link-text">Assessment Results</span>
                     </a>
                     <a href="{% url 'student_pastpapers' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📑</span>
                         <span class="sidebar-link-text">Past Exam Papers</span>
                     </a>
                     <a href="{% url 'student_actions' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">⚡</span>
                         <span class="sidebar-link-text">All Actions Directory</span>
                     </a>
                     <a href="{% url 'notifications_list' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🔔</span>
                         <span class="sidebar-link-text">Official Notices</span>
                         {% if user_unread_notifications_count > 0 %}<span class="sidebar-badge" style="background: #EF4444; color: #FFFFFF;">{{ user_unread_notifications_count }}</span>{% endif %}
                     </a>
@@ -74,11 +65,9 @@
                 <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
                 <nav class="sidebar-nav">
                     <a href="{% url 'profile' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👤</span>
                         <span class="sidebar-link-text">My Profile</span>
                     </a>
                     <a href="{% url 'index' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🏛️</span>
                         <span class="sidebar-link-text">University Home</span>
                     </a>
                 </nav>
@@ -92,7 +81,7 @@
                         <span class="user-role-badge">Student &bull; Offline Enabled</span>
                     </div>
                 </a>
-                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
             </div>
         </aside>
 
@@ -101,7 +90,7 @@
             <!-- Clean Top Navigation Bar -->
             <header class="app-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
                     <div class="topbar-breadcrumbs">
                         <span class="breadcrumb-parent">Student Portal</span>
                         <span class="breadcrumb-divider">/</span>
@@ -111,19 +100,19 @@
 
                 <div class="topbar-center">
                     <div class="topbar-search-box">
-                        <span class="topbar-search-icon">🔍</span>
+                        <span class="topbar-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                         <input type="text" placeholder="Search courses, study notes, assignments..." aria-label="Search">
                     </div>
                 </div>
 
                 <div class="topbar-right">
                     <!-- Night Study Dark Mode Toggle -->
-                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
 
                     <!-- Academic Notifications Bell -->
                     <div class="topbar-notifications">
                         <button type="button" class="notif-btn" id="notifToggleBtn" title="Announcements &amp; Alerts" aria-label="Notifications">
-                            <span>🔔</span>
+                            <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
                             {% if user_unread_notifications_count > 0 %}
                             <span class="notif-badge">{{ user_unread_notifications_count }}</span>
                             {% endif %}
@@ -139,7 +128,7 @@
                                     <a href="{% url 'notifications_list' %}" class="notif-item">
                                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
                                             <span class="notif-item-title">{{ n.title }}</span>
-                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">🚨 Urgent</span>{% endif %}
+                                            {% if n.priority == 'urgent' %}<span style="font-size: 0.65rem; background: #FEE2E2; color: #991B1B; padding: 1px 6px; border-radius: 999px;">Urgent</span>{% endif %}
                                         </div>
                                         <span class="notif-item-meta">{{ n.message|truncatewords:10 }}</span>
                                     </a>
@@ -236,27 +225,27 @@
                     <h3 style="margin-bottom: 14px; font-size: 1.15rem;">Student Actions &amp; Tools</h3>
                     <div class="action-row">
                         <a href="{% url 'student_materials' %}" class="action-tile">
-                            <strong>📚 Study Materials</strong>
+                            <strong> Study Materials</strong>
                             <span>Download lecture notes, slides, and offline documents for all your enrolled courses.</span>
                         </a>
                         <a href="{% url 'student_assignments' %}" class="action-tile">
-                            <strong>📋 Coursework &amp; Tasks</strong>
+                            <strong> Coursework &amp; Tasks</strong>
                             <span>Work on assignments and homework tasks, and upload your offline submissions.</span>
                         </a>
                         <a href="{% url 'student_quiz' %}" class="action-tile">
-                            <strong>⏱️ Attempt Quizzes</strong>
+                            <strong> Attempt Quizzes</strong>
                             <span>Take scheduled online and offline quizzes to test your course knowledge.</span>
                         </a>
                         <a href="{% url 'student_progress' %}" class="action-tile">
-                            <strong>📈 Progress Tracking</strong>
+                            <strong> Progress Tracking</strong>
                             <span>Check your module completion rates and view upcoming pending study tasks.</span>
                         </a>
                         <a href="{% url 'student_results' %}" class="action-tile">
-                            <strong>🏆 Assessment Results</strong>
+                            <strong> Assessment Results</strong>
                             <span>Review scores, grades, and teacher feedback on completed assessments.</span>
                         </a>
                         <a href="{% url 'student_pastpapers' %}" class="action-tile">
-                            <strong>📑 Past Exam Papers</strong>
+                            <strong> Past Exam Papers</strong>
                             <span>Access past semester exam papers published by your teachers for revision.</span>
                         </a>
                     </div>
@@ -265,7 +254,7 @@
                 <!-- Content Grid (Announcements, Activity, Courses) -->
                 <div class="section-grid">
                     <article class="messages-panel panel">
-                        <h3>📢 Announcements &amp; Messages</h3>
+                        <h3> Announcements &amp; Messages</h3>
                         {% if student_messages %}
                             <ul>
                                 {% for msg in student_messages %}
@@ -283,7 +272,7 @@
                     </article>
 
                     <article class="activity-panel panel">
-                        <h3>🕒 Recent Activity Feed</h3>
+                        <h3> Recent Activity Feed</h3>
                         <div class="recent-list">
                             <div class="list-item">
                                 <strong>New study material uploaded</strong>
@@ -304,7 +293,7 @@
                     </article>
 
                     <article class="courses-panel panel">
-                        <h3>📖 Enrolled Courses &amp; Metrics</h3>
+                        <h3> Enrolled Courses &amp; Metrics</h3>
                         <div class="courses-list">
                             {% for stat in course_stats %}
                             <div class="course-row">

@@ -874,7 +874,7 @@ def submit_assignment(request, assignment_id):
 
             if is_auto:
                 sub.feedback = f"[Proctoring Security Alert] {reason} at {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}."
-                messages.warning(request, f"⚠️ Examination Integrity Notice: {reason}. Your quiz answers have been locked and submitted.")
+                messages.warning(request, f"Examination Integrity Notice: {reason}. Your quiz answers have been locked and submitted.")
             else:
                 messages.success(request, f"Quiz '{assignment.title}' submitted successfully.")
 

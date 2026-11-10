@@ -31,40 +31,31 @@
                 <div class="sidebar-group-label">DEPARTMENT GOVERNANCE</div>
                 <nav class="sidebar-nav">
                       <a href="javascript:void(0)" onclick="document.getElementById('bgnu-chatbot-toggle').click(); return false;" class="sidebar-link" style="background: linear-gradient(135deg, rgba(110, 168, 254, 0.25), rgba(17, 29, 94, 0.25)); border-left: 3px solid #6EA8FE; font-weight: 700; color: #FFFFFF;" title="Open Autonomous HOD AI Co-Pilot">
-                          <span class="sidebar-link-icon">🤖</span>
-                          <span class="sidebar-link-text">HOD AI Co-Pilot ✨</span>
+                          <span class="sidebar-link-text">HOD AI Co-Pilot </span>
                       </a>
 
                     <a href="{% url 'hod_dashboard' %}" class="sidebar-link active" aria-current="page">
-                        <span class="sidebar-link-icon">📊</span>
                         <span class="sidebar-link-text">HOD Dashboard</span>
                     </a>
                     <a href="{% url 'hod_notifications' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📢</span>
                         <span class="sidebar-link-text">Official Announcements</span>
                     </a>
                     <a href="{% url 'hod_courses' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📚</span>
                         <span class="sidebar-link-text">Course Allocations</span>
                     </a>
                     <a href="{% url 'hod_tasks' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📋</span>
                         <span class="sidebar-link-text">Faculty Duties &amp; Tasks</span>
                     </a>
                     <a href="{% url 'hod_attendance' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🗓️</span>
                         <span class="sidebar-link-text">Faculty Lecture Logs</span>
                     </a>
                     <a href="{% url 'hod_marksheets' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📝</span>
                         <span class="sidebar-link-text">Review Marksheets</span>
                     </a>
                     <a href="{% url 'hod_student_roster' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">📑</span>
                         <span class="sidebar-link-text">Student Roster Template</span>
                     </a>
                     <a href="{% url 'hod_manage_users' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👥</span>
                         <span class="sidebar-link-text">Manage Faculty &amp; HODs</span>
                     </a>
                 </nav>
@@ -72,15 +63,12 @@
                 <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
                 <nav class="sidebar-nav">
                     <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👨‍🏫</span>
                         <span class="sidebar-link-text">Faculty Workspace</span>
                     </a>
                     <a href="{% url 'profile' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">👤</span>
                         <span class="sidebar-link-text">My Profile</span>
                     </a>
                     <a href="{% url 'index' %}" class="sidebar-link">
-                        <span class="sidebar-link-icon">🏛️</span>
                         <span class="sidebar-link-text">University Home</span>
                     </a>
                 </nav>
@@ -88,13 +76,13 @@
 
             <div class="sidebar-user-footer">
                 <a href="{% url 'profile' %}" class="sidebar-user-info">
-                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE;">🏛️</div>
+                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE; font-weight: 700;">{{ user.username|slice:":1"|upper }}</div>
                     <div class="user-text-meta">
                         <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
                         <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head of Dept</span>
                     </div>
                 </a>
-                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out">🚪</a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
             </div>
         </aside>
 
@@ -103,7 +91,7 @@
             <!-- Top Navigation Bar -->
             <header class="app-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
                     <div class="topbar-breadcrumbs">
                         <span class="breadcrumb-parent">BGNU CS &amp; IT</span>
                         <span class="breadcrumb-divider">/</span>
@@ -112,11 +100,11 @@
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle">🌙</button>
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
 
                     <div class="topbar-notifications">
                         <button type="button" class="notif-btn" id="notifToggleBtn" title="Department Alerts" aria-label="Notifications">
-                            <span>🔔</span>
+                            <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
                             {% if pending_marksheets > 0 %}
                             <span class="notif-badge">{{ pending_marksheets }}</span>
                             {% endif %}
@@ -128,15 +116,15 @@
                             </div>
                             <div class="notif-list">
                                 <a href="{% url 'hod_marksheets' %}" class="notif-item">
-                                    <span class="notif-item-title">📝 Marksheet Submissions</span>
+                                    <span class="notif-item-title"> Marksheet Submissions</span>
                                     <span class="notif-item-meta">{{ pending_marksheets }} marksheet(s) awaiting your official review.</span>
                                 </a>
                                 <a href="{% url 'hod_attendance' %}" class="notif-item">
-                                    <span class="notif-item-title">🗓️ Today's Lecture Logs</span>
+                                    <span class="notif-item-title"> Today's Lecture Logs</span>
                                     <span class="notif-item-meta">{{ today_attendance_count }} lecture(s) logged by faculty today.</span>
                                 </a>
                                 <a href="{% url 'hod_tasks' %}" class="notif-item">
-                                    <span class="notif-item-title">📋 Active Faculty Tasks</span>
+                                    <span class="notif-item-title"> Active Faculty Tasks</span>
                                     <span class="notif-item-meta">{{ active_tasks }} ongoing tasks assigned to instructors.</span>
                                 </a>
                             </div>
@@ -160,7 +148,7 @@
                 <section class="hero panel" style="margin-bottom: 28px;">
                     <article class="hero-panel">
                         <span class="badge" style="background: rgba(110, 168, 254, 0.2); color: var(--secondary-accent); border: 1px solid var(--secondary-accent); margin-bottom: 12px; display: inline-flex;">
-                            🏛️ Department Governance &middot; Baba Guru Nanak University
+                             Department Governance &middot; Baba Guru Nanak University
                         </span>
                         <h2>Welcome, Head of Department (HOD)</h2>
                         <p>Supervise academic courses, assign subjects to faculty members, distribute student roster sheets, review and approve marks, and track daily lecture conduction across the department.</p>
@@ -207,42 +195,42 @@
                 <!-- Quick Action Shortcuts -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px;">
                                         <a href="{% url 'hod_notifications' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">📢</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Broadcast Notices</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Send circulars to teachers &amp; students</span>
                         </div>
                     </a>
 <a href="{% url 'hod_courses' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">📚</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Assign Courses</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Allocate subjects to faculty</span>
                         </div>
                     </a>
                     <a href="{% url 'hod_tasks' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">📋</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Assign Duties &amp; Tasks</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Monitor teacher tasks</span>
                         </div>
                     </a>
                     <a href="{% url 'hod_marksheets' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">📝</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Review Marksheets</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Approve submitted grades</span>
                         </div>
                     </a>
                     <a href="{% url 'hod_student_roster' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">📑</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Export Roster Sheet</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Download CSV for teachers</span>
                         </div>
                     </a>
                     <a href="{% url 'hod_manage_users' %}" class="card-item" style="text-decoration: none; padding: 18px; border: 1px solid var(--borders); border-radius: var(--radius-md); background: var(--bg-card); display: flex; align-items: center; gap: 14px; transition: transform 0.2s, box-shadow 0.2s;">
-                        <span style="font-size: 1.8rem; background: var(--pale-blue); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">👥</span>
+                        
                         <div>
                             <strong style="color: var(--text-primary); display: block; font-size: 0.95rem;">Add HOD / Faculty</strong>
                             <span style="color: var(--secondary-text); font-size: 0.8rem;">Register staff accounts</span>
@@ -255,7 +243,7 @@
                     <!-- Marksheet Approvals Panel -->
                     <article class="panel">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 style="margin: 0; font-size: 1.15rem;">📝 Marksheet Submissions for Approval</h3>
+                            <h3 style="margin: 0; font-size: 1.15rem;"> Marksheet Submissions for Approval</h3>
                             <a href="{% url 'hod_marksheets' %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">View All</a>
                         </div>
                         <div class="recent-list">
@@ -278,7 +266,7 @@
                                 </div>
                                 <div style="display: flex; gap: 8px; align-items: center;">
                                     {% if ms.file %}
-                                    <a href="{{ ms.file.url }}" download class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">⬇️ Download Sheet</a>
+                                    <a href="{{ ms.file.url }}" download class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">Download Sheet</a>
                                     {% endif %}
                                     <a href="{% url 'hod_marksheets' %}" class="btn" style="padding: 4px 10px; font-size: 0.75rem;">Review &amp; Approve</a>
                                 </div>
@@ -292,7 +280,7 @@
                     <!-- Daily Lecture Logs Panel -->
                     <article class="panel">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 style="margin: 0; font-size: 1.15rem;">🗓️ Faculty Lecture Conduction Logs</h3>
+                            <h3 style="margin: 0; font-size: 1.15rem;"> Faculty Lecture Conduction Logs</h3>
                             <a href="{% url 'hod_attendance' %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Full Register</a>
                         </div>
                         <div class="recent-list">
@@ -331,7 +319,7 @@
                     <!-- Faculty Assigned Duties -->
                     <article class="panel">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 style="margin: 0; font-size: 1.15rem;">📋 Faculty Duties &amp; Department Tasks</h3>
+                            <h3 style="margin: 0; font-size: 1.15rem;"> Faculty Duties &amp; Department Tasks</h3>
                             <a href="{% url 'hod_tasks' %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Assign New</a>
                         </div>
                         <div class="recent-list">
@@ -362,7 +350,7 @@
                     <!-- Assigned Courses Summary -->
                     <article class="panel">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 style="margin: 0; font-size: 1.15rem;">📚 Course Allocations</h3>
+                            <h3 style="margin: 0; font-size: 1.15rem;"> Course Allocations</h3>
                             <a href="{% url 'hod_courses' %}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Manage All</a>
                         </div>
                         <div class="recent-list">

@@ -158,10 +158,10 @@ def compress_uploaded_file(uploaded_file) -> SimpleUploadedFile | None:
         if has_api_key:
             # pdflayer does not provide a dedicated compression endpoint; use local compression
             compressed_data = _compress_pdf_local(raw_data)
-            info_msg = "✅ PDF compressed locally (pdflayer key present)."
+            info_msg = "PDF compressed locally (pdflayer key present)."
         else:
             compressed_data = _compress_pdf_local(raw_data)
-            info_msg = "✅ PDF compressed locally (offline)."
+            info_msg = "PDF compressed locally (offline)."
     elif ext in CONVERTIBLE_EXTENSIONS:
         if has_api_key:
             pdf_bytes = _convert_to_pdf_pdflayer(raw_data, original_name, api_key)
@@ -169,23 +169,23 @@ def compress_uploaded_file(uploaded_file) -> SimpleUploadedFile | None:
                 # Attempt local compression on the resulting PDF
                 compressed_pdf = _compress_pdf_local(pdf_bytes)
                 compressed_data = compressed_pdf if compressed_pdf else pdf_bytes
-                info_msg = f"✅ {ext.upper()} converted to PDF via pdflayer."
+                info_msg = f"{ext.upper()} converted to PDF via pdflayer."
             else:
-                warning_msg = f"⚠️ pdflayer conversion failed for {ext.upper()}."
+                warning_msg = f"pdflayer conversion failed for {ext.upper()}."
         else:
             # No API key: handle images locally, others get warning
             if ext in {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif", ".webp"}:
                 pdf_bytes = _convert_image_to_pdf_local(raw_data)
                 if pdf_bytes:
                     compressed_data = _compress_pdf_local(pdf_bytes) or pdf_bytes
-                    info_msg = "✅ Image converted and compressed locally."
+                    info_msg = "Image converted and compressed locally."
                 else:
-                    warning_msg = "⚠️ Image conversion failed locally."
+                    warning_msg = "Image conversion failed locally."
             else:
-                warning_msg = f"⚠️ No pdflayer API key configured. {ext.upper()} uploaded as-is."
+                warning_msg = f"No pdflayer API key configured. {ext.upper()} uploaded as-is."
     else:
         # Unknown format
-        warning_msg = f"⚠️ Format {ext} not supported; uploaded unchanged."
+        warning_msg = f"Format {ext} not supported; uploaded unchanged."
 
     if compressed_data is None:
         uploaded_file.seek(0)
