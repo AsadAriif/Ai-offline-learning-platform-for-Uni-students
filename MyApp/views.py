@@ -157,11 +157,22 @@ def profile_view(request):
 
     return render(request, 'MyApp/profile.html', {'user_obj': user})
 
+def _redirect_role_home(user):
+    role = getattr(user, 'role', '')
+    if role == 'hod':
+        return redirect('hod_dashboard')
+    if role == 'teacher':
+        return redirect('teacher_dashboard')
+    if role == 'student':
+        return redirect('student_dashboard')
+    return redirect('index')
+
+
 def student_dashboard(request):
     if not request.user.is_authenticated:
         return redirect('login')
     if getattr(request.user, 'role', '') != 'student':
-        return redirect('teacher_dashboard')
+        return _redirect_role_home(request.user)
 
     display_name = request.user.get_full_name() or request.user.username
     enrolled_courses = Course.objects.filter(enrollments__student=request.user).distinct()
@@ -222,7 +233,7 @@ def teacher_dashboard(request):
     if not request.user.is_authenticated:
         return redirect('login')
     if getattr(request.user, 'role', '') != 'teacher':
-        return redirect('student_dashboard')
+        return _redirect_role_home(request.user)
     
     display_name = request.user.get_full_name() or request.user.username
     
@@ -980,11 +991,16 @@ def detect_submission(request, submission_id):
             if file_ext not in ALLOWED_EXTENSIONS:
                 return JsonResponse({'error': f'File type {file_ext} is not supported for detection.'}, status=400)
             
-            # Save to temporary location and detect
-            with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
-                submission.file.seek(0)
-                tmp.write(submission.file.read())
-                tmp_path = tmp.name
+            try:
+                if not hasattr(submission.file, 'path') or not os.path.exists(submission.file.path):
+                    return JsonResponse({'error': 'Attached file not found on server storage.'}, status=404)
+                # Save to temporary location and detect
+                with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
+                    with submission.file.open('rb') as f:
+                        tmp.write(f.read())
+                    tmp_path = tmp.name
+            except (FileNotFoundError, OSError):
+                return JsonResponse({'error': 'Attached file not found on server storage.'}, status=404)
             
             try:
                 result = predict(tmp_path)
@@ -1753,15 +1769,23 @@ def ai_chatbot_api(request):
                 if found:
                     local_path = found
 
-    result = run_academic_agent(
-        user=acting_user,
-        message=user_message,
-        uploaded_file=uploaded_file,
-        local_path=local_path,
-        history=conversation_history
-    )
-
-    return JsonResponse(result)
+    try:
+        result = run_academic_agent(
+            user=acting_user,
+            message=user_message,
+            uploaded_file=uploaded_file,
+            local_path=local_path,
+            history=conversation_history
+        )
+        return JsonResponse(result)
+    except Exception as exc:
+        return JsonResponse(
+            {
+                'error': f'AI assistant encountered an unexpected error: {str(exc)}',
+                'reply': 'Temporary error communicating with the AI assistant. Please verify your Gemini API configuration and try again.',
+            },
+            status=500,
+        )
 
 
 def export_results_csv(request):

@@ -158,6 +158,7 @@ else:
             'PASSWORD': os.getenv('DB_PASSWORD', ''),
             'HOST': os.getenv('DB_HOST', ''),
             'PORT': os.getenv('DB_PORT', ''),
+            'OPTIONS': {'timeout': 20} if 'sqlite3' in DB_ENGINE else {},
         }
     }
 
@@ -213,6 +214,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Use Custom User Model
 AUTH_USER_MODEL = 'MyApp.CustomUser'
+LOGIN_URL = 'login'
 
 # Email Configuration: use SMTP (Gmail) if env vars provided, otherwise console backend
 if os.getenv('EMAIL_HOST_USER') and os.getenv('EMAIL_HOST_PASSWORD'):
@@ -234,7 +236,7 @@ else:
 # Get your FREE API key at: https://account.cloudmersive.com/keys
 # Then replace the value below with your actual key.
 # PDFlayer API key for file conversion/compression
-PDFLAYER_API_KEY = os.getenv('PDFLAYER_API_KEY', '3a1e8458717b1314833e19faac0333a1')
+PDFLAYER_API_KEY = os.getenv('PDFLAYER_API_KEY', '')
 
 # AI Detector configuration
 DETECTOR_MODEL_PATH = BASE_DIR / "models/ai_detector_model.pkl"

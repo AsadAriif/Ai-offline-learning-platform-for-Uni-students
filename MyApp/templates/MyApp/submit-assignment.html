@@ -470,7 +470,7 @@
 
             // 4. In-page Link Click Detection
             document.addEventListener('click', function(e) {
-                const link = e.target.closest('a');
+                const link = (e.target && e.target.closest) ? e.target.closest('a') : null;
                 if (link && !hasSubmitted) {
                     e.preventDefault();
                     triggerAutoSubmit("Leaving the quiz via page link navigation detected.");

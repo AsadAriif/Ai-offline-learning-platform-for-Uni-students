@@ -96,8 +96,8 @@
                     <a href="{% url 'teacher_materials' %}" class="sidebar-link">
                         <span class="sidebar-link-text">Upload Materials</span>
                     </a>
-                    <a href="{% url 'teacher_submissions' %}" class="sidebar-link">
-                        <span class="sidebar-link-text">Submissions &amp; Grading</span>
+                    <a href="{% url 'teacher_assignment' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Assignments &amp; Submissions</span>
                     </a>
                     <a href="{% url 'teacher_results' %}" class="sidebar-link">
                         <span class="sidebar-link-text">Share Results</span>
@@ -130,6 +130,55 @@
                     <div class="user-text-meta">
                         <span class="user-name">{{ user_obj.get_full_name|default:user_obj.username }}</span>
                         <span class="user-role-badge">Faculty Portal</span>
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
+            </div>
+
+            {% elif user_obj.role == 'hod' %}
+            <div class="sidebar-nav-group">
+                <div class="sidebar-group-label">GOVERNANCE</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'hod_dashboard' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Executive Overview</span>
+                    </a>
+                    <a href="{% url 'hod_courses' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Courses &amp; Allocation</span>
+                    </a>
+                    <a href="{% url 'hod_tasks' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Task Delegation</span>
+                    </a>
+                    <a href="{% url 'hod_attendance' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Attendance Analytics</span>
+                    </a>
+                    <a href="{% url 'hod_marksheets' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Exam Marksheets</span>
+                    </a>
+                    <a href="{% url 'hod_notifications' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Official Notices</span>
+                    </a>
+                    <a href="{% url 'hod_manage_users' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">User Directory</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-group-label" style="margin-top: 14px;">ACCOUNT &amp; PORTAL</div>
+                <nav class="sidebar-nav">
+                    <a href="{% url 'profile' %}" class="sidebar-link active" aria-current="page">
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">University Home</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-user-footer">
+                <a href="{% url 'profile' %}" class="sidebar-user-info">
+                    <div class="user-avatar-circle">H</div>
+                    <div class="user-text-meta">
+                        <span class="user-name">{{ user_obj.get_full_name|default:user_obj.username }}</span>
+                        <span class="user-role-badge">HOD Governance</span>
                     </div>
                 </a>
                 <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
@@ -212,6 +261,8 @@
                         <a href="{% url 'student_dashboard' %}" class="topbar-user-link"><span>Student Dashboard</span></a>
                     {% elif user_obj.role == 'teacher' %}
                         <a href="{% url 'teacher_dashboard' %}" class="topbar-user-link"><span>Faculty Dashboard</span></a>
+                    {% elif user_obj.role == 'hod' %}
+                        <a href="{% url 'hod_dashboard' %}" class="topbar-user-link"><span>HOD Dashboard</span></a>
                     {% endif %}
                     <a href="{% url 'logout' %}" class="topbar-logout-link">Logout</a>
                 </div>
@@ -279,6 +330,8 @@
                             <button type="submit" class="btn" style="padding: 12px 28px;">Save Profile Changes</button>
                             {% if user_obj.role == 'student' %}
                                 <a href="{% url 'student_dashboard' %}" class="btn btn-outline">Cancel</a>
+                            {% elif user_obj.role == 'hod' %}
+                                <a href="{% url 'hod_dashboard' %}" class="btn btn-outline">Cancel</a>
                             {% else %}
                                 <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline">Cancel</a>
                             {% endif %}

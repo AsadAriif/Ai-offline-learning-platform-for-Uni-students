@@ -162,6 +162,8 @@ def tool_send_notification(user, args, uploaded_file=None, raw_message=""):
   Dispatches targeted notification for HOD or Teacher.
   Supports local file discovery from Downloads/Documents and multi-audience broadcasting.
   """
+  if not user or not getattr(user, 'is_authenticated', False):
+    return {"status": "error", "message": "Authentication required to dispatch official notifications."}
   title = str(args.get('title') or 'Official Department Announcement').strip()
   message = str(args.get('message') or 'Official departmental circular regarding academic schedule and updates.').strip()
   priority = str(args.get('priority') or 'normal').lower()
@@ -550,6 +552,58 @@ def parse_resilient_action(text):
   return action_type, args
 
 
+def _normalize_mcq_options_and_answer(raw_options, exp_ans):
+  """Normalize MCQ options to {'A': ..., 'B': ...} dict and expected_answer to option letter."""
+  import re
+  letters = ['A', 'B', 'C', 'D', 'E', 'F']
+  clean_opts = {}
+  raw_pairs = []
+
+  def _strip_prefix(text):
+    return re.sub(r'^[A-Fa-f][).:\-]\s+', '', text.strip()).strip()
+
+  if isinstance(raw_options, dict):
+    ordered_keys = [k for k in letters if k in raw_options or k.lower() in raw_options]
+    extra_keys = [k for k in raw_options.keys() if str(k).strip().upper() not in ordered_keys]
+    idx = 0
+    for k in ordered_keys + extra_keys:
+      orig_val = raw_options.get(k) if k in raw_options else raw_options.get(k.lower(), '')
+      key_up = str(k).strip().upper()
+      target_key = key_up if key_up in letters else (letters[idx] if idx < len(letters) else key_up)
+      val_str = str(orig_val or '').strip()
+      clean_val = _strip_prefix(val_str) or val_str
+      clean_opts[target_key] = clean_val
+      raw_pairs.append((target_key, val_str, clean_val))
+      idx += 1
+  elif isinstance(raw_options, (list, tuple)):
+    for idx, item in enumerate(raw_options[:len(letters)]):
+      key = letters[idx]
+      val_str = str(item or '').strip()
+      clean_val = _strip_prefix(val_str) or val_str
+      clean_opts[key] = clean_val
+      raw_pairs.append((key, val_str, clean_val))
+
+  ans_str = str(exp_ans or '').strip()
+  norm_ans = ans_str
+  if clean_opts and ans_str:
+    upper_ans = ans_str.upper()
+    if upper_ans in clean_opts:
+      norm_ans = upper_ans
+    else:
+      m = re.match(r'^(?:option\s*)?([A-Fa-f])(?:[).:\-]\s*.*)?$', ans_str, re.IGNORECASE)
+      if m and m.group(1).upper() in clean_opts and (
+        len(ans_str) == 1 or ans_str.lower().startswith('option') or re.match(r'^[A-Fa-f][).:\-]', ans_str)
+      ):
+        norm_ans = m.group(1).upper()
+      else:
+        stripped_ans = _strip_prefix(ans_str).lower()
+        for key, raw_val, clean_val in raw_pairs:
+          if clean_val.lower() == stripped_ans or raw_val.lower() == ans_str.lower():
+            norm_ans = key
+            break
+  return clean_opts, norm_ans
+
+
 def tool_create_quiz_or_assignment(user, args, uploaded_file=None):
   """Generates an assignment or interactive quiz."""
   title = str(args.get('title') or 'Weekly Assessment').strip()
@@ -588,13 +642,16 @@ def tool_create_quiz_or_assignment(user, args, uploaded_file=None):
   is_quiz = (kind == 'quiz') or ('questions' in args and len(args.get('questions', [])) > 0)
   assignment_kind = 'quiz' if is_quiz else ('project' if kind == 'project' else 'homework')
 
-  q_type_hint = str(args.get('quiz_type') or args.get('question_type') or '').lower()
-  raw_check_str = str(args).lower()
-  is_manual = (
-    q_type_hint in ['manual', 'subjective', 'written', 'open'] or
-    'manual' in raw_check_str or
-    'subjective' in raw_check_str or
-    'written' in raw_check_str
+  q_type_hint = str(args.get('quiz_type') or args.get('question_type') or '').strip().lower()
+  explicit_mcq = q_type_hint in ['mcq', 'multiple_choice', 'multiple choice', 'objective']
+  explicit_manual = q_type_hint in ['manual', 'subjective', 'written', 'open', 'short_answer', 'essay']
+  raw_check_str = f"{args.get('title', '')} {args.get('description', '')}".lower()
+  is_manual = explicit_manual or (
+    not explicit_mcq and (
+      'manual' in raw_check_str or
+      'subjective' in raw_check_str or
+      'written' in raw_check_str
+    )
   )
   final_quiz_type = 'manual' if is_manual else ('mcq' if is_quiz else 'manual')
 
@@ -621,7 +678,10 @@ def tool_create_quiz_or_assignment(user, args, uploaded_file=None):
 
   # If quiz requested but questions list is empty or fewer than desired, dynamically curate questions from topic
   if is_quiz:
-    desired_count = int(args.get('num_questions') or args.get('question_count') or 5)
+    try:
+      desired_count = max(1, int(args.get('num_questions') or args.get('question_count') or 5))
+    except (TypeError, ValueError):
+      desired_count = 5
     if len(questions_list) < desired_count:
       topic_hint = title or description or course_obj.name
       curated_qs = get_topic_questions(topic_hint, count=desired_count, question_type=final_quiz_type)
@@ -642,12 +702,17 @@ def tool_create_quiz_or_assignment(user, args, uploaded_file=None):
         options = q_data.get('options', [])
         exp_ans = q_data.get('expected_answer', '')
         if q_text:
+          norm_opts = None
+          norm_ans = str(exp_ans or '').strip()
+          if q_type == 'mcq':
+            norm_opts, norm_ans = _normalize_mcq_options_and_answer(options, exp_ans)
+            norm_opts = norm_opts or None
           QuizQuestion.objects.create(
             assignment=assignment,
             question_text=q_text,
             question_type=q_type,
-            options=options if (isinstance(options, list) and q_type == 'mcq') else None,
-            expected_answer=exp_ans,
+            options=norm_opts,
+            expected_answer=norm_ans,
             order=idx
           )
           created_q_count += 1
@@ -771,7 +836,7 @@ def tool_assign_faculty_task(user, args):
   if getattr(user, 'role', '') != 'hod':
     return {"status": "error", "message": "Only Head of Department (HOD) can delegate faculty tasks."}
 
-  title = args.get('title', 'Academic Task')
+  title = str(args.get('title') or args.get('task_title') or 'Academic Task').strip() or 'Academic Task'
   description = args.get('description', '')
   teacher_query = args.get('teacher_name', '').strip()
   course_query = args.get('course_name', '').strip()
@@ -1511,7 +1576,10 @@ def tool_manage_task(user, args):
     if args.get('description'):
       task_obj.description = args['description']
     if args.get('due_date'):
-      task_obj.due_date = args['due_date']
+      from django.utils.dateparse import parse_date
+      parsed_due = parse_date(str(args['due_date']).strip())
+      if parsed_due:
+        task_obj.due_date = parsed_due
     task_obj.save()
     return {
       "status": "success",

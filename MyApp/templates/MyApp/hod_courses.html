@@ -68,8 +68,8 @@
 
                 <div class="sidebar-group-label" style="margin-top: 14px;">SWITCH PORTALS</div>
                 <nav class="sidebar-nav">
-                    <a href="{% url 'teacher_dashboard' %}" class="sidebar-link">
-                        <span class="sidebar-link-text">Faculty Workspace</span>
+                    <a href="{% url 'notifications_list' %}" class="sidebar-link">
+                        <span class="sidebar-link-text">Notices Inbox</span>
                     </a>
                     <a href="{% url 'profile' %}" class="sidebar-link">
                         <span class="sidebar-link-text">My Profile</span>
@@ -82,14 +82,21 @@
 
             <div class="sidebar-user-footer">
                 <a href="{% url 'profile' %}" class="sidebar-user-info">
-                    <div class="user-avatar-circle" style="background: #111D5E; border: 2px solid #6EA8FE; font-weight: 700;">{{ user.username|slice:":1"|upper }}</div>
+                    <div class="user-avatar-circle"
+                        style="background: #111D5E; border: 2px solid #6EA8FE; font-weight: 700;">{{ user.username|slice:":1"|upper }}</div>
                     <div class="user-text-meta">
                         <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
                         <span class="user-role-badge" style="background: rgba(110, 168, 254, 0.2); color: #6EA8FE;">Head
                             of Dept</span>
                     </div>
                 </a>
-                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></a>
+                <a href="{% url 'logout' %}" class="sidebar-logout-btn" title="Sign Out"><svg width="16" height="16"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg></a>
             </div>
         </aside>
 
@@ -97,7 +104,13 @@
         <div class="app-main">
             <header class="app-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+                    <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle navigation"><svg width="18"
+                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg></button>
                     <div class="topbar-breadcrumbs">
                         <a href="{% url 'hod_dashboard' %}" class="breadcrumb-parent">HOD Portal</a>
                         <span class="breadcrumb-divider">/</span>
@@ -106,7 +119,11 @@
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+                    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme"
+                        aria-label="Dark Mode Toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg></button>
                     <div class="topbar-offline-pill">
                         <span class="status-indicator-dot"></span>
                         <span>Offline Ready</span>
@@ -180,8 +197,7 @@
                                     style="width: 100%; padding: 10px; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
                                     <option value="">-- Unassigned (Assign Later) --</option>
                                     {% for t in teachers %}
-                                    <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }} ({{ t.username
-                                        }})</option>
+                                    <option value="{{ t.id }}">{{ t.get_full_name|default:t.username }} ({{ t.username }})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -256,8 +272,7 @@
                                         {% endif %}
                                     </td>
                                     <td style="padding: 12px 14px;">
-                                        <span style="font-family: var(--font-mono); font-weight: 600;">{{
-                                            c.student_count }}</span> students
+                                        <span style="font-family: var(--font-mono); font-weight: 600;">{{ c.student_count }}</span> students
                                     </td>
                                     <td style="padding: 12px 14px;">
                                         <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
@@ -270,8 +285,7 @@
                                                     style="padding: 5px 8px; font-size: 0.8rem; border: 1px solid var(--borders); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-primary);">
                                                     <option value="">-- Unassigned --</option>
                                                     {% for t in teachers %}
-                                                    <option value="{{ t.id }}" {% if c.teacher and c.teacher.id==t.id
-                                                        %}selected{% endif %}>
+                                                    <option value="{{ t.id }}" {% if c.teacher and c.teacher.id == t.id %}selected{% endif %}>
                                                         {{ t.get_full_name|default:t.username }}
                                                     </option>
                                                     {% endfor %}

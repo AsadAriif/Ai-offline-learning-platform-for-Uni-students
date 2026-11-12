@@ -48,8 +48,11 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(event.request).catch(() => {
-        // Fallback if offline
-        return caches.match('/');
+        // Fallback to app shell only for top-level page navigations
+        if (event.request.mode === 'navigate') {
+          return caches.match('/').then((home) => home || new Response('Offline', { status: 503, statusText: 'Offline' }));
+        }
+        return new Response('', { status: 503, statusText: 'Service Unavailable' });
       });
     })
   );

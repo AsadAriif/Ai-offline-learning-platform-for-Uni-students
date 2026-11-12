@@ -775,3 +775,84 @@ class ComprehensivePlatformTests(TestCase):
         self.assertEqual(res_query.status_code, 200)
         reply = res_query.json().get('reply', '')
         self.assertTrue(len(reply) > 10)
+
+    def test_23_hod_portal_redirects_and_profile_render(self):
+        """
+        Verify LOGIN_URL points to /login/, HOD users do not bounce into an infinite
+        student/teacher redirect loop, and profile renders cleanly for all roles.
+        """
+        hod_user = CustomUser.objects.create_user(
+            username='hod_test_user',
+            password='Password123!',
+            role='hod',
+            first_name='Dr.',
+            last_name='HOD',
+        )
+
+        # Anonymous access to @login_required should redirect to /login/, not 404 /accounts/login/
+        res_anon = self.client.get(reverse('profile'))
+        self.assertEqual(res_anon.status_code, 302)
+        self.assertTrue(res_anon['Location'].startswith(reverse('login')))
+
+        # Authenticated HOD hitting student or teacher dashboard goes straight to hod_dashboard
+        self.client.force_login(hod_user)
+        res_stu_dash = self.client.get(reverse('student_dashboard'))
+        self.assertRedirects(res_stu_dash, reverse('hod_dashboard'))
+        res_tch_dash = self.client.get(reverse('teacher_dashboard'))
+        self.assertRedirects(res_tch_dash, reverse('hod_dashboard'))
+
+        # Profile renders 200 for HOD, Teacher, and Student without NoReverseMatch
+        for usr in (hod_user, self.teacher, self.student):
+            self.client.force_login(usr)
+            res_prof = self.client.get(reverse('profile'))
+            self.assertEqual(res_prof.status_code, 200)
+
+    def test_24_agent_mcq_normalization_and_error_guards(self):
+        """
+        Verify agent MCQ option normalization, unauthenticated notification guard,
+        chatbot exception JSON handling, and missing-file detect_submission 404 guard.
+        """
+        import json
+        from unittest.mock import patch
+        from django.contrib.auth.models import AnonymousUser
+        from MyApp.academic_agent import _normalize_mcq_options_and_answer, tool_send_notification
+
+        opts, ans = _normalize_mcq_options_and_answer(
+            ['O(1)', 'O(N)', 'O(N log N)', 'O(N^2)'],
+            'O(N log N)'
+        )
+        self.assertEqual(opts, {'A': 'O(1)', 'B': 'O(N)', 'C': 'O(N log N)', 'D': 'O(N^2)'})
+        self.assertEqual(ans, 'C')
+
+        opts2, ans2 = _normalize_mcq_options_and_answer(
+            ['A) Stack', 'B) Queue', 'C) Tree', 'D) Graph'],
+            'B) Queue'
+        )
+        self.assertEqual(opts2['B'], 'Queue')
+        self.assertEqual(ans2, 'B')
+
+        notif_res = tool_send_notification(AnonymousUser(), {'title': 'Test'})
+        self.assertEqual(notif_res.get('status'), 'error')
+
+        # Missing physical file in detect_submission returns 404 JSON instead of 500
+        course = Course.objects.create(name='Audit Course', code='AC101', teacher=self.teacher)
+        assign = Assignment.objects.create(
+            title='Essay 1', kind='homework', course=course, created_by=self.teacher, published=True
+        )
+        sub = Submission.objects.create(
+            assignment=assign, student=self.student, file='submissions/nonexistent_missing_test.txt'
+        )
+        self.client.force_login(self.teacher)
+        res_detect = self.client.post(reverse('detect_submission', args=[sub.id]))
+        self.assertEqual(res_detect.status_code, 404)
+        self.assertIn('error', res_detect.json())
+
+        # Unexpected exception inside run_academic_agent returns JSON 500 instead of HTML traceback
+        with patch('MyApp.academic_agent.run_academic_agent', side_effect=RuntimeError('Simulated upstream failure')):
+            res_bot = self.client.post(
+                reverse('ai_chatbot_api'),
+                data=json.dumps({'message': 'Hello AI'}),
+                content_type='application/json'
+            )
+            self.assertEqual(res_bot.status_code, 500)
+            self.assertIn('error', res_bot.json())
