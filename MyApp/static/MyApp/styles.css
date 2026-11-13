@@ -952,10 +952,13 @@ img {
    6. BUTTONS (CHAMPAGNE GOLD & REFINED OUTLINE)
    ========================================================================== */
 .btn,
-button,
-input[type="submit"],
+.btn-primary,
+.btn-secondary,
+.btn-outline,
 .login-btn,
-.btn-submit {
+.btn-submit,
+input[type="submit"],
+button:not(.chat-icon-action-btn):not(.chat-attach-btn):not(.chat-mic-btn):not(.chat-close-btn):not(.chat-tool-btn):not(.theme-toggle-btn):not(.sidebar-toggle-btn):not(.notif-btn):not(.code-copy-btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
