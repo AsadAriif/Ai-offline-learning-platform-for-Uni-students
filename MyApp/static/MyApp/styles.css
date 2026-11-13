@@ -15,8 +15,8 @@
     font-weight: 600;
     font-display: swap;
     src: local('Manrope SemiBold'),
-         local('Manrope-SemiBold'),
-         url('fonts/manrope-600.woff2') format('woff2');
+        local('Manrope-SemiBold'),
+        url('fonts/manrope-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -25,8 +25,8 @@
     font-weight: 700;
     font-display: swap;
     src: local('Manrope Bold'),
-         local('Manrope-Bold'),
-         url('fonts/manrope-700.woff2') format('woff2');
+        local('Manrope-Bold'),
+        url('fonts/manrope-700.woff2') format('woff2');
 }
 
 /* Inter (Body Text: 400 Regular, 500 Medium) */
@@ -36,8 +36,8 @@
     font-weight: 400;
     font-display: swap;
     src: local('Inter Regular'),
-         local('Inter-Regular'),
-         url('fonts/inter-400.woff2') format('woff2');
+        local('Inter-Regular'),
+        url('fonts/inter-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -46,8 +46,8 @@
     font-weight: 500;
     font-display: swap;
     src: local('Inter Medium'),
-         local('Inter-Medium'),
-         url('fonts/inter-500.woff2') format('woff2');
+        local('Inter-Medium'),
+        url('fonts/inter-500.woff2') format('woff2');
 }
 
 /* IBM Plex Mono (Numbers and Technical Metrics: 500 Medium) */
@@ -57,8 +57,8 @@
     font-weight: 500;
     font-display: swap;
     src: local('IBM Plex Mono Medium'),
-         local('IBMPlexMono-Medium'),
-         url('fonts/ibmplexmono-500.woff2') format('woff2');
+        local('IBMPlexMono-Medium'),
+        url('fonts/ibmplexmono-500.woff2') format('woff2');
 }
 
 /* Fallback Font Declarations for Offline Resilience */
@@ -68,7 +68,7 @@
     font-weight: 600;
     font-display: swap;
     src: local('Plus Jakarta Sans SemiBold'),
-         url('fonts/plusjakartasans-600.woff2') format('woff2');
+        url('fonts/plusjakartasans-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -77,7 +77,7 @@
     font-weight: 700;
     font-display: swap;
     src: local('Plus Jakarta Sans Bold'),
-         url('fonts/plusjakartasans-700.woff2') format('woff2');
+        url('fonts/plusjakartasans-700.woff2') format('woff2');
 }
 
 @font-face {
@@ -86,7 +86,7 @@
     font-weight: 400;
     font-display: swap;
     src: local('JetBrains Mono Regular'),
-         url('fonts/jetbrainsmono-400.woff2') format('woff2');
+        url('fonts/jetbrainsmono-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -95,7 +95,7 @@
     font-weight: 500;
     font-display: swap;
     src: local('JetBrains Mono Medium'),
-         url('fonts/jetbrainsmono-500.woff2') format('woff2');
+        url('fonts/jetbrainsmono-500.woff2') format('woff2');
 }
 
 /* ==========================================================================
@@ -104,33 +104,45 @@
    ========================================================================== */
 :root {
     /* Core BGNU Brand Colors */
-    --primary: #111D5E;                /* Royal Navy Blue */
-    --primary-hover: #0c1544;          /* Deep Royal Navy */
-    --primary-light: #1c2d82;          /* Lighter Royal Navy */
+    --primary: #111D5E;
+    /* Royal Navy Blue */
+    --primary-hover: #0c1544;
+    /* Deep Royal Navy */
+    --primary-light: #1c2d82;
+    /* Lighter Royal Navy */
     --primary-brand: #111D5E;
-    --secondary-accent: #6EA8FE;       /* Secondary Light Blue */
+    --secondary-accent: #6EA8FE;
+    /* Secondary Light Blue */
     --secondary-hover: #5092fc;
-    --near-black: #030207;             /* Near Black */
-    --primary-text: #030207;           /* Primary text */
-    --secondary-text: #64748B;         /* Slate 500 secondary text */
-    
+    --near-black: #030207;
+    /* Near Black */
+    --primary-text: #030207;
+    /* Primary text */
+    --secondary-text: #64748B;
+    /* Slate 500 secondary text */
+
     /* Backgrounds & Canvas */
-    --main-bg: #F4F7FC;                /* Main Background: Cool Off-White */
+    --main-bg: #F4F7FC;
+    /* Main Background: Cool Off-White */
     --primary-bg: #F4F7FC;
     --bg-surface: #F4F7FC;
-    --card-bg: #FFFFFF;                /* Card Background: Pure White */
-    --pale-blue: #DCE8FA;              /* Pale Blue highlight */
+    --card-bg: #FFFFFF;
+    /* Card Background: Pure White */
+    --pale-blue: #DCE8FA;
+    /* Pale Blue highlight */
     --soft-accent: #DCE8FA;
-    --primary-accent: #111D5E;         /* Brand CTA */
+    --primary-accent: #111D5E;
+    /* Brand CTA */
     --primary-accent-hover: #0c1544;
-    
+
     /* Clean Borders & Dividers */
-    --borders: #E2E8F0;                /* Border: Clean Slate */
+    --borders: #E2E8F0;
+    /* Border: Clean Slate */
     --border: #E2E8F0;
     --border-subtle: #E2E8F0;
     --border-light: #F1F5F9;
     --border-hover: #6EA8FE;
-    
+
     /* Royal Navy Sidebar (#111D5E) */
     --sidebar: #111D5E;
     --sidebar-bg: #111D5E;
@@ -140,7 +152,7 @@
     --sidebar-text: #F4F7FC;
     --sidebar-muted: #94A3B8;
     --sidebar-user-bg: #0c1544;
-    
+
     /* Functional Status */
     --success: #10B981;
     --success-bg: #ECFDF5;
@@ -152,25 +164,25 @@
     --error-bg: #FEF2F2;
     --error-border: #FECACA;
     --danger: #EF4444;
-    
+
     /* Semantic Typography Stacks (100% Offline Self-Hosted) */
     --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
-    
+
     /* Theme Aliases */
     --dark-slate: #111D5E;
     --text-headings: #030207;
     --text-body: #030207;
     --text-muted: #64748B;
     --text-light: #64748B;
-    
+
     /* AI Output & Prompts (BGNU Royal Navy & Light Blue) */
     --ai-box-bg: #111D5E;
     --ai-box-border: #6EA8FE;
-    --ai-box-text: #F4F7FC;
-    --ai-box-subtext: #DCE8FA;
-    
+    --ai-box-text: #f4f7fc7c;
+    --ai-box-subtext: #418bf9;
+
     /* Border Radii */
     --radius-xs: 4px;
     --radius-sm: 8px;
@@ -178,14 +190,14 @@
     --radius-lg: 16px;
     --radius-xl: 20px;
     --radius-full: 9999px;
-    
+
     /* Elevation & Subtle Modern Shadows */
     --shadow-xs: 0 1px 2px rgba(3, 2, 7, 0.03);
     --shadow-sm: 0 1px 3px rgba(3, 2, 7, 0.05), 0 1px 2px -1px rgba(3, 2, 7, 0.03);
     --shadow-md: 0 4px 6px -1px rgba(17, 29, 94, 0.05), 0 2px 4px -2px rgba(17, 29, 94, 0.03);
     --shadow-lg: 0 10px 18px -3px rgba(17, 29, 94, 0.08), 0 4px 6px -4px rgba(17, 29, 94, 0.02);
     --shadow-blue-glow: 0 0 16px rgba(110, 168, 254, 0.35);
-    
+
     /* Transitions */
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -194,7 +206,9 @@
 /* ==========================================================================
    3. RESET & BASE TYPOGRAPHY
    ========================================================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -219,7 +233,12 @@ body {
 }
 
 /* Headings: Manrope (600 SemiBold, 700 Bold) */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .card-title,
 .hero-panel h2,
 .panel h2,
@@ -237,13 +256,39 @@ h1, h2, h3, h4, h5, h6,
     letter-spacing: -0.02em;
 }
 
-h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
-h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem; }
-h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
-h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.35rem; }
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
 
 /* Body Text: Inter (400 Regular, 500 Medium) */
-p, .note, .course-module-text, input, select, textarea, label, .meta span {
+p,
+.note,
+.course-module-text,
+input,
+select,
+textarea,
+label,
+.meta span {
     font-family: var(--font-body);
     font-weight: 400;
     color: var(--primary-text);
@@ -259,7 +304,10 @@ p:last-child {
 }
 
 /* Numbers and Technical Metrics: IBM Plex Mono (500 Medium) */
-code, pre, kbd, samp,
+code,
+pre,
+kbd,
+samp,
 .stat-card strong,
 .stat-value,
 .metric-number,
@@ -336,6 +384,7 @@ img {
 .app-sidebar::-webkit-scrollbar {
     width: 4px;
 }
+
 .app-sidebar::-webkit-scrollbar-thumb {
     background: var(--secondary-dark);
     border-radius: 4px;
@@ -923,34 +972,39 @@ input[type="submit"],
     transition: var(--transition-fast);
 }
 
-/* Primary Button: Champagne Gold #6EA8FE */
+/* Primary Button: Official BGNU Royal Navy Blue (#111D5E) */
 .btn,
+.btn-primary,
 button[type="submit"],
 .login-btn,
 .btn-submit,
 .header-actions a.primary,
 .header-actions .primary {
-    background-color: var(--primary-accent);
+    background-color: var(--primary);
+    background: var(--primary);
     color: #FFFFFF !important;
-    border: 1px solid var(--primary-accent);
-    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--primary);
+    box-shadow: 0 2px 6px rgba(17, 29, 94, 0.2);
 }
 
-/* Hover State: Darker Champagne Gold with subtle glow */
+/* Hover State: Deep Navy with light blue highlight */
 .btn:hover,
+.btn-primary:hover,
 button[type="submit"]:hover,
 .login-btn:hover,
 .btn-submit:hover,
 .header-actions a.primary:hover,
 .header-actions .primary:hover {
-    background-color: var(--primary-accent-hover);
+    background-color: var(--primary-hover);
+    background: var(--primary-hover);
     color: #FFFFFF !important;
     border-color: var(--secondary-accent);
-    box-shadow: var(--shadow-gold-glow);
+    box-shadow: var(--shadow-blue-glow);
     transform: translateY(-1px);
 }
 
 .btn:active,
+.btn-primary:active,
 button[type="submit"]:active,
 .login-btn:active {
     transform: scale(0.98);
@@ -965,21 +1019,30 @@ input:disabled {
     box-shadow: none !important;
 }
 
-/* Secondary Button: Pure White with Refined Border */
+/* Secondary / Outline Button: Clean Crisp Surface & Border */
 .btn-secondary,
-.btn-outline {
-    background: #FFFFFF;
-    color: var(--primary-text);
-    border: 1px solid var(--borders);
+.btn-outline,
+.btn.btn-outline,
+.btn.btn-secondary {
+    background-color: var(--card-bg) !important;
+    background: var(--card-bg) !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--borders) !important;
     font-family: var(--font-heading);
     font-weight: 600;
+    box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary:hover,
-.btn-outline:hover {
-    background: var(--main-bg);
-    border-color: var(--primary-accent);
-    color: var(--primary-accent);
+.btn-outline:hover,
+.btn.btn-outline:hover,
+.btn.btn-secondary:hover {
+    background-color: var(--pale-blue) !important;
+    background: var(--pale-blue) !important;
+    border-color: var(--secondary-accent) !important;
+    color: var(--primary) !important;
+    box-shadow: 0 2px 8px rgba(110, 168, 254, 0.25);
+    transform: translateY(-1px);
 }
 
 /* Danger / Delete Button */
@@ -1468,7 +1531,7 @@ header:has(.logo-top-left),
     margin-bottom: 28px;
 }
 
-.section-grid > article:nth-child(3):last-child {
+.section-grid>article:nth-child(3):last-child {
     grid-column: 1 / -1;
 }
 
@@ -1609,10 +1672,29 @@ header:has(.logo-top-left),
     flex-shrink: 0;
 }
 
-.badge-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
-.badge-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
-.badge-danger  { background: var(--error-bg);   color: var(--error);   border: 1px solid var(--error-border); }
-.badge-info    { background: var(--secondary-accent); color: var(--primary); border: 1px solid var(--primary-accent); }
+.badge-success {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid var(--success-border);
+}
+
+.badge-warning {
+    background: var(--warning-bg);
+    color: var(--warning);
+    border: 1px solid var(--warning-border);
+}
+
+.badge-danger {
+    background: var(--error-bg);
+    color: var(--error);
+    border: 1px solid var(--error-border);
+}
+
+.badge-info {
+    background: var(--secondary-accent);
+    color: var(--primary);
+    border: 1px solid var(--primary-accent);
+}
 
 /* Messages Panel */
 .messages-panel ul {
@@ -2262,6 +2344,7 @@ footer.footer {
     .split-layout {
         grid-template-columns: 1fr;
     }
+
     .graphic-side {
         display: none;
     }
@@ -2298,7 +2381,7 @@ footer.footer {
         grid-template-columns: 1fr;
     }
 
-    .section-grid > article:nth-child(3):last-child {
+    .section-grid>article:nth-child(3):last-child {
         grid-column: 1;
     }
 
@@ -2588,8 +2671,8 @@ dialog {
 @media (min-width: 1025px) {
     .app-sidebar {
         transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                    opacity 0.25s ease,
-                    width 0.3s ease !important;
+            opacity 0.25s ease,
+            width 0.3s ease !important;
     }
 
     .app-sidebar.is-collapsed {
@@ -2841,6 +2924,49 @@ dialog {
     color: #FFFFFF;
 }
 
+[data-theme="dark"] .btn:not(.btn-outline):not(.btn-secondary),
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] button[type="submit"],
+[data-theme="dark"] .login-btn,
+[data-theme="dark"] .btn-submit {
+    background-color: #2563EB;
+    background: #2563EB;
+    border-color: #3B82F6;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="dark"] .btn:not(.btn-outline):not(.btn-secondary):hover,
+[data-theme="dark"] .btn-primary:hover,
+[data-theme="dark"] button[type="submit"]:hover,
+[data-theme="dark"] .login-btn:hover,
+[data-theme="dark"] .btn-submit:hover {
+    background-color: #1D4ED8;
+    background: #1D4ED8;
+    border-color: #6EA8FE;
+    box-shadow: 0 4px 16px rgba(110, 168, 254, 0.4);
+}
+
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .btn-outline,
+[data-theme="dark"] .btn.btn-outline,
+[data-theme="dark"] .btn.btn-secondary {
+    background-color: #111A42 !important;
+    background: #111A42 !important;
+    border-color: #1E2B63 !important;
+    color: #F4F7FC !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover,
+[data-theme="dark"] .btn-outline:hover,
+[data-theme="dark"] .btn.btn-outline:hover,
+[data-theme="dark"] .btn.btn-secondary:hover {
+    background-color: #1A2556 !important;
+    background: #1A2556 !important;
+    border-color: #6EA8FE !important;
+    color: #FFFFFF !important;
+}
+
 /* 2. THEME TOGGLE BUTTON */
 .theme-toggle-btn {
     display: inline-flex;
@@ -3019,8 +3145,13 @@ dialog {
 }
 
 @keyframes timerPulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.04); }
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.04);
+    }
 }
 
 /* 5. VOICE & AUDIO CONTROLS IN CHATBOT */
@@ -3050,8 +3181,13 @@ dialog {
 }
 
 @keyframes micPulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.15); }
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.15);
+    }
 }
 
 .chat-listen-btn {
@@ -3081,6 +3217,7 @@ dialog {
         background: #FFFFFF !important;
         color: #000000 !important;
     }
+
     .app-sidebar,
     .app-topbar,
     .sidebar-backdrop,
@@ -3089,20 +3226,24 @@ dialog {
     .btn:not(.print-include) {
         display: none !important;
     }
+
     .app-main {
         margin: 0 !important;
         padding: 0 !important;
         width: 100% !important;
     }
+
     .app-workspace {
         padding: 0 !important;
     }
+
     .panel {
         box-shadow: none !important;
         border: 1px solid #000000 !important;
         margin: 0 !important;
         padding: 20px !important;
     }
+
     .print-official-header {
         display: block !important;
         text-align: center;
@@ -3114,7 +3255,25 @@ dialog {
 
 
 /* NOTIFICATION BADGES & INBOX */
-.badge-urgent { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
-.badge-exam { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
-.badge-meeting { background: #CCFBF1; color: #115E59; border: 1px solid #99F6E4; }
-.badge-normal { background: #E2E8F0; color: #334155; }
+.badge-urgent {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+}
+
+.badge-exam {
+    background: #EDE9FE;
+    color: #5B21B6;
+    border: 1px solid #DDD6FE;
+}
+
+.badge-meeting {
+    background: #CCFBF1;
+    color: #115E59;
+    border: 1px solid #99F6E4;
+}
+
+.badge-normal {
+    background: #E2E8F0;
+    color: #334155;
+}
